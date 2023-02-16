@@ -1,0 +1,119 @@
+﻿@page "/stopcard"
+@using Samco_HSE.HSEData
+@attribute [Authorize(Roles = "Owner,Admin,Supervisor,Officer")]
+
+<PageTitle>گزارش اعمال / شرایط ایمن و نا ایمن</PageTitle>
+
+<Card>
+    <HeaderTemplate>
+        <DxMenu Title="گزارش اعمال / شرایط ایمن و نا ایمن" ItemsPosition="ItemPosition.Start" CssClass="card-header">
+            <Items>
+                <DxMenuItem Text="دریافت اطلاعات" IconCssClass="fas fa-paste" @onclick="OnPrintBtnClick" />
+                @*<DxMenuItem Text="تنظیم موجودی" IconCssClass="fas fa-shirt" @onclick="OnSetNumberBtnClick" />*@
+                @*<DxMenuItem Text="توزیع تجهیزات" IconCssClass="fas fa-boxes-packing" @onclick="OnDistributeBtnClick" />*@
+            </Items>
+        </DxMenu>
+    </HeaderTemplate>
+    <BodyTemplate>
+        <DxButton Text="تنظیم ستون‌ها"
+                  RenderStyle="ButtonRenderStyle.Secondary"
+                  CssClass="column-chooser-button"
+                  Click="ColumnChooserOnClick" />
+        <p />
+        <DxGrid @ref="StopGrid" Data="@StopsList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"
+                EditModelSaving="OnEditModelSaving" UnboundColumnData="StopGridUnbound"
+                DataItemDeleting="OnDataItemDeleting" CustomizeEditModel="StopEditModel"
+                CustomizeElement="StopGrid_CustomizeElement"
+                ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true"
+                SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="true"
+                ColumnResizeMode="GridColumnResizeMode.ColumnsContainer"
+                SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center" ValidationEnabled="false">
+            <Columns>
+                <DxGridCommandColumn MinWidth="100"/>
+                <DxGridDataColumn FieldName="WorkID.RigNo.Name" Caption="دکل / دفتر" MinWidth="100"/>
+                <DxGridDataColumn FieldName="WorkID.WellNo.Name" Caption="نام چاه" MinWidth="100"/>
+                <DxGridDataColumn FieldName="ReportDate" Caption="تاریخ گزارش" SortIndex="0" SortOrder="GridColumnSortOrder.Descending" MinWidth="100"/>
+                <DxGridDataColumn FieldName="Reporter.PersonnelName" Caption="گزارش دهنده" MinWidth="100"/>
+                <DxGridDataColumn FieldName="Location" Caption="محل مشاهده" MinWidth="200"/>
+                <DxGridDataColumn FieldName="Category" Caption="دسته بندی" MinWidth="200"/>
+                <DxGridDataColumn FieldName="Observation" Caption="مشاهدات" MinWidth="400"/>
+                <DxGridDataColumn FieldName="Responsible" Caption="مسئول پیگیری" MinWidth="100"/>
+                <DxGridDataColumn FieldName="Severity" Caption="درجه خطر" MinWidth="70"/>
+                <DxGridDataColumn FieldName="@nameof(StopCard.Probablety)" Caption="احتمال وقوع" MinWidth="70"/>
+                <DxGridDataColumn FieldName="Risk" Caption="ریسک" MinWidth="70" UnboundType="GridUnboundColumnType.String"/>
+                <DxGridDataColumn FieldName="Actions" Caption="اقدامات اصلاحی" MinWidth="400"/>
+                <DxGridDataColumn FieldName="@nameof(StopCard.Efficiency)" Caption="اثر بخشی اقدامات اصلاحی" MinWidth="400"/>
+                <DxGridDataColumn FieldName="Status" Caption="وضعیت" MinWidth="70"/>
+                <DxGridDataColumn FieldName="Comments" Caption="توضیحات" MinWidth="300"/>
+                <DxGridDataColumn Caption="تأیید شده" FieldName="IsApproved" MinWidth="70">
+                    <CellDisplayTemplate>
+                        <DxCheckBox CssClass="d-inline-block" Checked="@((bool)context.Value)" Enabled="false"/>
+                    </CellDisplayTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="Score" Caption="امتیاز" MinWidth="150">
+                    <CellDisplayTemplate>
+                        <Rate Value="@((int)context.Value)" IsDisable="true" Max="5" class="d-inline-block"/>
+                        @*<DxCheckBox CssClass="d-inline-block" Checked="@((bool)context.Value)" Enabled="false" />*@
+                    </CellDisplayTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="Agent.PersonnelName" Caption="کارشناس ایمنی" MinWidth="100"/>
+            </Columns>
+            <EditFormTemplate Context="editFormContext">
+                @{
+                    var stopCard = (StopCard)editFormContext.EditModel;
+                }
+                <DxFormLayout>
+                    <DxFormLayoutItem Caption="دکل / دفتر:">
+                        <DxComboBox Data="@Rigs" @bind-Value="@_selRig" TextFieldName="@nameof(Rig.Name)" NullText="الزامی"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="تاریخ گزارش:">
+                        <SamcoDateSelector TData="DateTime?" @bind-Date="@stopCard.ReportDate" DefaultCalendar="SamcoDateSelector<DateTime?>.CalendarType.Shamsi"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="گزارش دهنده:">
+                        <DxComboBox Data="@PersonnelList" @bind-Value="@stopCard.Reporter" NullText="الزامی"
+                                    TextFieldName="@nameof(Samco_HSE.HSEData.Personnel.PersonnelName)" FilteringMode="DataGridFilteringMode.Contains">
+                            <DxListEditorColumn FieldName="@nameof(Samco_HSE.HSEData.Personnel.PersonnelName)" Caption="نام و نام خانوادگی"/>
+                            <DxListEditorColumn FieldName="@nameof(Samco_HSE.HSEData.Personnel.CurrentRole)" Caption="سمت"/>
+                        </DxComboBox>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="محل مشاهده:">
+                        <DxComboBox Data="@_location" @bind-Value="@stopCard.Location" FilteringMode="DataGridFilteringMode.Contains" NullText="الزامی"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="دسته بندی:">
+                        <DxComboBox Data="@_category" @bind-Value="@stopCard.Category" FilteringMode="DataGridFilteringMode.Contains" NullText="الزامی"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="مشاهدات:">
+                        <DxMemo @bind-Text="@stopCard.Observation" NullText="الزامی"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="مسئول پیگیری:">
+                        <DxComboBox Data="@RigRoles" @bind-Value="@stopCard.Responsible" FilteringMode="DataGridFilteringMode.Contains"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="درجه خطر:">
+                        <DxComboBox Data="@_stopRisk" @bind-Value="@stopCard.Severity" FilteringMode="DataGridFilteringMode.Contains"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="احتمال وقوع:">
+                        <DxComboBox Data="@_stopProb" @bind-Value="@stopCard.Probablety" FilteringMode="DataGridFilteringMode.Contains"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="اقدامات اصلاحی:">
+                        <DxMemo @bind-Text="@stopCard.Actions"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="اثر بخشی اقدامات اصلاحی:">
+                        <DxMemo @bind-Text="@stopCard.Efficiency" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="وضعیت:">
+                        <DxComboBox Data="@_status" @bind-Value="stopCard.Status"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="توضیحات:">
+                        <DxTextBox @bind-Text="@stopCard.Comments"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="تأیید شده:">
+                        <DxCheckBox @bind-Checked="@stopCard.IsApproved"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="امتیاز ایمنی:">
+                        <Rate @bind-Value="@stopCard.Score" Max="5"/>
+                    </DxFormLayoutItem>
+                </DxFormLayout>
+            </EditFormTemplate>
+        </DxGrid>
+    </BodyTemplate>
+</Card>

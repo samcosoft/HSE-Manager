@@ -1,0 +1,73 @@
+﻿@inherits LayoutComponentBase
+
+<PageTitle>Samco HSE Manager</PageTitle>
+
+@*<Layout ShowFooter="true" IsFullSide="true" SideWidth="0">
+    <Header>
+        <div class="container-fluid">
+            <div class="navbar-brand col d-flex pt-0 pb-0">
+            <img src="/images/logo.svg" alt="logo" height="50">
+            <h3 class="mt-2 ms-2 me-3" style="color: var(--primary-color)">سامانه مدیریت ایمنی، بهداشت و محیط زیست</h3>
+            </div>
+            <div class="col text-left">
+                <AuthorizeView>
+                    <Authorized>
+                        <Logout ImageUrl="" DisplayName="@_loggedUser.PersonnelName" UserName="@_loggedUser.Username" />
+                        <button type="button" class="btn btn-danger" @onclick="LogOut_Click">خروج از سیستم</button>
+                    </Authorized>
+                    <NotAuthorized>
+                        <button type="button" class="btn btn-primary" @onclick="LogIn_Click">ورود به سیستم</button>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </div>
+        </div>
+    </Header>
+    <Side>
+        <div class="sidebar">
+            <NavMenu/>
+        </div>
+    </Side>
+    <Main>
+        @Body
+    </Main>
+    <Footer>
+        <div class="text-center footer">>Copyright 2022-@DateTime.Now.Year Samco Software Group. All rights reserved.</div>
+    </Footer>
+</Layout>*@
+
+<div class="page">
+
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <div class="container p-0">
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+                <div class="navbar-brand col d-flex pt-0 pb-0 header">
+                    <img src="/images/logo.svg" alt="logo" height="40">
+                    <h4 class="mt-2 ms-2 me-3 text-white">سامانه مدیریت ایمنی، بهداشت و محیط زیست</h4>
+                </div>
+                <div class="col text-left">
+                    <AuthorizeView>
+                        <Authorized>
+                            @*<Logout DisplayName="@_loggedUser.PersonnelName" UserName="@_loggedUser.Username" />*@
+                            <button type="button" class="btn btn-danger" @onclick="LogOut_Click">خروج از سیستم</button>
+                        </Authorized>
+                        <NotAuthorized>
+                            <button type="button" class="btn btn-primary" @onclick="LogIn_Click">ورود به سیستم</button>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </div>
+            </div>
+        </nav>
+        <main class="main-background">
+            <article class="content py-3">
+                @Body
+            </article>
+        </main>
+
+        <footer class="footer bg-light fixed-bottom">Copyright 2022-@DateTime.Now.Year Samco Software Group. All rights reserved.</footer>
+
+    </div>
+</div>

@@ -1,0 +1,75 @@
+﻿@page "/visit"
+@attribute [Authorize(Roles = "Owner,Admin,Supervisor,Officer,Medic")]
+@using Samco_HSE.HSEData
+@using Microsoft.AspNetCore.Components
+
+<PageTitle>ویزیت بیمار</PageTitle>
+<Card HeaderText="ویزیت بیمار">
+    @*<HeaderTemplate>
+    <DxMenu Title="مدیریت تجهیزات ملکی" ItemsPosition="ItemPosition.Start" CssClass="card-header">
+    <Items>
+    <DxMenuItem Text="تنظیم موجودی" IconCssClass="fas fa-shirt" @onclick="OnSetNumberBtnClick" />
+    <DxMenuItem Text="توزیع تجهیزات" IconCssClass="fas fa-boxes-packing" @onclick="OnDistributeBtnClick" />
+    </Items>
+    </DxMenu>
+    </HeaderTemplate>*@
+    <BodyTemplate>
+        <Alert Color="Color.Info" ShowDismiss="true">همکار گرامی، از این قسمت فقط برای ثبت ویزیت سرپایی بیماران و FAC استفاده نمایید. برای سایر موارد شامل اعزام از قسمت گزارش حوادث استفاده کنید.</Alert>
+        <DxGrid Data="@VisitList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"
+                EditModelSaving="OnEditModelSaving" DataItemDeleting="OnDataItemDeleting"
+                CustomizeEditModel="VisitEditModel" EditStart="VisitEditStart"
+                ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true" ValidationEnabled="false"
+                SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="true"
+                ColumnResizeMode="GridColumnResizeMode.ColumnsContainer"
+                SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center">
+            <Columns>
+                <DxGridCommandColumn MinWidth="100" />
+                <DxGridDataColumn Caption="دکل / دفتر" FieldName="RigNo.Name" MinWidth="100" />
+                <DxGridDataColumn Caption="نام پزشک" FieldName="DoctorName.PersonnelName" MinWidth="150" />
+                <DxGridDataColumn Caption="نام بیمار" FieldName="Patient.PersonnelName" MinWidth="150" Visible="_showNames"/>
+                <DxGridDataColumn Caption="سمت" FieldName="Patient.CurrentRole" MinWidth="150" Visible="_showNames" />
+                <DxGridDataColumn Caption="تاریخ ویزیت" FieldName="VisitDate" MinWidth="100" SortIndex="0" SortOrder="GridColumnSortOrder.Descending" />
+                <DxGridDataColumn Caption="علائم" FieldName="Symptoms" MinWidth="200" />
+                <DxGridDataColumn Caption="تشخیص" FieldName="Diagnose" MinWidth="200" />
+                <DxGridDataColumn Caption="دسته بندی" FieldName="Category" MinWidth="200" />
+                <DxGridDataColumn Caption="توضیحات" FieldName="Comment" MinWidth="200" />
+            </Columns>
+            <DetailRowTemplate>
+                <PrescribedDrugsGrid Visit="(MedicalVisit)context.DataItem" />
+            </DetailRowTemplate>
+            <EditFormTemplate Context="editFormContext">
+                @{
+                    var visit = (MedicalVisit)editFormContext.EditModel;
+                }
+                <DxFormLayout>
+                    <DxFormLayoutItem Caption="نام بیمار:">
+                        <DxComboBox Data="@PersonnelList" @bind-Value="@visit.Patient" NullText="الزامی"
+                                    TextFieldName="@nameof(Personnel.PersonnelName)" FilteringMode="DataGridFilteringMode.Contains">
+                            <DxListEditorColumn FieldName="@nameof(Personnel.PersonnelName)" Caption="نام و نام خانوادگی" />
+                            <DxListEditorColumn FieldName="@nameof(Personnel.CurrentRole)" Caption="سمت" />
+                            <DxListEditorColumn FieldName="@nameof(Personnel.ActiveRig.Name)" Caption="دکل / دفتر" />
+                        </DxComboBox>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="تاریخ ویزیت:">
+                        @*<DxDateEdit @bind-Date="@asset.ExpireDate" />*@
+                        <SamcoDateSelector TData="DateTime" @bind-Date="@visit.VisitDate" DefaultCalendar="SamcoDateSelector<DateTime>.CalendarType.Shamsi" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="علائم:">
+                        <DxTextBox @bind-Text="@visit.Symptoms" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="تشخیص:">
+                        <DxTextBox @bind-Text="@visit.Diagnose" NullText="الزامی" CssClass="ltr" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="دسته بندی:">
+                        <DxComboBox Data="_category" NullText="الزامی" @bind-Value="@visit.Category" CssClass="ltr"
+                                    FilteringMode="DataGridFilteringMode.Contains" />
+
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem BeginRow="true" ColSpanLg="12">
+                        <PrescribedDrugsGrid Visit="@visit" IsEditable="true" />
+                    </DxFormLayoutItem>
+                </DxFormLayout>
+            </EditFormTemplate>
+        </DxGrid>
+    </BodyTemplate>
+</Card>

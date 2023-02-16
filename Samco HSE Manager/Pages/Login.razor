@@ -1,0 +1,109 @@
+﻿@page "/login"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components
+@using System.ComponentModel.DataAnnotations
+@using DevExpress.Data.Filtering
+@using Samco_HSE.HSEData
+@using Samco_HSE_Manager.Authentication
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject ITokenManager TokenManager
+@inject IDataLayer DataLayer
+
+<PageTitle>ورود به ناحیه کاربری</PageTitle>
+
+<div class="container-fluid w-50 animate__animated animate__headShake">
+    <div class="card">
+        <div class="card-header">
+            <div class="mx-auto text-center">
+                <img src="images/logo.svg" alt="Samco HSE" style="width: 50%" />
+            </div>
+        </div>
+        <EditForm Model="_loginData" OnValidSubmit="@ValidateUser">
+            <div>
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+            </div>
+            <div class="container p-5">
+                <div class="row">
+                    <input class="form-control col-12" @bind="_loginData.Username" placeholder="نام کاربری" />
+                </div>
+                <br />
+                <div class="row">
+                    <input type="password" class="form-control col-12" @bind="_loginData.Password" placeholder="کلمه عبور" />
+                </div>
+                <br />
+                <div class="row">
+                    <button type="submit" class="form-control col-6 btn btn-primary">ورود به سیستم</button>
+                </div>
+                <br />
+                <div class="col-12 row animate__animated animate__headShake" style="text-align: center; font-weight: bold">
+                    <span class="col-12">@LoginMessage</span>
+                </div>
+            </div>
+
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private readonly LoginModel _loginData = new();
+    private string? LoginMessage { get; set; }
+
+    ClaimsPrincipal? _claimsPrincipal;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _claimsPrincipal = (await AuthenticationStateTask).User;
+
+        if (_claimsPrincipal.Identity is { IsAuthenticated: true })
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+    private async void ValidateUser()
+    {
+        if (TokenManager.Authenticate(_loginData.Username, _loginData.Password, DataLayer, out var token, out _, out var errorMessage))
+        {
+            await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsAuthenticated(token);
+
+            try
+            {
+                using var session1 = new Session(DataLayer);
+                var authStat = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+                if (authStat.User.Identity == null) return;
+                SamcoSoftShared.CurrentUser = await session1.FindObjectAsync<User>(new BinaryOperator("Username",
+                    authStat.User.Identity!.Name));
+                if (SamcoSoftShared.CurrentUser != null)
+                {
+                    SamcoSoftShared.CurrentUserRole = Enum.Parse<SamcoSoftShared.SiteRoles>(SamcoSoftShared.CurrentUser.SiteRole);
+                    SamcoSoftShared.CurrentUserId = SamcoSoftShared.CurrentUser.Oid;
+                }
+            }
+            catch (Exception)
+            {
+                //_loggedUser = new User(session1);
+            }
+
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            LoginMessage = errorMessage;
+        }
+    }
+
+    public class LoginModel
+    {
+        [Required(ErrorMessage = "نام کاربری الزامی است."), StringLength(10, MinimumLength = 5)]
+        public string? Username { get; set; }
+
+        [Required(ErrorMessage = "کلمه عبور الزامی است.")]
+        public string? Password { get; set; }
+    }
+}

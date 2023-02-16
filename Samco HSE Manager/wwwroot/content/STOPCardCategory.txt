@@ -1,0 +1,18 @@
+Safe Action / Condition Observed / Good job-appreciation
+Procedure Ignored - Not Followed/ Unsafe Action / Wrong Use of Tools
+No Procedure Available - Known / Shortage of Equipment or Tools
+Shortage of PPE / Not Using Proper PPE
+Caught Between / Sharp Edge / Pinch Point / Struck By Position
+Slippery Area / Trip or Fall Hazard
+Possible Dropped Object / Work at Height
+Lifting Operations / Lifting Gears / Cranes & Hoists
+Manual Handling/ Overexertion / Body Positioning
+Oil or Water Leakage / Corrosion 
+Poor Housekeeping / Fire Hazard / Garbage Accumulation
+Hazardous Materials / Safety Data Sheet
+Electrical Hazard / Poor Lighting / Electrical Systems
+Mechanical Systems / Sewage and Water Treatment / Piping
+Tools or Equipment in Unsafe Condition / Out of Service
+Third party / Service Company / Client Related Issues
+Health Issue / Food related Issue / Poor Hygiene / Pest Control
+Wellfare & Facilities / Payments / HR related / Logistic or IT related

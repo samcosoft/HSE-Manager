@@ -1,0 +1,30 @@
+﻿@page "/"
+@inject IConfiguration Configuration
+
+<PageTitle>Samco HSE Management System - @Configuration["CompanyInfo:Name"]</PageTitle>
+
+<div class="container-fluid vh-100">
+    <AuthorizeView>
+        <Authorized>
+            <div class="card opacity-85 animate__animated animate__fadeInUp">
+                <div class="card-body">
+                    <h6 style="color: black">@_loggedUser?.PersonnelName عزیز سلام! به پنل مدیریت HSE خوش آمدید!</h6>
+                    <hr class="my-3">
+                    <Alert Color="Color.Info" Icon="fa fa-info" ShowShadow="true" ShowBorder="true">
+                        با توجه به آزمایشی بودن این نسخه، ممکن است برخی ایرادات در آن وجود داشته باشد که به مرور برطرف می‌گردند. از شکیبایی شما سپاسگزاریم.
+                        در صورت داشتن سوال در مورد قابلیت‌های سیستم و یا بروز خطا با ایمیل <a href="mailto:info@samcosoft.ir">SamcoSoft Support</a> ارتباط برقرار کنید.
+                    </Alert>
+                </div>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <div class="card opacity-85 animate__animated animate__zoomInUp">
+                <div class="card-body">
+                    <h6 style="color: black">همکار عزیز سلام! به پنل مدیریت HSE خوش آمدید!</h6>
+                    <hr class="my-3">
+                    <p>لطفاً وارد سیستم شوید.</p>
+                </div>
+            </div>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>

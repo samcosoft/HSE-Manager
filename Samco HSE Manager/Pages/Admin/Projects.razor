@@ -1,0 +1,139 @@
+﻿@using Samco_HSE.HSEData
+@page "/projects"
+@attribute [Authorize(Roles = "Owner,Admin")]
+
+<PageTitle>مدیریت عملیات حفاری</PageTitle>
+<h3>مدیریت عملیات حفاری</h3>
+
+<Row ItemsPerRow="ItemsPerRow.Three">
+    <Card HeaderText="پروژه‌ها" IsCenter="true" IsShadow="true">
+        <BodyTemplate>
+            <DxListBox Data="@DrillProjects" TextFieldName="@nameof(Project.Name)" @bind-Value="@_selProject" SelectionMode="ListBoxSelectionMode.Single" />
+            <EditController EditorType="EditController.EditType.Project" OnNewButtonClicked="NewBtnClick" OnEditButtonClicked="EditBtnClick"
+                            OnDelButtonClicked="DelBtnClick"></EditController>
+        </BodyTemplate>
+    </Card>
+    <Card HeaderText="چاه‌ها" IsCenter="true" IsShadow="true">
+        <BodyTemplate>
+            <DxListBox Data="@_selProject.Wells" TextFieldName="@nameof(Well.Name)" @bind-Value="@_selWell" SelectionMode="ListBoxSelectionMode.Single" />
+            <EditController EditorType="EditController.EditType.Well" OnNewButtonClicked="NewBtnClick" OnEditButtonClicked="EditBtnClick"
+                            OnDelButtonClicked="DelBtnClick"></EditController>
+        </BodyTemplate>
+
+    </Card>
+    <Card HeaderText="دکل / پالایشگاه / دفتر" IsCenter="true" IsShadow="true">
+        <BodyTemplate>
+            <DxListBox Data="@Rigs" TextFieldName="@nameof(Rig.Name)" @bind-Value="@_selRig" SelectionMode="ListBoxSelectionMode.Single" />
+            <EditController EditorType="EditController.EditType.Rig" OnNewButtonClicked="NewBtnClick" OnEditButtonClicked="EditBtnClick"
+                            OnDelButtonClicked="DelBtnClick"></EditController>
+        </BodyTemplate>
+    </Card>
+</Row>
+
+<div class="mt-3">
+    <Row>
+        <Card HeaderText="عملیات حفاری" IsCenter="true" IsShadow="true">
+            <BodyTemplate>
+                <DxGrid Data="@WellWorks" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"
+                        EditModelSaving="OnEditModelSaving" DataItemDeleting="OnDataItemDeleting" CustomizeEditModel="ProjectEditModel"
+                        UnboundColumnData="ProjectsGridUnbound" ShowSearchBox="true" ShowFilterRow="true">
+                    <Columns>
+                        <DxGridCommandColumn MinWidth="85" />
+                        <DxGridDataColumn Caption="دکل" FieldName="RigNo.Name" TextAlignment="GridTextAlignment.Center" MinWidth="85" />
+                        <DxGridDataColumn Caption="چاه" FieldName="WellNo.Name" TextAlignment="GridTextAlignment.Center" MinWidth="85" />
+                        <DxGridDataColumn Caption="عملیات فعال" FieldName="IsActive" SortIndex="1" MinWidth="85">
+                            <CellDisplayTemplate>
+                                <DxCheckBox CssClass="d-inline-block" Checked="@((bool)context.Value)" Enabled="false" />
+                            </CellDisplayTemplate>
+                        </DxGridDataColumn>
+                        <DxGridDataColumn Caption="تاریخ شروع" FieldName="StartDate" SortIndex="0" SortOrder="GridColumnSortOrder.Descending" TextAlignment="GridTextAlignment.Center" MinWidth="85" />
+                        <DxGridDataColumn Caption="تاریخ پایان" FieldName="EndDate" TextAlignment="GridTextAlignment.Center" />
+                        @*<DxGridDataColumn Caption="تعداد تجهیزات  تحویل شده" FieldName="EquipmentsCount" UnboundType="GridUnboundColumnType.Integer" TextAlignment="GridTextAlignment.Center" MinWidth="85" />*@
+                        <DxGridDataColumn Caption="تعداد اخطارهای صادر شده" FieldName="WarningsCount" UnboundType="GridUnboundColumnType.Integer" TextAlignment="GridTextAlignment.Center" MinWidth="85" />
+                        <DxGridDataColumn Caption="تعداد حوادث اتفاق افتاده" FieldName="AccidentsCount" UnboundType="GridUnboundColumnType.Integer" TextAlignment="GridTextAlignment.Center" MinWidth="85" />
+                        <DxGridDataColumn Caption="تعداد مانورهای برگزار شده" FieldName="PracticeCount" UnboundType="GridUnboundColumnType.Integer" TextAlignment="GridTextAlignment.Center" MinWidth="85" />
+                        <DxGridDataColumn Caption="تعداد آموزش‌های برگزار شده" FieldName="TrainingCount" UnboundType="GridUnboundColumnType.Integer" TextAlignment="GridTextAlignment.Center" MinWidth="85" />
+                    </Columns>
+                    <EditFormTemplate Context="editFormContext">
+                        @{
+                            var wellWork = (WellWork)editFormContext.EditModel;
+                        }
+                        <DxFormLayout>
+                            <DxFormLayoutItem Caption="انتخاب دکل:">
+                                <DxComboBox Data="@Rigs" TextFieldName="@nameof(Rig.Name)" @bind-Value="@wellWork.RigNo" NullText="الزامی" />
+                            </DxFormLayoutItem>
+                            <DxFormLayoutItem Caption="انتخاب چاه:">
+                                <DxComboBox Data="@Wells" TextFieldName="@nameof(Well.Name)" @bind-Value="@wellWork.WellNo" NullText="الزامی">
+                                    <DxListEditorColumn FieldName="Name" Caption="نام چاه" />
+                                    <DxListEditorColumn FieldName="ProjectName.Name" Caption="نام پروژه" />
+                                    <DxListEditorColumn FieldName="Location" Caption="محل" />
+                                </DxComboBox>
+                            </DxFormLayoutItem>
+                            <DxFormLayoutItem Caption="تاریخ شروع:">
+                                <SamcoDateSelector TData="DateTime" @bind-Date="@wellWork.StartDate" NullText="الزامی" DefaultCalendar="SamcoDateSelector<DateTime>.CalendarType.Miladi" />
+                            </DxFormLayoutItem>
+                            <DxFormLayoutItem Caption="تاریخ پایان:">
+                                <SamcoDateSelector TData="DateTime?" @bind-Date="@wellWork.EndDate" NullText="الزامی" DefaultCalendar="SamcoDateSelector<DateTime?>.CalendarType.Miladi" />
+                            </DxFormLayoutItem>
+                            <DxFormLayoutItem Caption="وضعیت:">
+                                <DxCheckBox @bind-Checked="@wellWork.IsActive">عملیات فعال است</DxCheckBox>
+                            </DxFormLayoutItem>
+                        </DxFormLayout>
+                    </EditFormTemplate>
+                </DxGrid>
+            </BodyTemplate>
+        </Card>
+    </Row>
+</div>
+
+<Modal @ref="ProjectModal" IsKeyboard="true" IsBackdrop="true" IsFade="true">
+    <ModalDialog Title="جزئیات پروژه">
+        <BodyTemplate>
+            <Row ItemsPerRow="ItemsPerRow.One">
+                <BootstrapInput PlaceHolder="نام پروژه" TValue="string" IsAutoFocus="true"
+                                IsSelectAllTextOnFocus="true" @bind-Value="@(_selProject.Name)" />
+                <DateTimePicker ShowLabel="true" DisplayText="تاریخ شروع" @bind-Value="@(_selProject.StartDate)" MinValue="@DateTime.Parse("1900/01/01")" />
+                <DateTimePicker ShowLabel="true" DisplayText="تاریخ پایان" @bind-Value="@(_selProject.EndDate)" MinValue="@DateTime.Parse("1900/01/01")" />
+            </Row>
+            <div class="mt-3">
+                <Row ItemsPerRow="ItemsPerRow.Two">
+                    <Button Color="Color.Success" Icon="fas fa-check" OnClick="ProjOkBtnClick">تأیید</Button>
+                </Row>
+            </div>
+        </BodyTemplate>
+    </ModalDialog>
+</Modal>
+
+<Modal @ref="WellModal" IsKeyboard="true" IsBackdrop="true" IsFade="true">
+    <ModalDialog Title="اطلاعات چاه">
+        <BodyTemplate>
+            <Row ItemsPerRow="ItemsPerRow.One">
+                <BootstrapInput PlaceHolder="نام چاه" TValue="string" IsAutoFocus="true"
+                                IsSelectAllTextOnFocus="true" @bind-Value="@(_selWell.Name)" />
+                <BootstrapInput PlaceHolder="محل چاه" TValue="string"
+                                IsSelectAllTextOnFocus="true" @bind-Value="@(_selWell.Location)" />
+            </Row>
+            <div class="mt-3">
+                <Row ItemsPerRow="ItemsPerRow.Two">
+                    <Button Color="Color.Success" Icon="fas fa-check" OnClick="WellOkBtnClick">تأیید</Button>
+                </Row>
+            </div>
+        </BodyTemplate>
+    </ModalDialog>
+</Modal>
+
+<Modal @ref="RigModal" IsKeyboard="true" IsBackdrop="true" IsFade="true">
+    <ModalDialog Title="اطلاعات دکل">
+        <BodyTemplate>
+            <Row ItemsPerRow="ItemsPerRow.One">
+                <BootstrapInput PlaceHolder="نام دکل" TValue="string" IsAutoFocus="true"
+                                IsSelectAllTextOnFocus="true" @bind-Value="@(_selRig.Name)" />
+            </Row>
+            <div class="mt-3">
+                <Row ItemsPerRow="ItemsPerRow.Two">
+                    <Button Color="Color.Success" Icon="fas fa-check" OnClick="RigOkBtnClick">تأیید</Button>
+                </Row>
+            </div>
+        </BodyTemplate>
+    </ModalDialog>
+</Modal>

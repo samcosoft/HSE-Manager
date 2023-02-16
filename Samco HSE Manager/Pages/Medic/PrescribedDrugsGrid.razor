@@ -1,0 +1,41 @@
+﻿@using Samco_HSE.HSEData
+<div>
+    <Alert Color="Color.Primary">نسخه تجویزی</Alert>
+</div>
+@{
+    if (IsEditable)
+    {
+        <Card>
+            <BodyTemplate>
+                <Row ItemsPerRow="ItemsPerRow.Four">
+                    <Row ColSpan="3">
+                        <BootstrapInputGroup>
+                            <BootstrapInputGroupLabel DisplayText="دارو / تجهیز" />
+                            <DxComboBox Data="@_medicationList" @bind-Value="@_selUsedMedicine!.MedicName" NullText="الزامی"
+                                        EditFormat="{0} {2} {1}" CssClass="w-50"
+                                        FilteringMode="DataGridFilteringMode.Contains">
+                                <DxListEditorColumn FieldName="@nameof(Medication.Name)" Caption="نام دارو / تجهیز" />
+                                <DxListEditorColumn FieldName="@nameof(Medication.Dose)" Caption="دوز" />
+                                <DxListEditorColumn FieldName="@nameof(Medication.DrugForm)" Caption="فرم دارویی" />
+                            </DxComboBox>
+                            <BootstrapInputGroupLabel DisplayText="تعداد" />
+                            <BootstrapInputNumber @bind-Value="@_selUsedMedicine.MedCount" Min="1" Max="100" SkipValidate="true"/>
+                            <Button Icon="fa-solid fa-check" Color="Color.Primary" OnClick="AddMedicineBtnClick"></Button>
+                        </BootstrapInputGroup>
+                    </Row>
+                    <Button Color="Color.Danger" OnClick="DelMedicineClick">حذف</Button>
+                </Row>
+            </BodyTemplate>
+        </Card>
+    }
+}
+<DxGrid @ref="MedicineGrid" Data="DetailGridData"
+        PageSize="5" SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="@IsEditable"
+        AutoExpandAllGroupRows="true" SelectedDataItemChanged="MedicineGrid_SelectionChanged">
+    <Columns>
+        <DxGridDataColumn FieldName="MedicName.Name" Caption="نام دارو / تجهیز" Width="40%" />
+        <DxGridDataColumn FieldName="MedicName.Dose" Caption="دوز" />
+        <DxGridDataColumn FieldName="MedicName.DrugForm" Caption="فرم دارویی" />
+        <DxGridDataColumn FieldName="MedCount" Caption="تعداد" />
+    </Columns>
+</DxGrid>

@@ -1,0 +1,116 @@
+﻿@page "/equipment"
+@attribute [Authorize(Roles = "Owner,Admin,Supervisor,Officer")]
+@using Samco_HSE.HSEData
+@using Microsoft.AspNetCore.Components
+
+<PageTitle>مدیریت تجهیزات حفاظت فردی</PageTitle>
+
+<Card>
+    <HeaderTemplate>
+        <DxMenu Title="مدیریت تجهیزات حفاظت فردی" ItemsPosition="ItemPosition.Start" CssClass="card-header">
+            <Items>
+                <DxMenuItem Text="تنظیم موجودی" IconCssClass="fas fa-shirt" @onclick="OnSetNumberBtnClick" />
+                <DxMenuItem Text="توزیع تجهیزات" IconCssClass="fas fa-boxes-packing" @onclick="OnDistributeBtnClick"/>
+            </Items>
+        </DxMenu>
+    </HeaderTemplate>
+    <BodyTemplate>
+        <DxGrid @ref="EquipmentGrid" Data="@EquipmentsList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm" EditModelSaving="OnEditModelSaving"
+                DataItemDeleting="OnDataItemDeleting" EditStart="EquipmentGrid_EditStart" CustomizeEditModel="EquipmentEditModel" UnboundColumnData="EquipmentGridUnbound"
+                ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true"
+                SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="true"
+                ColumnResizeMode="GridColumnResizeMode.ColumnsContainer"
+                SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center" ValidationEnabled="false">
+            <Columns>
+                <DxGridCommandColumn MinWidth="100" />
+                <DxGridDataColumn Caption="نام تجهیز" FieldName="Name" MinWidth="200" />
+                <DxGridDataColumn Caption="واحد شمارش" FieldName="CountUnit" MinWidth="150" />
+                <DxGridDataColumn Caption="مدل" FieldName="Model" MinWidth="150" />
+                @BuildColumnsGrid()
+            </Columns>
+            <EditFormTemplate Context="editFormContext">
+                @{
+                    var equipment = (Equipment)editFormContext.EditModel;
+                }
+                <DxFormLayout>
+                    <DxFormLayoutItem Caption="نام تجهیز:">
+                        <DxTextBox @bind-Text="@equipment.Name" NullText="الزامی" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="مدل:">
+                        <DxTextBox @bind-Text="@equipment.Model" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="واحد شمارش:">
+                        <DxTextBox @bind-Text="@equipment.CountUnit" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="نوع:">
+                        <DxComboBox Data="@_ppeKind" @bind-Value="@equipment.EquipType" NullText="الزامی" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="استفاده کنندگان:">
+                        <Row ItemsPerRow="ItemsPerRow.Four">
+                            <Row ColSpan="3">
+                                <DxTagBox Data="@RigRoles" @bind-Values="@Consumers" NullText="الزامی" ClearButtonDisplayMode="DataEditorClearButtonDisplayMode.Auto"
+                                          FilteringMode="DataGridFilteringMode.StartsWith" />
+                            </Row>
+                            <DxButton Text="انتخاب همه" RenderStyle="ButtonRenderStyle.Primary" Click="SelAllClick" />
+                        </Row>
+                    </DxFormLayoutItem>
+                </DxFormLayout>
+            </EditFormTemplate>
+        </DxGrid>
+    </BodyTemplate>
+</Card>
+
+<DxPopup @ref="SetNumberModal" HeaderText="تنظیم تعداد تجهیز" ShowFooter="true" CloseOnOutsideClick="false" CloseOnEscape="false">
+    <BodyContentTemplate Context="_">
+        <DxFormLayout>
+            <DxFormLayoutItem Caption="نام تجهیز:" ColSpanMd="4" ColSpanSm="12">
+                <DxTextBox @bind-Text="@_selEquipmentStock!.EquipmentName.Name" ReadOnly="true" />
+            </DxFormLayoutItem>
+            <DxFormLayoutItem Caption="نام دکل / دفتر:" ColSpanMd="4" ColSpanSm="12">
+                <DxComboBox TValue="Rig" TData="Rig" @ref="RigBx" Data="@Rigs" TextFieldName="@nameof(Rig.Name)" NullText="الزامی" ValueChanged="RigSelectionChanged" />
+            </DxFormLayoutItem>
+            <DxFormLayoutItem Caption="تعداد:" ColSpanMd="4" ColSpanSm="12">
+                <DxSpinEdit @bind-Value="@_selEquipmentStock!.Counts" MinValue="0" MaxValue="1000000" />
+            </DxFormLayoutItem>
+        </DxFormLayout>
+    </BodyContentTemplate>
+    <FooterContentTemplate>
+        <Button Color="Color.Success" Icon="fas fa-check" OnClick="SetCountOkBtnClick">تأیید</Button>
+    </FooterContentTemplate>
+</DxPopup>
+
+<DxPopup @ref="DistModal" HeaderText="توزیع تجهیز" ShowFooter="true" CloseOnOutsideClick="false" CloseOnEscape="false">
+    <BodyContentTemplate Context="_">
+        <p>از این قسمت می‌توانید یک تجهیز را به تعداد زیادی از کارکنان توزیع کنید.</p>
+        <DxFormLayout>
+            <DxFormLayoutItem ColSpanMd="12" ColSpanSm="12">
+                <DxGrid @ref="PersonnelGrid" Data="@Personnel" KeyFieldName="Oid"
+                        ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true"
+                        SelectionMode="GridSelectionMode.Multiple" AllowSelectRowByClick="true"
+                        ColumnResizeMode="GridColumnResizeMode.ColumnsContainer" SelectedDataItemsChanged="PersonnelGrid_SelectionChanged"
+                        SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center" ValidationEnabled="false">
+                    <Columns>
+                        <DxGridSelectionColumn MinWidth="50" />
+                        <DxGridDataColumn Caption="نام دکل / دفتر" FieldName="ActiveRig.Name" MinWidth="50" />
+                        <DxGridDataColumn Caption="نام و نام خانوادگی" FieldName="PersonnelName" MinWidth="150" />
+                        <DxGridDataColumn Caption="شماره پرسنلی" FieldName="PersonnelNum" MinWidth="100" />
+                        <DxGridDataColumn Caption="سمت فعلی" FieldName="CurrentRole" MinWidth="100" />
+                        <DxGridDataColumn Caption="سایز کفش" FieldName="ShoeSize" MinWidth="100" />
+                        <DxGridDataColumn Caption="سایز لباس" FieldName="ClothSize" MinWidth="100" />
+                        <DxGridDataColumn Caption="وضعیت" FieldName="Status" MinWidth="100" />
+                    </Columns>
+                </DxGrid>
+            </DxFormLayoutItem>
+            <DxFormLayoutItem ColSpanMd="12" ColSpanSm="12">
+                <div style="display: @(_alertVisible? "block":"none")">
+                    <Alert ShowBar="true" ShowBorder="true" Color="Color.Warning" ShowShadow="true">
+                        @_alertMessage
+                    </Alert>
+                </div>
+            </DxFormLayoutItem>
+        </DxFormLayout>
+    </BodyContentTemplate>
+    <FooterContentTemplate>
+        <Button Color="Color.Success" Icon="fas fa-check" OnClick="DistributeOkBtnClick">تأیید</Button>
+    </FooterContentTemplate>
+</DxPopup>

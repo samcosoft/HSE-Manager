@@ -1,0 +1,67 @@
+﻿@using Samco_HSE.HSEData
+@using Samco_HSE_Manager.Pages
+@inject IDataLayer DataLayer
+
+<CascadingAuthenticationState>
+    <BootstrapBlazorRoot>
+        <Router AppAssembly="@typeof(App).Assembly">
+            <Found Context="routeData">
+                @*<RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />*@
+                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                    <Authorizing>
+                        <div class="card opacity-85">
+                            <div class="card-body text-center">
+                                <h6 style="color: black">در حال بررسی سطح دسترسی...</h6>
+                                <hr class="my-3">
+                                <div class="center">
+                                    <div class="wave"></div>
+                                    <div class="wave"></div>
+                                    <div class="wave"></div>
+                                    <div class="wave"></div>
+                                    <div class="wave"></div>
+                                    <div class="wave"></div>
+                                    <div class="wave"></div>
+                                    <div class="wave"></div>
+                                    <div class="wave"></div>
+                                    <div class="wave"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </Authorizing>
+                    <NotAuthorized>
+                        <div class="card opacity-85">
+                            <div class="card-body text-center">
+                                <h6 class="alert alert-danger">با عرض پوزش، شما اجازه دسترسی به این صفحه را ندارید.</h6>
+                            </div>
+                        </div>
+                        <LoginRedirect />
+                    </NotAuthorized>
+                </AuthorizeRouteView>
+            </Found>
+            <NotFound>
+                <PageTitle>صفحه پیدا نشد</PageTitle>
+                <LayoutView Layout="@typeof(MainLayout)">
+                    <div class="card opacity-85">
+                        <div class="card-body text-center">
+                            <h6 class="alert alert-danger">با عرض پوزش، این صفحه وجود ندارد.</h6>
+                        </div>
+                    </div>
+                </LayoutView>
+            </NotFound>
+        </Router>
+    </BootstrapBlazorRoot>
+</CascadingAuthenticationState>
+
+
+@{
+    //First startup
+    using (var session1 = new Session(DataLayer))
+    {
+        var usr = session1.Query<User>();
+        if (!usr.Any())
+        {
+            var adminUser = new User(session1) { Username = "admin", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("admin"), SiteRole = "Owner", PersonnelName = "مدیر سیستم" };
+            adminUser.Save();
+        }
+    }
+}

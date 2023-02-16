@@ -1,0 +1,103 @@
+﻿@typeparam TData
+
+<style>
+    .DNDDayBtn {
+        padding: 3px;
+    }
+
+    .row.mb-3 {
+        margin-bottom: 0 !important;
+    }
+
+        .row.mb-3 .col-lg-9 {
+            width: 100%;
+        }
+
+    .input-group > :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback):not(#persianYear) {
+        margin-left: -1px;
+        margin-right: -1px;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-top-left-radius: .2rem;
+        border-bottom-left-radius: .2rem;
+    }
+
+    .input-group:not(.has-validation) > :not(:last-child):not(.dropdown-toggle):not(.dropdown-menu):not(.form-floating):not(#persianYear) {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-top-right-radius: .2rem;
+        border-bottom-right-radius: .2rem;
+    }
+
+    #_date {
+        border-top-right-radius: 3px !important;
+        border-bottom-right-radius: 3px !important;
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+    }
+
+    #persianYear, #persianMonth {
+        padding: 0;
+        padding-right: 30px
+    }
+
+</style>
+<div class="row">
+    <div class="col ps-0">
+        <div style="display: @(_shamsiVisible? "none":"block")">
+            @*<DxDateEdit @bind-Date="@_date" MinDate="@DateTime.Parse("1900/01/01")" NullText="@NullText" />*@
+            <DateTimePicker @bind-Value="@Date" DisplayText="@DisplayText" MinValue="@DateTime.Parse("1900/01/01")" />
+        </div>
+        <div style="display: @(_shamsiVisible? "block":"none")">
+            <DntInputPersianDate @bind-Value="@Date" CalendarDayButtonsCss="btn DNDDayBtn" CalendarNextPreviousButtonsCss="btn btn-secondary DNDDayBtn"
+                                 BeginningOfCentury="1400" CalendarFromYear="1300" CalendarToYear="1500" UsePersianNumbers="true"
+                                 CalendarUseShortPersianDayNamesOfWeek="true" CalendarShowYearMonthDropdowns="true" CalendarShowTodayButton="true" />
+        </div>
+    </div>
+    <div class="col-2 ps-0 pe-1">
+        <div style="display: @(_shamsiVisible? "none":"block")">
+            <Button Color="Color.Primary" Icon="fas fa-cross" TooltipText="تقویم میلادی" OnClick="() => _shamsiVisible=!_shamsiVisible"></Button>
+        </div>
+        <div style="display: @(_shamsiVisible? "block":"none")">
+            <Button Color="Color.Primary" Icon="fas fa-sun" TooltipText="تقویم شمسی" OnClick="() => _shamsiVisible=!_shamsiVisible"></Button>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    private TData? _date;
+
+    [Parameter]
+    public TData Date
+    {
+        get => _date!;
+        set
+        {
+            if (value == null || EqualityComparer<TData>.Default.Equals(value, _date)) return;
+            _date = value;
+            DateChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<TData> DateChanged { get; set; }
+
+    [Parameter]
+    public string? NullText { get; set; }
+
+    [Parameter]
+    public string? DisplayText { get; set; }
+    [Parameter] public CalendarType DefaultCalendar { get; set; }
+
+    public enum CalendarType
+    {
+        Shamsi, Miladi
+    }
+
+    private bool _shamsiVisible;
+
+    protected override void OnInitialized()
+    {
+        _shamsiVisible = DefaultCalendar == CalendarType.Shamsi;
+    }
+    }

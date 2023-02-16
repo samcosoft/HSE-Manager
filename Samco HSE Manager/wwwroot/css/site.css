@@ -1,0 +1,369 @@
+@import url(fontiran.css);
+
+:root {
+    --primary-color: #8d0f53;
+}
+
+body {
+    font-family: IRANSansX, serif !important;
+    direction: rtl;
+    background-color: #cdcdcd;
+    margin: 0;
+}
+
+input, textarea, p ,pre {
+    font-family: IRANSansX, serif !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: dana, serif !important;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.ltr {
+    direction: ltr;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+.text-left {
+    text-align: left !important;
+}
+
+.text-small {
+    font-size: 0.8em;
+}
+
+.text-xsmall {
+    font-size: 0.6em;
+}
+
+.text-large {
+    font-size: 1.2em;
+}
+
+.text-xlarge {
+    font-size: 1.4em;
+}
+
+.text-underline {
+    text-decoration: underline;
+}
+
+.text-thin {
+    font-weight: 100;
+}
+
+.text-UltraLight {
+    font-weight: 200;
+}
+
+.text-light {
+    font-weight: 300;
+}
+
+.text-regular {
+    font-weight: normal;
+}
+
+.text-medium {
+    font-weight: 500;
+}
+
+.text-demibold {
+    font-weight: 600;
+}
+
+.text-bold {
+    font-weight: bold;
+}
+
+.text-extrabold {
+    font-weight: 800;
+}
+
+.text-black {
+    font-weight: 900;
+}
+
+blockquote {
+    font-weight: 700;
+    padding: 10px;
+    border: 1px dashed #666666;
+}
+
+.mainbox {
+    width: 100%;
+    background-color: #EFEFEF;
+    display: table;
+    margin-bottom: 30px;
+    border-right: 8px solid #df79ff;
+}
+
+.mainboxnegativ {
+    width: 100%;
+    background-color: #000000;
+    display: table;
+    margin-bottom: 30px;
+    border-right: 8px solid #df79ff;
+    color: #F9F9F9;
+}
+
+.mainbox2 {
+    font-size: 1em;
+    width: 90%;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.mainboxitalic {
+    font-size: 1em;
+    font-style: italic;
+    width: 90%;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.mainbox3 {
+    width: 100%;
+    background-color: #DFDFDF;
+    display: table;
+    margin-bottom: 30px;
+    border-right: 8px solid #FF5EAA;
+}
+
+.mainbox2negativ {
+    font-size: 1em;
+    color: #F9F9F9;
+    background-color: #000000;
+    padding-right: 20px;
+}
+
+
+.farsiparagraph {
+    font-size: 1em;
+    width: 47%;
+    float: right;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.farsiparagraph_negativ {
+    font-size: 1em;
+    color: #F9F9F9;
+    background-color: #000000;
+    width: 47%;
+    float: right;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+
+.englishparagraph {
+    font-size: 1em;
+    width: 47%;
+    float: left;
+    direction: ltr;
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.englishparagraph_negativ {
+    font-size: 1em;
+    color: #F9F9F9;
+    background-color: #000000;
+    width: 47%;
+    float: left;
+    direction: ltr;
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.rightbox {
+    width: 60%;
+    padding-right: 20px;
+    padding-left: 5px;
+    float: right;
+    margin-left: 10px;
+    margin-bottom: 0;
+    min-width: 0;
+    background-color: #F7F7F7;
+}
+
+.titelbox {
+    width: 60%;
+    padding-right: 25px;
+    padding-left: 0;
+    float: right;
+    margin-left: 10px;
+    margin-bottom: 0;
+    min-width: 0;
+    background-color: #d5d5d5;
+    color: #4B4B4B;
+}
+
+
+.lefttbox {
+    padding-right: 20px;
+    padding-left: 4px;
+    float: right;
+    margin-bottom: 10px;
+    min-width: 0;
+}
+
+.alphabet {
+    width: 35%;
+    float: left;
+    font-size: 20em;
+    text-align: center;
+    font-weight: 700;
+    color: #999999;
+}
+
+.alphabet2 {
+    width: 35%;
+    float: left;
+    direction: ltr;
+    font-size: 1.6em;
+    text-align: left;
+    font-weight: 600;
+    color: #333333;
+    margin-top: 100px;
+}
+
+.footer {
+    font-weight: 400;
+    font-size: 0.7em;
+    text-align: center;
+    direction: ltr;
+    margin: 0 !important;
+    padding: 0 !important;
+    flex-flow: column;
+}
+
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px #000000;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    font-family: IranSansX, serif;
+}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
+
+.fas, .far, .fad {
+    width: 1.5rem;
+}
+
+.place-self-end {
+    place-self: end !important;
+}
+
+/*Custom RTL Devexpress Codes*/
+
+.me-auto {
+    margin-left: auto !important;
+    margin-right: unset;
+}
+
+.dxbl-checkbox > .dxbl-text:last-child {
+    padding-left: unset;
+    padding-right: var(--dxbl-checkbox-spacing);
+}
+
+.dxbl-grid-edit-form-buttons > .dxbl-btn:not(:last-child) {
+    margin-right: unset;
+    margin-left: var(--dxbl-grid-edit-form-buttons-spacing);
+}
+
+.dxbl-modal-root {
+    left: 0;
+}
+
+.dxbl-modal {
+    --dxbl-popup-max-width: 75%;
+}
+
+.dxbl-popup.dxbl-popup-adaptivity.dxbl-popup-fixed-width {
+    direction: ltr;
+}
+
+.dxbl-grid-search-box .dxbl-image {
+    margin-right: 6px;
+    margin-left: unset;
+}
+.dxbl-grid-header-content span {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.form-select, .popover {
+    font-family: IranSansX;
+}
+
+.main-item {
+    background-color: #ffffff;
+    background-color: rgba(255,200,255,0.25);
+    color: white;
+}
+
+@media (min-width: 1400px) {
+    .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+        max-width: 1214px;
+    }
+}
+
+.front-form {
+    z-index: 1;
+}
+
+.danger-item, .expired-item, .expired-item > td {
+    background-color: #cc2200;
+    background-color: rgba(204, 34, 0, 0.5);
+}
+
+.warning-item {
+    background-color: #ff9c00;
+    background-color: rgba(255,180,0,0.5)
+}
+
+.safe-item {
+    background-color: darkgreen;
+    background-color: rgba(0,100,0,0.5)
+}
+
+.dxbl-grid-group-row {
+    text-align: initial;
+}
+
+/*Persian Calendar*/

@@ -1,0 +1,68 @@
+﻿@page "/asset"
+@using Samco_HSE.HSEData
+@attribute [Authorize(Roles = "Owner,Admin,Supervisor,Officer")]
+<PageTitle>مدیریت تجهیزات ملکی</PageTitle>
+
+<Card HeaderText="مدیریت تجهیزات ملکی">
+    @*<HeaderTemplate>
+        <DxMenu Title="مدیریت تجهیزات ملکی" ItemsPosition="ItemPosition.Start" CssClass="card-header">
+             <Items>
+            <DxMenuItem Text="تنظیم موجودی" IconCssClass="fas fa-shirt" @onclick="OnSetNumberBtnClick" />
+            <DxMenuItem Text="توزیع تجهیزات" IconCssClass="fas fa-boxes-packing" @onclick="OnDistributeBtnClick" />
+            </Items>
+        </DxMenu>
+    </HeaderTemplate>*@
+    <BodyTemplate>
+        <DxGrid Data="@AssetsList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"
+                EditModelSaving="OnEditModelSaving" DataItemDeleting="OnDataItemDeleting"
+                CustomizeEditModel="AssetEditModel" CustomizeElement="AssetGrid_CustomizeElement"
+                ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true" ValidationEnabled="false"
+                SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="true"
+                ColumnResizeMode="GridColumnResizeMode.ColumnsContainer"
+                SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center">
+            <Columns>
+                <DxGridCommandColumn MinWidth="100" />
+                <DxGridDataColumn Caption="دکل / دفتر" FieldName="RigNo.Name" MinWidth="200" />
+                <DxGridDataColumn Caption="نام تجهیز" FieldName="Name" MinWidth="200" />
+                <DxGridDataColumn Caption="مالکیت" FieldName="Owner" MinWidth="200" />
+                <DxGridDataColumn Caption="شماره سریال" FieldName="Serial" MinWidth="200" />
+                <DxGridDataColumn Caption="محل نصب یا قرارگیری" FieldName="Position" MinWidth="250" />
+                <DxGridDataColumn Caption="وضعیت" FieldName="Status" MinWidth="150" />
+                <DxGridDataColumn Caption="انقضای گواهی" FieldName="ExpireDate" MinWidth="150" />
+                <DxGridDataColumn Caption="توضیحات" FieldName="Comment" MinWidth="200" />
+            </Columns>
+            <EditFormTemplate Context="editFormContext">
+                @{
+                    var asset = (Asset)editFormContext.EditModel;
+                }
+                <DxFormLayout>
+                    <DxFormLayoutItem Caption="نام تجهیز:">
+                        <DxTextBox @bind-Text="@asset.Name" NullText="الزامی" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="دکل / دفتر:">
+                        <DxComboBox Data="@Rigs" @bind-Value="asset.RigNo" TextFieldName="@nameof(Rig.Name)" NullText="الزامی" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="مالکیت:">
+                        <DxComboBox Data="@_owners" @bind-Value="asset.Owner" NullText="الزامی" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="شماره سریال:">
+                        <DxTextBox @bind-Text="@asset.Serial" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="محل نصب یا قرارگیری:">
+                        <DxTextBox @bind-Text="@asset.Position" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="وضعیت:">
+                        <DxComboBox Data="@_status" @bind-Value="asset.Status" NullText="الزامی" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="انقضای گواهی:">
+                        @*<DxDateEdit @bind-Date="@asset.ExpireDate" />*@
+                        <SamcoDateSelector TData="DateTime?" @bind-Date="@asset.ExpireDate" DefaultCalendar="SamcoDateSelector<DateTime?>.CalendarType.Shamsi"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="توضیحات:">
+                        <DxTextBox @bind-Text="@asset.Comment" />
+                    </DxFormLayoutItem>
+                </DxFormLayout>
+            </EditFormTemplate>
+        </DxGrid>
+    </BodyTemplate>
+</Card>

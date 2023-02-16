@@ -1,0 +1,54 @@
+﻿@font-face {
+    font-family: IRANSansX;
+    font-style: normal;
+    font-weight: normal;
+    src: url('../fonts/woff/IRANSansX-regular.woff') format('woff'), url('../fonts/woff2/IRANSansX-regular.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: IRANSansX;
+    font-style: normal;
+    font-weight: bold;
+    src: url('../fonts/woff/IRANSansX-bold.woff') format('woff'), url('../fonts/woff2/IRANSansX-bold.woff2') format('woff2');
+}
+
+
+@font-face {
+    font-family: dana;
+    font-style: normal;
+    font-weight: bold;
+    src: url('../fonts/eot/dana-bold.eot');
+    src: url('../fonts/eot/dana-bold.eot?#iefix') format('embedded-opentype'), /* IE6-8 */
+    url('../fonts/woff2/dana-bold.woff2') format('woff2'), /* FF39+,Chrome36+, Opera24+*/
+    url('../fonts/woff/dana-bold.woff') format('woff'); /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+}
+
+@font-face {
+    font-family: dana;
+    font-style: normal;
+    font-weight: normal;
+    src: url('../fonts/eot/dana-regular.eot');
+    src: url('../fonts/eot/dana-regular.eot?#iefix') format('embedded-opentype'), /* IE6-8 */
+    url('../fonts/woff2/dana-regular.woff2') format('woff2'), /* FF39+,Chrome36+, Opera24+*/
+    url('../fonts/woff/dana-regular.woff') format('woff'); /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+}
+
+@font-face {
+    font-family: dana;
+    font-style: italic;
+    font-weight: bold;
+    src: url('../fonts/eot/dana-bolditalic.eot');
+    src: url('../fonts/eot/dana-bolditalic.eot?#iefix') format('embedded-opentype'), /* IE6-8 */
+    url('../fonts/woff2/dana-bolditalic.woff2') format('woff2'), /* FF39+,Chrome36+, Opera24+*/
+    url('../fonts/woff/dana-bolditalic.woff') format('woff'); /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+}
+
+@font-face {
+    font-family: dana;
+    font-style: italic;
+    font-weight: normal;
+    src: url('../fonts/eot/dana-regularitalic.eot');
+    src: url('../fonts/eot/dana-regularitalic.eot?#iefix') format('embedded-opentype'), /* IE6-8 */
+    url('../fonts/woff2/dana-regularitalic.woff2') format('woff2'), /* FF39+,Chrome36+, Opera24+*/
+    url('../fonts/woff/dana-regularitalic.woff') format('woff'); /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+}

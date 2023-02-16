@@ -1,0 +1,136 @@
+﻿@page "/personnel"
+@attribute [Authorize(Roles = "Owner,Admin,Supervisor,Officer,Doctor")]
+@using Samco_HSE.HSEData
+@using Microsoft.AspNetCore.Components
+
+<PageTitle>مدیریت کارکنان</PageTitle>
+
+<Card>
+    <HeaderTemplate>
+        <DxMenu Title="مدیریت کارکنان" ItemsPosition="ItemPosition.Start" CssClass="card-header">
+            <Items>
+                <DxMenuItem Text="دریافت اطلاعات" IconCssClass="fas fa-paste" @onclick="OnPrintBtnClick"/>
+                @*<DxMenuItem Text="تنظیم دسترسی اطلاعات" IconCssClass="fas fa-unlock" @onclick="OnPermitBtnClick"/>*@
+            </Items>
+        </DxMenu>
+    </HeaderTemplate>
+    <BodyTemplate>
+        <DxButton Text="تنظیم ستون‌ها"
+                  RenderStyle="ButtonRenderStyle.Secondary"
+                  CssClass="column-chooser-button"
+                  Click="ColumnChooserOnClick" />
+        <p />
+        <DxGrid @ref="PersonnelGrid" Data="@Personnels" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm" EditModelSaving="OnEditModelSaving"
+                DataItemDeleting="OnDataItemDeleting" EditStart="PersonnelGrid_EditStart" CustomizeEditModel="PersonnelEditModel" UnboundColumnData="PersonnelGridUnbound"
+                ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true"
+                SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="true"
+                ColumnResizeMode="GridColumnResizeMode.ColumnsContainer"
+                SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center" ValidationEnabled="false">
+            <Columns>
+                <DxGridCommandColumn MinWidth="100"/>
+                <DxGridDataColumn Caption="نام دکل / دفتر" FieldName="ActiveRig.Name" MinWidth="50" />
+                <DxGridDataColumn Caption="نام و نام خانوادگی" FieldName="PersonnelName" MinWidth="150"/>
+                <DxGridDataColumn Caption="نام و نام خانوادگی (انگلیسی)" FieldName="EnglishName" MinWidth="150"/>
+                <DxGridDataColumn Caption="کد ملی" FieldName="NationalID" MinWidth="100"/>
+                <DxGridDataColumn Caption="تاریخ تولد" FieldName="BirthDate" MinWidth="100"/>
+                <DxGridDataColumn Caption="متأهل" FieldName="Marriage" MinWidth="70">
+                    <CellDisplayTemplate>
+                        <DxCheckBox CssClass="d-inline-block" Checked="@((bool)context.Value)" Enabled="false"/>
+                    </CellDisplayTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn Caption="اعتبار گواهینامه" FieldName="LicenseDate" MinWidth="100"/>
+                <DxGridDataColumn Caption="شماره پرسنلی" FieldName="PersonnelNum" MinWidth="100"/>
+                <DxGridDataColumn Caption="سمت فعلی" FieldName="CurrentRole" MinWidth="100"/>
+                <DxGridDataColumn Caption="تاریخ استخدام" FieldName="EmpDate" MinWidth="100"/>
+                <DxGridDataColumn Caption="تلفن همراه" FieldName="MobileNum" MinWidth="100"/>
+                <DxGridDataColumn Caption="تلفن منزل" FieldName="HomeNum" MinWidth="100"/>
+                <DxGridDataColumn Caption="شماره بیمه" FieldName="InsuranceNum" MinWidth="100"/>
+                <DxGridDataColumn Caption="آدرس منزل" FieldName="Address" MinWidth="100"/>
+                <DxGridDataColumn Caption="ایمیل" FieldName="BusinessEmail" MinWidth="150"/>
+                <DxGridDataColumn Caption="سایز کفش" FieldName="ShoeSize" MinWidth="100"/>
+                <DxGridDataColumn Caption="سایز لباس" FieldName="ClothSize" MinWidth="100"/>
+                <DxGridDataColumn Caption="وضعیت" FieldName="Status" MinWidth="100" />
+                <DxGridDataColumn Caption="تعداد PPE دریافتی" FieldName="PPECounts" UnboundType="GridUnboundColumnType.Integer" MinWidth="100" />
+                <DxGridDataColumn Caption="تعداد تشویق" FieldName="IncentivesCount" UnboundType="GridUnboundColumnType.Integer" MinWidth="100" />
+                <DxGridDataColumn Caption="تعداد اخطار" FieldName="WarningsCount" UnboundType="GridUnboundColumnType.Integer" MinWidth="100" />
+                <DxGridDataColumn Caption="تعداد حادثه" FieldName="AccidentsCount" UnboundType="GridUnboundColumnType.Integer" MinWidth="100" />
+                <DxGridDataColumn Caption="تعداد آموزش" FieldName="TrainingCount" UnboundType="GridUnboundColumnType.Integer" MinWidth="100" />
+                <DxGridDataColumn Caption="تعداد تمرین" FieldName="PracticeCount" UnboundType="GridUnboundColumnType.Integer" MinWidth="100" />
+                <DxGridDataColumn Caption="تعداد گزارش STOP Card" FieldName="StopReportCount" UnboundType="GridUnboundColumnType.Integer" MinWidth="100" />
+                <DxGridDataColumn Caption="تعداد مراجعه به درمانگاه" FieldName="MedicalVisitsCount" UnboundType="GridUnboundColumnType.Integer" MinWidth="100" />
+                
+            </Columns>
+            <EditFormTemplate Context="editFormContext">
+                @{
+                    var personnel = (Samco_HSE.HSEData.Personnel)editFormContext.EditModel;
+                }
+                <DxFormLayout>
+                    <DxFormLayoutGroup AnimationType="LayoutAnimationType.Slide" Caption="اطلاعات شخصی" ExpandButtonDisplayMode="GroupExpandButtonDisplayMode.Start" CssClass="front-form">
+                        <DxFormLayoutItem Caption="نام و نام خانوادگی:">
+                            <DxTextBox @bind-Text="@personnel.PersonnelName" NullText="الزامی"/>
+                        </DxFormLayoutItem>
+                        <DxFormLayoutItem Caption="نام و نام خانوادگی (انگلیسی):">
+                            <DxTextBox @bind-Text="@personnel.EnglishName" CssClass="ltr"/>
+                        </DxFormLayoutItem>
+                        <DxFormLayoutItem Caption="کد ملی:">
+                            <DxMaskedInput @bind-Value="@personnel.NationalID" MaskMode="MaskMode.Text" Mask="0000000000" InputCssClass="ltr" CssClass="text-center"/>
+                        </DxFormLayoutItem>
+                        <DxFormLayoutItem Caption="تاریخ تولد:" ColSpanLg="6">
+                            <SamcoDateSelector TData="DateTime?" @bind-Date="@personnel.BirthDate" DefaultCalendar="SamcoDateSelector<DateTime?>.CalendarType.Shamsi" />
+                        </DxFormLayoutItem>
+                        <DxFormLayoutItem Caption="وضعیت تأهل:">
+                            <DxCheckBox @bind-Checked="@personnel.Marriage">متأهل</DxCheckBox>
+                        </DxFormLayoutItem>
+                        <DxFormLayoutItem Caption="تلفن همراه:">
+                            <DxMaskedInput @bind-Value="@personnel.MobileNum" MaskMode="MaskMode.Text" Mask="\0\9000000000" InputCssClass="ltr" CssClass="text-center"/>
+                        </DxFormLayoutItem>
+                        <DxFormLayoutItem Caption="تلفن منزل:">
+                            <DxMaskedInput @bind-Value="@personnel.HomeNum" MaskMode="MaskMode.Text" Mask="\00000000000" InputCssClass="ltr" CssClass="text-center"/>
+                        </DxFormLayoutItem>
+                        <DxFormLayoutItem Caption="شماره بیمه:">
+                            <DxTextBox @bind-Text="@personnel.InsuranceNum" CssClass="ltr"/>
+                        </DxFormLayoutItem>
+                        <DxFormLayoutItem Caption="اعتبار گواهینامه:" ColSpanLg="6">
+                            <SamcoDateSelector TData="DateTime?" @bind-Date="@personnel.LicenseDate" DefaultCalendar="SamcoDateSelector<DateTime?>.CalendarType.Shamsi" />
+                        </DxFormLayoutItem>
+                    </DxFormLayoutGroup>
+                    <DxFormLayoutGroup AnimationType="LayoutAnimationType.Slide" Caption="اطلاعات شغلی" ExpandButtonDisplayMode="GroupExpandButtonDisplayMode.Start">
+                        <DxFormLayoutItem Caption="نام دکل / محل فعالیت:">
+                            <DxComboBox Data="@Rigs" TextFieldName="@nameof(Rig.Name)" @bind-Value="@personnel.ActiveRig" NullText="الزامی"/>
+                        </DxFormLayoutItem>
+                        <DxFormLayoutItem Caption="تاریخ استخدام:" ColSpanLg="6">
+                            <SamcoDateSelector TData="DateTime?" @bind-Date="@personnel.EmpDate" DefaultCalendar="SamcoDateSelector<DateTime?>.CalendarType.Shamsi" />
+                        </DxFormLayoutItem>
+                        <DxFormLayoutItem Caption="سمت فعلی:">
+                            <DxComboBox Data="@RigRoles" @bind-Value="@personnel.CurrentRole" NullText="الزامی" FilteringMode="DataGridFilteringMode.Contains"/>
+                        </DxFormLayoutItem>
+                        <DxFormLayoutItem Caption="شماره پرسنلی:">
+                            <DxTextBox @bind-Text="@personnel.PersonnelNum"/>
+                        </DxFormLayoutItem>
+                        <DxFormLayoutItem Caption="وضعیت:">
+                            <DxComboBox Data="@_status" @bind-Value="@personnel.Status" NullText="الزامی"/>
+                        </DxFormLayoutItem>
+                        <DxFormLayoutItem Caption="ایمیل سازمانی:">
+                            @{
+                                const string regexMask = @"(\w|[.-])+@(\w|-)+\.(\w|-){2,4}";
+                            }
+                            <DxMaskedInput @bind-Value="@personnel.BusinessEmail" MaskMode="MaskMode.RegEx" Mask="@regexMask" InputCssClass="ltr" CssClass="text-center"/>
+                        </DxFormLayoutItem>
+                        <DxFormLayoutItem Caption="سمت قبلی:">
+                            <DxComboBox Data="@RigRoles" @bind-Value="@personnel.PreviousRole"/>
+                        </DxFormLayoutItem>
+                        <DxFormLayoutItem Caption="تاریخ آخرین ارتقا:" ColSpanLg="6">
+                            <SamcoDateSelector TData="DateTime?" @bind-Date="@personnel.LastUpgradeDate" DefaultCalendar="SamcoDateSelector<DateTime?>.CalendarType.Shamsi" />
+                        </DxFormLayoutItem>
+                        <DxFormLayoutItem Caption="سایز لباس:">
+                            <DxMaskedInput @bind-Value="@personnel.ClothSize" MaskMode="MaskMode.Numeric" Mask="d" InputCssClass="ltr" CssClass="text-center"/>
+                        </DxFormLayoutItem>
+                        <DxFormLayoutItem Caption="سایز کفش:">
+                            <DxMaskedInput @bind-Value="@personnel.ShoeSize" MaskMode="MaskMode.Numeric" Mask="d" InputCssClass="ltr" CssClass="text-center"/>
+                        </DxFormLayoutItem>
+                    </DxFormLayoutGroup>
+                </DxFormLayout>
+            </EditFormTemplate>
+        </DxGrid>
+    </BodyTemplate>
+</Card>

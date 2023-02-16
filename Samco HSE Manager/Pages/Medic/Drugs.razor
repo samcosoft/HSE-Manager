@@ -1,0 +1,102 @@
+﻿@page "/drug"
+@attribute [Authorize(Roles = "Owner,Admin,Supervisor,Officer,Medic")]
+@using Samco_HSE.HSEData
+@using Microsoft.AspNetCore.Components
+
+<PageTitle>داروها و تجهیزات پزشکی</PageTitle>
+<Card>
+    <HeaderTemplate>
+        <DxMenu Title="داروها و تجهیزات پزشکی" ItemsPosition="ItemPosition.Start" CssClass="card-header">
+            <Items>
+                <DxMenuItem Text="تنظیم موجودی" IconCssClass="fas fa-suitcase-medical" @onclick="OnSetNumberBtnClick" />
+                <DxMenuItem Text="درخواست دارو / تجهیزات" IconCssClass="fas fa-truck-medical" @onclick="OnDrugRequestBtnClick" />
+            </Items>
+        </DxMenu>
+    </HeaderTemplate>
+    <BodyTemplate>
+        <DxGrid @ref="MedicineGrid" Data="@MedicineList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"
+                EditModelSaving="OnEditModelSaving" DataItemDeleting="OnDataItemDeleting" UnboundColumnData="MedicationGridUnbound"
+                CustomizeEditModel="MedicineEditModel" EditStart="MedicineEditStart"
+                ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true" ValidationEnabled="false"
+                SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="true"
+                ColumnResizeMode="GridColumnResizeMode.ColumnsContainer"
+                SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center">
+            <Columns>
+                <DxGridCommandColumn/>
+                <DxGridDataColumn FieldName="@nameof(Medication.Name)" Caption="نام دارو / تجهیز" Width="15%"/>
+                <DxGridDataColumn FieldName="@nameof(Medication.Dose)" Caption="دوز" MinWidth="100"/>
+                <DxGridDataColumn FieldName="@nameof(Medication.DrugForm)" Caption="فرم دارویی" MinWidth="100"/>
+                <DxGridDataColumn FieldName="@nameof(Medication.Category)" Caption="دسته بندی" MinWidth="100"/>
+                <DxGridDataColumn Caption="قابل درخواست" FieldName="@nameof(Medication.AvailForOrder)" MinWidth="70">
+                    <CellDisplayTemplate>
+                        <DxCheckBox CssClass="d-inline-block" Checked="@((bool)context.Value)" Enabled="false"/>
+                    </CellDisplayTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="@nameof(Medication.MinCount)" Caption="حداقل تعداد"/>
+                <DxGridDataColumn FieldName="@nameof(Medication.Discription)" Caption="توضیحات" MinWidth="100"/>
+                @BuildColumnsGrid()
+            </Columns>
+            <EditFormTemplate Context="editFormContext">
+                @{
+                    var drug = (Medication)editFormContext.EditModel;
+                }
+                <DxFormLayout>
+                    <DxFormLayoutItem Caption="نام دارو / تجهیز:">
+                        <DxTextBox @bind-Text="@drug.Name" NullText="الزامی" InputCssClass="ltr" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="دوز / اندازه:">
+                        <DxTextBox @bind-Text="@drug.Dose" NullText="الزامی" InputCssClass="ltr" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="فرم دارویی:">
+                        <DxComboBox Data="@_drugFormList" @bind-Value="@drug.DrugForm" NullText="الزامی" FilteringMode="DataGridFilteringMode.Contains" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="دسته بندی:">
+                        <DxComboBox Data="@_category" @bind-Value="@drug.Category" NullText="الزامی" FilteringMode="DataGridFilteringMode.Contains" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="حداقل تعداد:">
+                        <DxSpinEdit @bind-Value="drug.MinCount" MinValue="1" MaxValue="1000" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="قابل درخواست:">
+                        <DxCheckBox @bind-Checked="@drug.AvailForOrder" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="توضیحات:">
+                        <DxTextBox @bind-Text="@drug.Discription" />
+                    </DxFormLayoutItem>
+                </DxFormLayout>
+            </EditFormTemplate>
+        </DxGrid>
+    </BodyTemplate>
+</Card>
+
+<DxPopup @ref="SetNumberModal" HeaderText="تنظیم تعداد تجهیز" ShowFooter="true" CloseOnOutsideClick="false" CloseOnEscape="false">
+    <BodyContentTemplate Context="_">
+        <DxFormLayout>
+            <DxFormLayoutItem Caption="نام تجهیز:" ColSpanMd="4" ColSpanSm="12">
+                <DxTextBox @bind-Text="@_selMedicationStock!.MedicName.Name" ReadOnly="true" />
+            </DxFormLayoutItem>
+            <DxFormLayoutItem Caption="نام دکل / دفتر:" ColSpanMd="4" ColSpanSm="12">
+                <DxComboBox TValue="Rig" TData="Rig" @ref="RigBx" Data="@Rigs" TextFieldName="@nameof(Rig.Name)" NullText="الزامی" ValueChanged="RigSelectionChanged" />
+            </DxFormLayoutItem>
+            <DxFormLayoutItem Caption="تعداد:" ColSpanMd="4" ColSpanSm="12">
+                <DxSpinEdit T="short" @bind-Value="@_selMedicationStock!.AvailCount" MinValue="0" MaxValue="1000" />
+            </DxFormLayoutItem>
+        </DxFormLayout>
+    </BodyContentTemplate>
+    <FooterContentTemplate>
+        <Button Color="Color.Success" Icon="fas fa-check" OnClick="SetCountOkBtnClick">تأیید</Button>
+    </FooterContentTemplate>
+</DxPopup>
+
+<DxPopup @ref="DrugRequestModal" HeaderText="درخواست دارو / تجهیزات" ShowFooter="true" CloseOnOutsideClick="false" CloseOnEscape="false">
+    <BodyContentTemplate Context="_">
+        <Alert Color="Color.Info" Icon="fas fa-info" ShowBar="true">درخواست داروها بر اساس حداقل تعداد دارو / تجهیز تنظیم می‌شود. شما می‌توانید پس از دریافت فایل درخواست مقادیر آن‌ها را تغییر دهید.</Alert>
+        <DxFormLayout>
+            <DxFormLayoutItem Caption="نام دکل / دفتر:" ColSpanMd="4" ColSpanSm="12">
+                <DxComboBox Data="@Rigs" @bind-Value="_selRig" TextFieldName="@nameof(Rig.Name)" NullText="الزامی"/>
+            </DxFormLayoutItem>
+        </DxFormLayout>
+    </BodyContentTemplate>
+    <FooterContentTemplate>
+        <Button Color="Color.Success" Icon="fas fa-check" OnClick="RequestBtnClick">تأیید</Button>
+    </FooterContentTemplate>
+</DxPopup>
