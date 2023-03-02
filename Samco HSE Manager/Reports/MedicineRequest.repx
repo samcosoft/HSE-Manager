@@ -1,128 +1,133 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<XtraReportsLayoutSerializer SerializerVersion="22.2.3.0" Ref="1" ControlType="DevExpress.XtraReports.UI.XtraReport, DevExpress.XtraReports.v22.2, Version=22.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Name="MedicineRequest" SnapGridSize="25" ReportUnit="TenthsOfAMillimeter" Margins="150, 150, 50, 50" PaperKind="A4" PageWidth="2100" PageHeight="2970" Version="22.2" RequestParameters="false" RightToLeft="Yes" FilterString="[AvailForOrder] = True" DataSource="#Ref-0" Dpi="254" Font="Arial, 9.75pt">
+<XtraReportsLayoutSerializer SerializerVersion="22.2.3.0" Ref="1" ControlType="DevExpress.XtraReports.UI.XtraReport, DevExpress.XtraReports.v22.2, Version=22.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Name="MedicationRequest" SnapGridSize="25" ReportUnit="TenthsOfAMillimeter" Margins="150, 150, 50, 50" PaperKind="A4" PageWidth="2100" PageHeight="2970" Version="22.2" RightToLeft="Yes" FilterString="[AvailForOrder] = True And [OID] = ?RigId" DataMember="MedicationStock" DataSource="#Ref-0" Dpi="254" Font="Arial, 9.75pt">
   <Parameters>
-    <Item1 Ref="3" Description="Select rig from database" ValueInfo="0" Name="RigId" Type="#Ref-2" />
-    <Item2 Ref="5" Visible="false" Name="Title" />
+    <Item1 Ref="3" Description="Page Title" Name="Title" />
+    <Item2 Ref="5" Description="Location Id" ValueInfo="1" Name="RigId" Type="#Ref-4" />
   </Parameters>
-  <CalculatedFields>
-    <Item1 Ref="6" Name="AvailCount" Expression="Iif([MedicationStocks][[RigNo].[Oid]=?RigId].Exists(),[MedicationStocks][[RigNo].[Oid]=?RigId].Single([AvailCount]), 0)" />
-    <Item2 Ref="7" Name="RigName" Expression="Iif([MedicationStocks][[RigNo].[Oid]=?RigId].Exists(),[MedicationStocks][[RigNo].[Oid]=?RigId].Single([RigNo].[Name]), '')" />
-  </CalculatedFields>
   <Bands>
-    <Item1 Ref="8" ControlType="TopMarginBand" Name="TopMargin" HeightF="50" Dpi="254" />
-    <Item2 Ref="9" ControlType="BottomMarginBand" Name="BottomMargin" HeightF="50" Dpi="254" />
-    <Item3 Ref="10" ControlType="DetailBand" Name="Detail" PageBreak="AfterBand" HeightF="65" KeepTogether="true" Dpi="254">
-      <HierarchyPrintOptions Ref="11" Indent="50.8" />
-      <SortFields>
-        <Item1 Ref="12" FieldName="Category" SortOrder="Descending" />
-        <Item2 Ref="13" FieldName="Name" />
-      </SortFields>
+    <Item1 Ref="6" ControlType="TopMarginBand" Name="TopMargin" HeightF="50" Dpi="254" />
+    <Item2 Ref="7" ControlType="ReportHeaderBand" Name="ReportHeader" HeightF="333.286" Dpi="254">
       <Controls>
-        <Item1 Ref="14" ControlType="XRTable" Name="xrTable5" TextAlignment="MiddleCenter" SizeF="1800,64" LocationFloat="0,0" Dpi="254" Padding="2,2,0,0,96" Borders="All">
+        <Item1 Ref="8" ControlType="XRPictureBox" Name="xrPictureBox1" Sizing="StretchImage" SizeF="250,250" LocationFloat="50,24.99999" Dpi="254" />
+        <Item2 Ref="9" ControlType="XRLabel" Name="xrLabel3" Multiline="true" Text="Title" TextAlignment="MiddleCenter" SizeF="1380,80" LocationFloat="359.9998,24.99999" Dpi="254" Font="Vazir, 16pt, style=Bold" ForeColor="White" Padding="5,5,0,0,254" BorderColor="0,0,0,0">
+          <ExpressionBindings>
+            <Item1 Ref="10" EventName="BeforePrint" PropertyName="Text" Expression="?Title" />
+          </ExpressionBindings>
+          <StylePriority Ref="11" UseFont="false" UseForeColor="false" UseBorderColor="false" UseTextAlignment="false" />
+        </Item2>
+        <Item3 Ref="12" ControlType="XRLabel" Name="xrLabel4" TextFormatString="{0:yyyy/MM/dd}" Multiline="true" TextAlignment="MiddleCenter" SizeF="685,79.99998" LocationFloat="360.0001,195" Dpi="254" Font="Vazir, 14pt" ForeColor="White" Padding="5,5,0,0,254" BorderColor="0,0,0,0">
+          <ExpressionBindings>
+            <Item1 Ref="13" EventName="BeforePrint" PropertyName="Text" Expression="Today()" />
+          </ExpressionBindings>
+          <StylePriority Ref="14" UseFont="false" UseForeColor="false" UseBorderColor="false" UseTextAlignment="false" />
+        </Item3>
+        <Item4 Ref="15" ControlType="XRLabel" Name="xrLabel2" Multiline="true" Text="درخواست خرید دارو / تجهیزات پزشکی" TextAlignment="MiddleCenter" SizeF="1380,80" LocationFloat="360,110" Dpi="254" Font="Vazir, 16pt, style=Bold" ForeColor="White" Padding="5,5,0,0,254" BorderColor="0,0,0,0">
+          <StylePriority Ref="16" UseFont="false" UseForeColor="false" UseBorderColor="false" UseTextAlignment="false" />
+        </Item4>
+        <Item5 Ref="17" ControlType="XRLabel" Name="CompanyInfoLabel" TextFormatString="دکل {0}" Multiline="true" TextAlignment="MiddleCenter" SizeF="685,79.99998" LocationFloat="1055,195" Dpi="254" Font="Vazir, 14pt" ForeColor="White" Padding="5,5,0,0,254" BorderColor="0,0,0,0">
+          <ExpressionBindings>
+            <Item1 Ref="18" EventName="BeforePrint" PropertyName="Text" Expression="[Rig_Name]" />
+          </ExpressionBindings>
+          <StylePriority Ref="19" UseFont="false" UseForeColor="false" UseBorderColor="false" UseTextAlignment="false" />
+        </Item5>
+        <Item6 Ref="20" ControlType="XRShape" Name="xrShape1" LineWidth="3" FillColor="DarkSlateBlue" SizeF="1800,300" LocationFloat="0,0" Dpi="254" Borders="None">
+          <Shape Ref="21" Fillet="15" ShapeName="Rectangle" />
+          <StylePriority Ref="22" UseBorders="false" />
+        </Item6>
+      </Controls>
+    </Item2>
+    <Item3 Ref="23" ControlType="GroupHeaderBand" Name="GroupHeader1" GroupUnion="WithFirstDetail" HeightF="71.12" Dpi="254">
+      <Controls>
+        <Item1 Ref="24" ControlType="XRTable" Name="xrTable6" TextAlignment="MiddleCenter" SizeF="1800,64" LocationFloat="0,0" Dpi="254" Font="Vazir, 12pt, style=Bold" ForeColor="White" BackColor="Maroon" Padding="2,2,0,0,96" Borders="Top, Bottom">
           <Rows>
-            <Item1 Ref="15" ControlType="XRTableRow" Name="xrTableRow5" Weight="0.56097560975609762" Dpi="254">
+            <Item1 Ref="25" ControlType="XRTableRow" Name="xrTableRow6" Weight="0.5609756097560976" Dpi="254">
               <Cells>
-                <Item1 Ref="16" ControlType="XRTableCell" Name="xrTableCell21" Weight="0.47924528301886793" Multiline="true" Text="xrTableCell1" Dpi="254" Borders="Left, Top, Bottom">
-                  <ExpressionBindings>
-                    <Item1 Ref="17" EventName="BeforePrint" PropertyName="Text" Expression="[Name]" />
-                  </ExpressionBindings>
-                  <StylePriority Ref="18" UseBorders="false" />
-                </Item1>
-                <Item2 Ref="19" ControlType="XRTableCell" Name="xrTableCell22" Weight="0.47924528301886793" Multiline="true" Text="xrTableCell2" Dpi="254" Borders="Top, Bottom">
-                  <ExpressionBindings>
-                    <Item1 Ref="20" EventName="BeforePrint" PropertyName="Text" Expression="[Dose]" />
-                  </ExpressionBindings>
-                  <StylePriority Ref="21" UseBorders="false" />
-                </Item2>
-                <Item3 Ref="22" ControlType="XRTableCell" Name="xrTableCell23" Weight="0.47924528301886793" Multiline="true" Text="xrTableCell3" Dpi="254" Borders="Top, Bottom">
-                  <ExpressionBindings>
-                    <Item1 Ref="23" EventName="BeforePrint" PropertyName="Text" Expression="[DrugForm]" />
-                  </ExpressionBindings>
-                  <StylePriority Ref="24" UseBorders="false" />
-                </Item3>
-                <Item4 Ref="25" ControlType="XRTableCell" Name="xrTableCell24" Weight="0.47924528301886793" Multiline="true" Text="xrTableCell4" Dpi="254" Borders="Top, Bottom">
-                  <ExpressionBindings>
-                    <Item1 Ref="26" EventName="BeforePrint" PropertyName="Text" Expression="[Discription]" />
-                  </ExpressionBindings>
+                <Item1 Ref="26" ControlType="XRTableCell" Name="xrTableCell26" Weight="0.47924528301886793" Multiline="true" Text="نام دارو / تجهیز" Dpi="254" Borders="Left, Top, Bottom">
                   <StylePriority Ref="27" UseBorders="false" />
-                </Item4>
-                <Item5 Ref="28" ControlType="XRTableCell" Name="xrTableCell25" Weight="0.47924528301886793" Multiline="true" Text="xrTableCell5" TextAlignment="MiddleCenter" Dpi="254" Borders="Top, Right, Bottom">
-                  <ExpressionBindings>
-                    <Item1 Ref="29" EventName="BeforePrint" PropertyName="Text" Expression="[MinCount]-[AvailCount]" />
-                  </ExpressionBindings>
-                  <StylePriority Ref="30" UseBorders="false" UseTextAlignment="false" />
+                </Item1>
+                <Item2 Ref="28" ControlType="XRTableCell" Name="xrTableCell27" Weight="0.47924528301886793" Multiline="true" Text="دوز / اندازه" Dpi="254" />
+                <Item3 Ref="29" ControlType="XRTableCell" Name="xrTableCell28" Weight="0.47924528301886793" Multiline="true" Text="فرم دارویی / نوع" Dpi="254" />
+                <Item4 Ref="30" ControlType="XRTableCell" Name="xrTableCell29" Weight="0.47924528301886793" Multiline="true" Text="توضیحات" Dpi="254" />
+                <Item5 Ref="31" ControlType="XRTableCell" Name="xrTableCell30" Weight="0.47924528301886793" Multiline="true" Text="تعداد" TextAlignment="MiddleCenter" Dpi="254" Borders="Top, Right, Bottom">
+                  <StylePriority Ref="32" UseBorders="false" UseTextAlignment="false" />
                 </Item5>
               </Cells>
             </Item1>
           </Rows>
-          <StylePriority Ref="31" UseBorders="false" UseTextAlignment="false" />
+          <StylePriority Ref="33" UseFont="false" UseForeColor="false" UseBackColor="false" UseBorders="false" UseTextAlignment="false" />
         </Item1>
       </Controls>
     </Item3>
-    <Item4 Ref="32" ControlType="ReportHeaderBand" Name="ReportHeader" HeightF="320" Dpi="254">
+    <Item4 Ref="34" ControlType="DetailBand" Name="Detail" HeightF="64" Dpi="254">
+      <HierarchyPrintOptions Ref="35" Indent="50.8" />
       <Controls>
-        <Item1 Ref="33" ControlType="XRLabel" Name="xrLabel4" TextFormatString="{0:yyyy/MM/dd}" Multiline="true" TextAlignment="MiddleCenter" SizeF="685,79.9999847" LocationFloat="360.000122,214.999985" Dpi="254" Font="Vazir, 14pt" ForeColor="White" Padding="5,5,0,0,254" BorderColor="0,0,0,0">
-          <ExpressionBindings>
-            <Item1 Ref="34" EventName="BeforePrint" PropertyName="Text" Expression="Today()" />
-          </ExpressionBindings>
-          <StylePriority Ref="35" UseFont="false" UseForeColor="false" UseBorderColor="false" UseTextAlignment="false" />
-        </Item1>
-        <Item2 Ref="36" ControlType="XRLabel" Name="xrLabel3" Multiline="true" Text="درخواست خرید دارو / تجهیزات پزشکی" TextAlignment="MiddleCenter" SizeF="1380,80" LocationFloat="359.999847,45" Dpi="254" Font="Vazir, 16pt, style=Bold" ForeColor="White" Padding="5,5,0,0,254" BorderColor="0,0,0,0">
-          <ExpressionBindings>
-            <Item1 Ref="37" EventName="BeforePrint" PropertyName="Text" Expression="?Title" />
-          </ExpressionBindings>
-          <StylePriority Ref="38" UseFont="false" UseForeColor="false" UseBorderColor="false" UseTextAlignment="false" />
-        </Item2>
-        <Item3 Ref="39" ControlType="XRLabel" Name="CompanyInfoLabel" TextFormatString="دکل {0}" Multiline="true" TextAlignment="MiddleCenter" SizeF="685,79.9999847" LocationFloat="1055.00012,215.000015" Dpi="254" Font="Vazir, 14pt" ForeColor="White" Padding="5,5,0,0,254" BorderColor="0,0,0,0">
-          <ExpressionBindings>
-            <Item1 Ref="40" EventName="BeforePrint" PropertyName="Text" Expression="[RigName]" />
-          </ExpressionBindings>
-          <StylePriority Ref="41" UseFont="false" UseForeColor="false" UseBorderColor="false" UseTextAlignment="false" />
-        </Item3>
-        <Item4 Ref="42" ControlType="XRLabel" Name="xrLabel2" Multiline="true" Text="درخواست خرید دارو / تجهیزات پزشکی" TextAlignment="MiddleCenter" SizeF="1380,80" LocationFloat="360,130" Dpi="254" Font="Vazir, 16pt, style=Bold" ForeColor="White" Padding="5,5,0,0,254" BorderColor="0,0,0,0">
-          <StylePriority Ref="43" UseFont="false" UseForeColor="false" UseBorderColor="false" UseTextAlignment="false" />
-        </Item4>
-        <Item5 Ref="44" ControlType="XRPictureBox" Name="xrPictureBox1" Sizing="StretchImage" SizeF="250,250" LocationFloat="50,45" Dpi="254" />
-        <Item6 Ref="45" ControlType="XRShape" Name="xrShape1" LineWidth="3" FillColor="DarkSlateBlue" SizeF="1800,300" LocationFloat="0,20.00001" Dpi="254" Borders="None">
-          <Shape Ref="46" Fillet="15" ShapeName="Rectangle" />
-          <StylePriority Ref="47" UseBorders="false" />
-        </Item6>
-      </Controls>
-    </Item4>
-    <Item5 Ref="48" ControlType="PageFooterBand" Name="PageFooter" HeightF="70" Dpi="254">
-      <Controls>
-        <Item1 Ref="49" ControlType="XRLabel" Name="xrLabel1" Multiline="true" Text="Powered by Samco® HSE Manager" TextAlignment="MiddleCenter" SizeF="704.5167,70" LocationFloat="0,0" Dpi="254" Font="Vazir, 10pt" Padding="5,5,0,0,254">
-          <StylePriority Ref="50" UseFont="false" UseTextAlignment="false" />
-        </Item1>
-      </Controls>
-    </Item5>
-    <Item6 Ref="51" ControlType="GroupHeaderBand" Name="GroupHeader1" RepeatEveryPage="true" HeightF="65" Dpi="254">
-      <Controls>
-        <Item1 Ref="52" ControlType="XRTable" Name="xrTable6" TextAlignment="MiddleCenter" SizeF="1800,64" LocationFloat="0,0" Dpi="254" Font="Vazir, 12pt, style=Bold" ForeColor="Black" BackColor="Thistle" Padding="2,2,0,0,96" Borders="Top, Bottom">
+        <Item1 Ref="36" ControlType="XRTable" Name="xrTable5" TextAlignment="MiddleCenter" SizeF="1800,64" LocationFloat="0,0" Dpi="254" Padding="2,2,0,0,96" Borders="All">
           <Rows>
-            <Item1 Ref="53" ControlType="XRTableRow" Name="xrTableRow6" Weight="0.56097560975609762" Dpi="254">
+            <Item1 Ref="37" ControlType="XRTableRow" Name="xrTableRow5" Weight="0.5609756097560976" Dpi="254">
               <Cells>
-                <Item1 Ref="54" ControlType="XRTableCell" Name="xrTableCell26" Weight="0.47924528301886793" Multiline="true" Text="نام دارو / تجهیز" Dpi="254" Borders="Left, Top, Bottom">
-                  <StylePriority Ref="55" UseBorders="false" />
+                <Item1 Ref="38" ControlType="XRTableCell" Name="xrTableCell21" Weight="0.47924528301886793" Multiline="true" Text="xrTableCell1" Dpi="254" Borders="Left, Top, Bottom">
+                  <ExpressionBindings>
+                    <Item1 Ref="39" EventName="BeforePrint" PropertyName="Text" Expression="[MedicationStock.Name]" />
+                  </ExpressionBindings>
+                  <StylePriority Ref="40" UseBorders="false" />
                 </Item1>
-                <Item2 Ref="56" ControlType="XRTableCell" Name="xrTableCell27" Weight="0.47924528301886793" Multiline="true" Text="دوز / اندازه" Dpi="254" />
-                <Item3 Ref="57" ControlType="XRTableCell" Name="xrTableCell28" Weight="0.47924528301886793" Multiline="true" Text="فرم دارویی / نوع" Dpi="254" />
-                <Item4 Ref="58" ControlType="XRTableCell" Name="xrTableCell29" Weight="0.47924528301886793" Multiline="true" Text="توضیحات" Dpi="254" />
-                <Item5 Ref="59" ControlType="XRTableCell" Name="xrTableCell30" Weight="0.47924528301886793" Multiline="true" Text="تعداد" TextAlignment="MiddleCenter" Dpi="254" Borders="Top, Right, Bottom">
-                  <StylePriority Ref="60" UseBorders="false" UseTextAlignment="false" />
+                <Item2 Ref="41" ControlType="XRTableCell" Name="xrTableCell22" Weight="0.47924528301886793" Multiline="true" Text="xrTableCell2" Dpi="254" Borders="Top, Bottom">
+                  <ExpressionBindings>
+                    <Item1 Ref="42" EventName="BeforePrint" PropertyName="Text" Expression="[MedicationStock.Dose]" />
+                  </ExpressionBindings>
+                  <StylePriority Ref="43" UseBorders="false" />
+                </Item2>
+                <Item3 Ref="44" ControlType="XRTableCell" Name="xrTableCell23" Weight="0.47924528301886793" Multiline="true" Text="xrTableCell3" Dpi="254" Borders="Top, Bottom">
+                  <ExpressionBindings>
+                    <Item1 Ref="45" EventName="BeforePrint" PropertyName="Text" Expression="[MedicationStock.DrugForm]" />
+                  </ExpressionBindings>
+                  <StylePriority Ref="46" UseBorders="false" />
+                </Item3>
+                <Item4 Ref="47" ControlType="XRTableCell" Name="xrTableCell24" Weight="0.47924528301886793" Multiline="true" Text="xrTableCell4" Dpi="254" Borders="Top, Bottom">
+                  <ExpressionBindings>
+                    <Item1 Ref="48" EventName="BeforePrint" PropertyName="Text" Expression="[MedicationStock.Discription]" />
+                  </ExpressionBindings>
+                  <StylePriority Ref="49" UseBorders="false" />
+                </Item4>
+                <Item5 Ref="50" ControlType="XRTableCell" Name="xrTableCell25" Weight="0.47924528301886793" Multiline="true" Text="xrTableCell5" TextAlignment="MiddleCenter" Dpi="254" Borders="Top, Right, Bottom">
+                  <ExpressionBindings>
+                    <Item1 Ref="51" EventName="BeforePrint" PropertyName="Text" Expression="[MinCount] - [AvailCount] " />
+                  </ExpressionBindings>
+                  <StylePriority Ref="52" UseBorders="false" UseTextAlignment="false" />
                 </Item5>
               </Cells>
             </Item1>
           </Rows>
-          <StylePriority Ref="61" UseFont="false" UseForeColor="false" UseBackColor="false" UseBorders="false" UseTextAlignment="false" />
+          <StylePriority Ref="53" UseBorders="false" UseTextAlignment="false" />
         </Item1>
       </Controls>
-    </Item6>
+    </Item4>
+    <Item5 Ref="54" ControlType="PageFooterBand" Name="PageFooter" HeightF="80" Dpi="254">
+      <Controls>
+        <Item1 Ref="55" ControlType="XRLabel" Name="xrLabel1" Multiline="true" Text="Powered by Samco® HSE Manager" TextAlignment="MiddleCenter" SizeF="704.5167,70" LocationFloat="0,0" Dpi="254" Font="Vazir, 10pt" Padding="5,5,0,0,254">
+          <StylePriority Ref="56" UseFont="false" UseTextAlignment="false" />
+        </Item1>
+        <Item2 Ref="57" ControlType="XRPageInfo" Name="pageInfo2" TextFormatString="Page {0} of {1}" TextAlignment="MiddleCenter" SizeF="900,70.00004" LocationFloat="900,0" Dpi="254" StyleName="PageInfo">
+          <StylePriority Ref="58" UseTextAlignment="false" />
+        </Item2>
+      </Controls>
+    </Item5>
+    <Item6 Ref="59" ControlType="BottomMarginBand" Name="BottomMargin" HeightF="50" Dpi="254" />
   </Bands>
+  <StyleSheet>
+    <Item1 Ref="60" Name="DetailCaption1" BorderStyle="Inset" Padding="15,15,0,0,254" Font="Arial, 8.25pt, style=Bold" ForeColor="White" BackColor="255,152,51,91" BorderColor="White" Sides="Left" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="2" />
+    <Item2 Ref="61" Name="DetailData1" BorderStyle="Inset" Padding="15,15,0,0,254" Font="Arial, 8.25pt" ForeColor="Black" BorderColor="Transparent" Sides="Left" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="2" />
+    <Item3 Ref="62" Name="DetailData3_Odd" BorderStyle="Inset" Padding="15,15,0,0,254" Font="Arial, 8.25pt" ForeColor="Black" BackColor="255,243,245,248" BorderColor="Transparent" Sides="None" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="1" />
+    <Item4 Ref="63" Name="PageInfo" BorderStyle="Inset" Padding="15,15,0,0,254" Font="Arial, 8.25pt, style=Bold" ForeColor="255,64,70,80" StringFormat="Near;Near;0;None;Character;Default" />
+  </StyleSheet>
+  <ParameterPanelLayoutItems>
+    <Item1 Ref="64" LayoutItemType="Parameter" Parameter="#Ref-3" />
+    <Item2 Ref="65" LayoutItemType="Parameter" Parameter="#Ref-5" />
+  </ParameterPanelLayoutItems>
   <ComponentStorage>
-    <Item1 Ref="0" ObjectType="DevExpress.Xpo.XPObjectSource,DevExpress.DataAccess.v22.2" Name="xpObjectSource1" Base64="PFhQT2JqZWN0U291cmNlPjxOYW1lPnhwT2JqZWN0U291cmNlMTwvTmFtZT48Q29ubmVjdGlvblN0cmluZ05hbWU+TWFpbkRhdGFiYXNlPC9Db25uZWN0aW9uU3RyaW5nTmFtZT48VG9wUmVjb3Jkcz4wPC9Ub3BSZWNvcmRzPjxTa2lwUmVjb3Jkcz4wPC9Ta2lwUmVjb3Jkcz48RW50aXR5VHlwZT5TYW1jb19IU0UuSFNFRGF0YS5NZWRpY2F0aW9uLFNhbWNvIEhTRSBNYW5hZ2VyPC9FbnRpdHlUeXBlPjxQYXJhbWV0ZXJzIC8+PFNvcnRpbmcgLz48UHJvcGVydGllcyAvPjwvWFBPYmplY3RTb3VyY2U+" />
+    <Item1 Ref="0" ObjectType="DevExpress.DataAccess.Sql.SqlDataSource,DevExpress.DataAccess.v22.2" Name="sqlDataSource1" Base64="PFNxbERhdGFTb3VyY2UgTmFtZT0ic3FsRGF0YVNvdXJjZTEiPjxDb25uZWN0aW9uIE5hbWU9Ik1haW5EYXRhYmFzZSIgRnJvbUFwcENvbmZpZz0idHJ1ZSIgLz48UXVlcnkgVHlwZT0iU2VsZWN0UXVlcnkiIE5hbWU9Ik1lZGljYXRpb25TdG9jayI+PFRhYmxlcz48VGFibGUgTmFtZT0iTWVkaWNhdGlvblN0b2NrIiAvPjxUYWJsZSBOYW1lPSJNZWRpY2F0aW9uIiAvPjxUYWJsZSBOYW1lPSJSaWciIC8+PFJlbGF0aW9uIFR5cGU9IklubmVyIiBQYXJlbnQ9Ik1lZGljYXRpb25TdG9jayIgTmVzdGVkPSJNZWRpY2F0aW9uIj48S2V5Q29sdW1uIFBhcmVudD0iTWVkaWNOYW1lIiBOZXN0ZWQ9Ik9JRCIgLz48L1JlbGF0aW9uPjxSZWxhdGlvbiBUeXBlPSJJbm5lciIgUGFyZW50PSJNZWRpY2F0aW9uU3RvY2siIE5lc3RlZD0iUmlnIj48S2V5Q29sdW1uIFBhcmVudD0iUmlnTm8iIE5lc3RlZD0iT0lEIiAvPjwvUmVsYXRpb24+PC9UYWJsZXM+PENvbHVtbnM+PENvbHVtbiBUYWJsZT0iTWVkaWNhdGlvblN0b2NrIiBOYW1lPSJBdmFpbENvdW50IiAvPjxDb2x1bW4gVGFibGU9Ik1lZGljYXRpb24iIE5hbWU9Ik5hbWUiIC8+PENvbHVtbiBUYWJsZT0iTWVkaWNhdGlvbiIgTmFtZT0iRG9zZSIgLz48Q29sdW1uIFRhYmxlPSJNZWRpY2F0aW9uIiBOYW1lPSJEcnVnRm9ybSIgLz48Q29sdW1uIFRhYmxlPSJNZWRpY2F0aW9uIiBOYW1lPSJDYXRlZ29yeSIgLz48Q29sdW1uIFRhYmxlPSJNZWRpY2F0aW9uIiBOYW1lPSJNaW5Db3VudCIgLz48Q29sdW1uIFRhYmxlPSJNZWRpY2F0aW9uIiBOYW1lPSJEaXNjcmlwdGlvbiIgLz48Q29sdW1uIFRhYmxlPSJNZWRpY2F0aW9uIiBOYW1lPSJBdmFpbEZvck9yZGVyIiAvPjxDb2x1bW4gVGFibGU9IlJpZyIgTmFtZT0iT0lEIiAvPjxDb2x1bW4gVGFibGU9IlJpZyIgTmFtZT0iTmFtZSIgQWxpYXM9IlJpZ19OYW1lIiAvPjwvQ29sdW1ucz48L1F1ZXJ5PjxSZXN1bHRTY2hlbWE+PERhdGFTZXQgTmFtZT0ic3FsRGF0YVNvdXJjZTEiPjxWaWV3IE5hbWU9Ik1lZGljYXRpb25TdG9jayI+PEZpZWxkIE5hbWU9IkF2YWlsQ291bnQiIFR5cGU9IkludDE2IiAvPjxGaWVsZCBOYW1lPSJOYW1lIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9IkRvc2UiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iRHJ1Z0Zvcm0iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iQ2F0ZWdvcnkiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iTWluQ291bnQiIFR5cGU9IkludDMyIiAvPjxGaWVsZCBOYW1lPSJEaXNjcmlwdGlvbiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJBdmFpbEZvck9yZGVyIiBUeXBlPSJCb29sZWFuIiAvPjxGaWVsZCBOYW1lPSJPSUQiIFR5cGU9IkludDMyIiAvPjxGaWVsZCBOYW1lPSJSaWdfTmFtZSIgVHlwZT0iU3RyaW5nIiAvPjwvVmlldz48L0RhdGFTZXQ+PC9SZXN1bHRTY2hlbWE+PENvbm5lY3Rpb25PcHRpb25zIENsb3NlQ29ubmVjdGlvbj0idHJ1ZSIgLz48L1NxbERhdGFTb3VyY2U+" />
   </ComponentStorage>
   <ObjectStorage>
-    <Item1 ObjectType="DevExpress.XtraReports.Serialization.ObjectStorageInfo, DevExpress.XtraReports.v22.2" Ref="2" Content="System.Int32" Type="System.Type" />
+    <Item1 ObjectType="DevExpress.XtraReports.Serialization.ObjectStorageInfo, DevExpress.XtraReports.v22.2" Ref="4" Content="System.Int32" Type="System.Type" />
   </ObjectStorage>
 </XtraReportsLayoutSerializer>

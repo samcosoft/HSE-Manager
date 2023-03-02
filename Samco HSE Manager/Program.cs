@@ -76,7 +76,8 @@ app.UseRouting();
 //app.MapDashboardRoute("api/dashboard", "DefaultDashboard");
 
 app.UseAuthorization();
-
+//TODO: Change this line on deployment
+//app.UsePathBase("/hse");
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 

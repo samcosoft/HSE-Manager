@@ -4,15 +4,11 @@
 @using Microsoft.AspNetCore.Components
 
 <PageTitle>ویزیت بیمار</PageTitle>
-<Card HeaderText="ویزیت بیمار">
-    @*<HeaderTemplate>
-    <DxMenu Title="مدیریت تجهیزات ملکی" ItemsPosition="ItemPosition.Start" CssClass="card-header">
-    <Items>
-    <DxMenuItem Text="تنظیم موجودی" IconCssClass="fas fa-shirt" @onclick="OnSetNumberBtnClick" />
-    <DxMenuItem Text="توزیع تجهیزات" IconCssClass="fas fa-boxes-packing" @onclick="OnDistributeBtnClick" />
-    </Items>
-    </DxMenu>
-    </HeaderTemplate>*@
+<Card>
+    <HeaderTemplate>
+        <DxMenu Title="ویزیت بیمار" ItemsPosition="ItemPosition.Start" CssClass="card-header">
+        </DxMenu>
+    </HeaderTemplate>
     <BodyTemplate>
         <Alert Color="Color.Info" ShowDismiss="true">همکار گرامی، از این قسمت فقط برای ثبت ویزیت سرپایی بیماران و FAC استفاده نمایید. برای سایر موارد شامل اعزام از قسمت گزارش حوادث استفاده کنید.</Alert>
         <DxGrid Data="@VisitList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"

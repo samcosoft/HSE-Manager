@@ -152,6 +152,12 @@ namespace Samco_HSE.HSEData
         public XPCollection<Committee> CommitteesChief { get { return GetCollection<Committee>(nameof(CommitteesChief)); } }
         [Association(@"StopCardsReferencesPersonnel")]
         public XPCollection<StopCard> StopCardsReports { get { return GetCollection<StopCard>(nameof(StopCardsReports)); } }
+        [Association(@"PermitReferencesPersonnel")]
+        public XPCollection<Permit> PermitsHold { get { return GetCollection<Permit>(nameof(PermitsHold)); } }
+        [Association(@"PermitReferencesPersonnel1")]
+        public XPCollection<Permit> PermitsResponsible { get { return GetCollection<Permit>(nameof(PermitsResponsible)); } }
+        [Association(@"PermitReferencesPersonnel2")]
+        public XPCollection<Permit> PermitsApprover { get { return GetCollection<Permit>(nameof(PermitsApprover)); } }
         [Association(@"WarningsReferencesPersonnel"), Aggregated]
         public XPCollection<Warning> Warnings { get { return GetCollection<Warning>(nameof(Warnings)); } }
         [Association(@"IncentiveReferencesPersonnel"), Aggregated]

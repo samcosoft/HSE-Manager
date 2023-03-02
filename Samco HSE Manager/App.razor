@@ -1,5 +1,6 @@
 ﻿@using Samco_HSE.HSEData
 @using Samco_HSE_Manager.Pages
+@using DevExpress.Data.Filtering
 @inject IDataLayer DataLayer
 
 <CascadingAuthenticationState>
@@ -57,8 +58,8 @@
     //First startup
     using (var session1 = new Session(DataLayer))
     {
-        var usr = session1.Query<User>();
-        if (!usr.Any())
+        var usr = session1.FindObject<User>(new BinaryOperator("Username", "admin"));
+        if (usr == null)
         {
             var adminUser = new User(session1) { Username = "admin", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("admin"), SiteRole = "Owner", PersonnelName = "مدیر سیستم" };
             adminUser.Save();

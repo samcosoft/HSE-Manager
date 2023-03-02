@@ -1,0 +1,34 @@
+﻿<style>
+    @("." + IconCssClass) {
+        width: 16px;
+        height: 16px;
+        -webkit-mask-image: url(@CurrentOperatorType.IconPath);
+        mask-image: url(@CurrentOperatorType.IconPath);
+        background-color: currentColor;
+    }
+</style>
+
+<div class="filter-type-container" id="@PositionTargetId">
+    <div>
+        @ChildContent
+    </div>
+    @{
+        if (ShowFilterButton)
+        {
+            <DxButton CssClass="filter-type-button"
+                      IconCssClass="@IconCssClass"
+                      Click="() => IsOpen = !IsOpen"></DxButton>
+            <DxDropDown @bind-IsOpen="@IsOpen"
+                        HeaderVisible="false"
+                        FooterVisible="false"
+                        PositionMode="DropDownPositionMode.Bottom"
+                        PositionTarget="@("#" + PositionTargetId)">
+                <BodyTemplate>
+                    <DxListBox Data="OperatorTypes"
+                               @bind-Value="CurrentOperatorType"
+                               TextFieldName="@(nameof(OperatorTypeWrapper.DisplayText))"></DxListBox>
+                </BodyTemplate>
+            </DxDropDown>
+        }
+    }
+</div>

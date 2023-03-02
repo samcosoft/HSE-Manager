@@ -106,8 +106,7 @@ public partial class Drugs
 
     private async Task MedicineEditStart(GridEditStartEventArgs e)
     {
-        //prevent owner editing
-        if (SamcoSoftShared.CurrentUserRole < SamcoSoftShared.SiteRoles.Supervisor) return;
+        if (SamcoSoftShared.CurrentUserRole <= SamcoSoftShared.SiteRoles.Supervisor) return;
         await MessageService.Show(new MessageOption
         {
             Color = Color.Warning,
@@ -167,6 +166,19 @@ public partial class Drugs
 
     private async Task OnDataItemDeleting(GridDataItemDeletingEventArgs e)
     {
+        //prevent owner editing
+        if (SamcoSoftShared.CurrentUserRole > SamcoSoftShared.SiteRoles.Supervisor)
+        {
+            await MessageService.Show(new MessageOption
+            {
+                Color = Color.Warning,
+                Content = "شما اجازه ویرایش دارو و تجهیزات را ندارید.",
+                IsAutoHide = true
+            });
+            e.Cancel = true;
+            return;
+        }
+
         var dataItem =
             await Session1.FindObjectAsync<Medication>(new BinaryOperator("Oid", (e.DataItem as Medication)!.Oid));
         if (dataItem != null)

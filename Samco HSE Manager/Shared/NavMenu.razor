@@ -1,14 +1,4 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <img src="/images/company.svg" alt="logo" height="40">
-        <a class="navbar-brand" href="">@_companyName</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
-
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+﻿<div class="sidebar @StateCssClass">
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
@@ -64,13 +54,18 @@
                 </div>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link main-item" @onclick="()=>_reportSubMenu = !_reportSubMenu">
-                        <span class="fas fa-info" aria-hidden="true"></span> گزارشات
+                        <span class="fas fa-paste" aria-hidden="true"></span> گزارشات
                     </NavLink>
                     @if (_reportSubMenu)
                     {
                         <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="permit">
+                                <span class="fas fa-hand" aria-hidden="true"></span> مجوز کار ایمن
+                            </NavLink>
+                        </div>
+                        <div class="nav-item px-3">
                             <NavLink class="nav-link" href="stopcard">
-                                <span class="fas fa-traffic-light-stop" aria-hidden="true"></span> STOP Cards
+                                <span class="fas fa-hand" aria-hidden="true"></span> STOP Cards
                             </NavLink>
                         </div>
                     }
@@ -122,12 +117,33 @@
             </Authorized>
         </AuthorizeView>
     </nav>
+    @*<DxTreeView AllowSelectNodes="true" CssClass="app-sidebar">
+        <Nodes>
+            <DxTreeViewNode NavigateUrl="./" Text="Overview"></DxTreeViewNode>
+        </Nodes>
+    </DxTreeView>*@
 </div>
+
+@*<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <img src="images/company.svg" alt="logo" height="40">
+        <a class="navbar-brand" href="">@_companyName</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    
+</div>*@
 
 @code {
 
     [Inject]
     private IConfiguration Configuration { get; set; } = null!;
+
+    [Parameter] public string? StateCssClass { get; set; }
 
     private bool _collapseNavMenu = true, _manageSubMenu = true,
     _infoSubMenu = true, _medicSubMenu = true, _reportSubMenu = true;

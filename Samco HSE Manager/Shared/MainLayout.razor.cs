@@ -3,21 +3,49 @@ using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Routing;
 using Samco_HSE.HSEData;
-using Samco_HSE_Manager.Authentication;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Samco_HSE_Manager.Shared
 {
-    public partial class MainLayout
+    public partial class MainLayout: IDisposable
     {
         [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
-        [Inject] private NavigationManager NavMan { get; set; } = null!;
+        [Inject] private NavigationManager NavigationManager { get; set; } = null!;
         [Inject] private IDataLayer DataLayer { get; set; } = null!;
 
         [CascadingParameter]
         [NotNull]
         private BootstrapBlazorRoot? Root { get; set; }
+
+
+        string? NavMenuCssClass { get; set; }
+        bool _isMobileLayout;
+        bool IsMobileLayout
+        {
+            get => _isMobileLayout;
+            set
+            {
+                _isMobileLayout = value;
+                IsSidebarExpanded = !_isMobileLayout;
+            }
+        }
+
+        bool _isSidebarExpanded = true;
+        bool IsSidebarExpanded
+        {
+            get => _isSidebarExpanded;
+            set
+            {
+                if (_isSidebarExpanded != value)
+                {
+                    NavMenuCssClass = value ? "expand" : "collapse";
+                    _isSidebarExpanded = value;
+                }
+            }
+        }
+
 
         protected override async Task OnInitializedAsync()
         {
@@ -27,13 +55,18 @@ namespace Samco_HSE_Manager.Shared
             {
                 var authStat = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                 if (authStat.User.Identity == null) return;
-                SamcoSoftShared.CurrentUser = await session1.FindObjectAsync<User>(new BinaryOperator("Username",
-                   authStat.User.Identity!.Name));
-                if (SamcoSoftShared.CurrentUser != null)
+
+                var loggedUser = await session1.FindObjectAsync<User>(new BinaryOperator("Username",
+                    authStat.User.Identity?.Name));
+                if (loggedUser != null)
                 {
-                    SamcoSoftShared.CurrentUserRole =
-                        Enum.Parse<SamcoSoftShared.SiteRoles>(SamcoSoftShared.CurrentUser.SiteRole);
-                    SamcoSoftShared.CurrentUserId = SamcoSoftShared.CurrentUser.Oid;
+                    SamcoSoftShared.CurrentUser = loggedUser;
+                    SamcoSoftShared.CurrentUserId = loggedUser.Oid;
+                    SamcoSoftShared.CurrentUserRole = Enum.Parse<SamcoSoftShared.SiteRoles>(SamcoSoftShared.CurrentUser.SiteRole);
+                }
+                else
+                {
+                    return;
                 }
             }
             catch (Exception)
@@ -43,17 +76,20 @@ namespace Samco_HSE_Manager.Shared
 
             var toastContainer = Root.ToastContainer;
             toastContainer.SetPlacement(Placement.MiddleCenter);
+            NavigationManager.LocationChanged += OnLocationChanged;
+        }
+        async void OnLocationChanged(object? sender, LocationChangedEventArgs args)
+        {
+            if (IsMobileLayout)
+            {
+                IsSidebarExpanded = false;
+                await InvokeAsync(StateHasChanged);
+            }
         }
 
-        private async void LogOut_Click()
+        public void Dispose()
         {
-            await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsLoggedOut();
-            NavMan.NavigateTo("");
-        }
-
-        private void LogIn_Click()
-        {
-            NavMan.NavigateTo("/login");
+            NavigationManager.LocationChanged -= OnLocationChanged;
         }
     }
 }

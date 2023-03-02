@@ -12,6 +12,7 @@ public partial class StopCards : IDisposable
 {
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
     [Inject]
     [NotNull]
@@ -25,11 +26,11 @@ public partial class StopCards : IDisposable
 
     private readonly IEnumerable<string> _stopRisk = new List<string>
     {
-        "ایمن", "کم","متوسط","زیاد","خیلی زیاد"
+        "ایمن","کم","متوسط","زیاد","خیلی زیاد"
     };
     private readonly IEnumerable<string> _stopProb = new List<string>
     {
-       "خیلی کم",  "کم","متوسط","زیاد","خیلی زیاد"
+       "خیلی کم","کم","متوسط","زیاد","خیلی زیاد"
     };
     private readonly IEnumerable<string> _status = new List<string>
     {
@@ -107,12 +108,39 @@ public partial class StopCards : IDisposable
         };
         itm.Value = result;
     }
+
     #region StopGrid
+
+    private List<string>? _photoList;
+    private bool _photoShowVisible;
     private void StopEditModel(GridCustomizeEditModelEventArgs e)
     {
         var dataItem = (StopCard?)e.DataItem ?? new StopCard(Session1);
         if (dataItem.WorkID != null) _selRig = dataItem.WorkID.RigNo;
+        //Get related photos
+        _photoList = null;
+        var path = Path.Combine(HostEnvironment.WebRootPath, "upload", "STOPCards", dataItem.Oid.ToString());
+        if (Directory.Exists(path))
+            _photoList = Directory.GetFiles(path).Select(x => Path.Combine(NavigationManager.BaseUri, "upload", "STOPCards", dataItem.Oid.ToString(), x.Split("\\").Last())).ToList();
         e.EditModel = dataItem;
+    }
+
+    private void ShowImages(int oid)
+    {
+        _photoList = null;
+        //Get related photos
+        var path = Path.Combine(HostEnvironment.WebRootPath, "upload", "STOPCards", oid.ToString());
+        if (Directory.Exists(path))
+            _photoList = Directory.GetFiles(path).Select(x => Path.Combine(NavigationManager.BaseUri, "upload", "STOPCards", oid.ToString(), x.Split("\\").Last())).ToList();
+        if (_photoList != null && _photoList.Any())
+        {
+            _photoShowVisible = true;
+        }
+        else
+        {
+            ToastService.Warning("نمایش تصویر", "تصویری وجود ندارد.");
+        }
+            
     }
 
     private async Task OnEditModelSaving(GridEditModelSavingEventArgs e)

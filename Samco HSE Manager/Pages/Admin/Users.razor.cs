@@ -128,7 +128,7 @@ namespace Samco_HSE_Manager.Pages.Admin
 
             //Check user not existed before
             var selPersonnel =
-                Session1.FindObject<Personnel>(new BinaryOperator(nameof(Personnel.NationalID), editModel.NationalID));
+                Session1.FindObject<Samco_HSE.HSEData.Personnel>(new BinaryOperator(nameof(Samco_HSE.HSEData.Personnel.NationalID), editModel.NationalID));
             if (e.IsNew)
             {
                 if (selPersonnel != null)
@@ -341,12 +341,12 @@ namespace Samco_HSE_Manager.Pages.Admin
         #region UpgradePersonnel
 
         private DxPopup? UpgradeModal { get; set; }
-        private IEnumerable<Personnel> PersonnelList { get; set; } = null!;
-        private Personnel? _selPersonnel;
+        private IEnumerable<Samco_HSE.HSEData.Personnel> PersonnelList { get; set; } = null!;
+        private Samco_HSE.HSEData.Personnel? _selPersonnel;
         private string? _personnelUsername, _personnelRole;
         private async Task OnUpgradeBtnClick()
         {
-            PersonnelList = Session1.Query<Personnel>().AsEnumerable().Where(x => x.GetType() != typeof(User));
+            PersonnelList = Session1.Query<Samco_HSE.HSEData.Personnel>().AsEnumerable().Where(x => x.GetType() != typeof(User));
             _selPersonnel = null;
             _personnelUsername = string.Empty;
             _personnelRole = string.Empty;

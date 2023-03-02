@@ -1,12 +1,13 @@
 ﻿@page "/"
+@using Samco_HSE.HSEData
 @inject IConfiguration Configuration
-
+@inject NavigationManager NavigationManager
 <PageTitle>Samco HSE Management System - @Configuration["CompanyInfo:Name"]</PageTitle>
 
-<div class="container-fluid vh-100">
+<div class="container-fluid">
     <AuthorizeView>
         <Authorized>
-            <div class="card opacity-85 animate__animated animate__fadeInUp">
+            <div class="card opacity-85 animate__animated animate__fadeIn animate__slow mb-3">
                 <div class="card-body">
                     <h6 style="color: black">@_loggedUser?.PersonnelName عزیز سلام! به پنل مدیریت HSE خوش آمدید!</h6>
                     <hr class="my-3">
@@ -16,6 +17,29 @@
                     </Alert>
                 </div>
             </div>
+            <div class="animate__animated animate__fadeInUp">
+                <Card>
+                    <HeaderTemplate>
+                        <div class="me-2 w-100">
+                            <Row ItemsPerRow="ItemsPerRow.Three">
+                                <h2 class="mt-2">آمار سیستم</h2>
+                                <Row ColSpan="2" ItemsPerRow="ItemsPerRow.Three">
+                                    <label>محل:</label>
+                                    <DxTagBox Data="@_locationList"
+                                              @bind-Values="@_selLocation" ClearButtonDisplayMode="DataEditorClearButtonDisplayMode.Auto"
+                                              TextFieldName="@nameof(Rig.Name)" TagsChanged="LoadStatistics">
+                                    </DxTagBox>
+                                    <label>از تاریخ:</label>
+                                    <DxDateEdit @bind-Date="@_fromDate" MinDate="@(new DateTime(1900,01,01))" />
+                                    <label>تا تاریخ:</label>
+                                    <DxDateEdit @bind-Date="@_toDate" MinDate="@(new DateTime(1900,01,01))" />
+                                </Row>
+                            </Row>
+                        </div>
+                    </HeaderTemplate>
+                </Card>
+            </div>
+
         </Authorized>
         <NotAuthorized>
             <div class="card opacity-85 animate__animated animate__zoomInUp">
@@ -23,6 +47,10 @@
                     <h6 style="color: black">همکار عزیز سلام! به پنل مدیریت HSE خوش آمدید!</h6>
                     <hr class="my-3">
                     <p>لطفاً وارد سیستم شوید.</p>
+                    @*<Row ItemsPerRow="ItemsPerRow.Six">
+                        <Button Color="Color.Primary" OnClick="MemberLogin">ورود همکاران</Button>
+                        <Button Color="Color.Secondary" OnClick="PersonnelLogin">ورود کارکنان</Button>
+                    </Row>*@
                 </div>
             </div>
         </NotAuthorized>

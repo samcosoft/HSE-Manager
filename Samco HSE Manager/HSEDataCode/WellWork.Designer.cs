@@ -68,6 +68,8 @@ namespace Samco_HSE.HSEData
         public XPCollection<Report> Reports { get { return GetCollection<Report>(nameof(Reports)); } }
         [Association(@"TrainingReferencesWellWork"), Aggregated]
         public XPCollection<Training> Trainings { get { return GetCollection<Training>(nameof(Trainings)); } }
+        [Association(@"PermitReferencesWellWork"), Aggregated]
+        public XPCollection<Permit> Permits { get { return GetCollection<Permit>(nameof(Permits)); } }
     }
 
 }

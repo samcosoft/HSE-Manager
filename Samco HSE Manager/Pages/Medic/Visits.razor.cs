@@ -20,7 +20,7 @@ public partial class Visits
     private Session Session1 { get; set; } = null!;
 
     private IEnumerable<MedicalVisit>? VisitList { get; set; }
-    private IEnumerable<Personnel>? PersonnelList { get; set; }
+    private IEnumerable<Samco_HSE.HSEData.Personnel>? PersonnelList { get; set; }
 
     private IEnumerable<string>? _category;
 
@@ -41,13 +41,13 @@ public partial class Visits
                 await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
 
             VisitList = Session1.Query<MedicalVisit>().Where(x => x.DoctorName.Oid == loggedUser.Oid || loggedUser.Rigs.Contains(x.Patient.ActiveRig));
-            PersonnelList = await Session1.Query<Personnel>().Where(x => loggedUser.Rigs.Contains(x.ActiveRig)).ToListAsync();
+            PersonnelList = await Session1.Query<Samco_HSE.HSEData.Personnel>().Where(x => loggedUser.Rigs.Contains(x.ActiveRig)).ToListAsync();
         }
         else
         {
             //Owner
             VisitList = Session1.Query<MedicalVisit>();
-            PersonnelList = await Session1.Query<Personnel>().ToListAsync();
+            PersonnelList = await Session1.Query<Samco_HSE.HSEData.Personnel>().ToListAsync();
         }
     }
     private async Task VisitEditStart(GridEditStartEventArgs e)

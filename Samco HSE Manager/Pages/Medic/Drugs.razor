@@ -25,12 +25,31 @@
                 <DxGridCommandColumn/>
                 <DxGridDataColumn FieldName="@nameof(Medication.Name)" Caption="نام دارو / تجهیز" Width="15%"/>
                 <DxGridDataColumn FieldName="@nameof(Medication.Dose)" Caption="دوز" MinWidth="100"/>
-                <DxGridDataColumn FieldName="@nameof(Medication.DrugForm)" Caption="فرم دارویی" MinWidth="100"/>
-                <DxGridDataColumn FieldName="@nameof(Medication.Category)" Caption="دسته بندی" MinWidth="100"/>
+                <DxGridDataColumn FieldName="@nameof(Medication.DrugForm)" Caption="فرم دارویی" MinWidth="100">
+                    <FilterRowCellTemplate>
+                        <TagBoxFilterRow TData="string" FilterContext="context" DataSource="_drugFormList" />
+                    </FilterRowCellTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="@nameof(Medication.Category)" Caption="دسته بندی" MinWidth="100">
+                    <FilterRowCellTemplate>
+                        <OperatorType FilterContext="@context">
+                            <DxComboBox Data="_category"
+                                        Value="(string?)context.FilterRowValue" AllowUserInput="true"
+                                        ValueChanged="(string? v) => context.FilterRowValue = v" />
+                        </OperatorType>
+                    </FilterRowCellTemplate>
+                </DxGridDataColumn>
                 <DxGridDataColumn Caption="قابل درخواست" FieldName="@nameof(Medication.AvailForOrder)" MinWidth="70">
                     <CellDisplayTemplate>
                         <DxCheckBox CssClass="d-inline-block" Checked="@((bool)context.Value)" Enabled="false"/>
                     </CellDisplayTemplate>
+                    <FilterRowCellTemplate>
+                        <OperatorType FilterContext="@context">
+                            <DxComboBox Data="SamcoSoftShared.ComboboxBoolean" TextFieldName="Key" ValueFieldName="Value"
+                                        Value="(bool?)context.FilterRowValue" AllowUserInput="true"
+                                        ValueChanged="(bool? v) => context.FilterRowValue = v" />
+                        </OperatorType>
+                    </FilterRowCellTemplate>
                 </DxGridDataColumn>
                 <DxGridDataColumn FieldName="@nameof(Medication.MinCount)" Caption="حداقل تعداد"/>
                 <DxGridDataColumn FieldName="@nameof(Medication.Discription)" Caption="توضیحات" MinWidth="100"/>
@@ -45,7 +64,7 @@
                         <DxTextBox @bind-Text="@drug.Name" NullText="الزامی" InputCssClass="ltr" />
                     </DxFormLayoutItem>
                     <DxFormLayoutItem Caption="دوز / اندازه:">
-                        <DxTextBox @bind-Text="@drug.Dose" NullText="الزامی" InputCssClass="ltr" />
+                        <DxTextBox @bind-Text="@drug.Dose" NullText="الزامی - مثال: 100mg یا 5% ..." InputCssClass="ltr" />
                     </DxFormLayoutItem>
                     <DxFormLayoutItem Caption="فرم دارویی:">
                         <DxComboBox Data="@_drugFormList" @bind-Value="@drug.DrugForm" NullText="الزامی" FilteringMode="DataGridFilteringMode.Contains" />

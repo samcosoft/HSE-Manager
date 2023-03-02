@@ -2,7 +2,6 @@
 using System.Text.RegularExpressions;
 using DevExpress.Blazor;
 using DevExpress.Export;
-using DevExpress.Export.Xl;
 using DevExpress.Printing.ExportHelpers;
 using DevExpress.Xpo.Metadata;
 using Newtonsoft.Json.Linq;
@@ -33,40 +32,6 @@ namespace Samco_HSE_Manager
             Medium = 3,
             Strong = 4,
             VeryStrong = 5
-        }
-
-        public enum OrderModes
-        {
-            User,
-            Photo,
-            Online
-        }
-
-        public enum OrderStatus
-        {
-            Registered,
-            Approved,
-            Paid,
-            WaitForSampler,
-            InProgressed,
-            Completed,
-            Cancelled
-        }
-
-        public static string GetStatusText(string EnglishStatus)
-        {
-            var Stat = Enum.Parse<OrderStatus>(EnglishStatus);
-            return Stat switch
-            {
-                OrderStatus.Registered => "در انتظار پذیرش...",
-                OrderStatus.Approved => "در انتظار پرداخت...",
-                OrderStatus.Paid => "در انتظار نمونه گیری...",
-                OrderStatus.WaitForSampler => "در حال نمونه گیری...",
-                OrderStatus.InProgressed => "در حال انجام...",
-                OrderStatus.Completed => "کامل شده",
-                OrderStatus.Cancelled => "لغو شده",
-                _ => null
-            };
         }
 
         public static PasswordScore PasswordStrengthChecker(string password)
@@ -152,8 +117,15 @@ namespace Samco_HSE_Manager
             Officer,
             Medic,
             Teacher,
+            Personnel,
             Disabled
         }
+
+        public static Dictionary<string, bool> ComboboxBoolean = new()
+        {
+            { "بله", true },
+            { "خیر", false }
+        };
 
         public static T PickRandom<T>(this IEnumerable<T> source)
         {

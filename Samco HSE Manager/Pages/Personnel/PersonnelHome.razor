@@ -1,0 +1,98 @@
+﻿@page "/personnelHome"
+@attribute [Authorize(Roles = "Owner,Personnel")]
+@inject NavigationManager NavigationManager
+<PageTitle>گزارش اعمال / شرایط ایمن و نا ایمن</PageTitle>
+<Card>
+    <HeaderTemplate>
+        <DxMenu Title="گزارش اعمال / شرایط ایمن و نا ایمن" ItemsPosition="ItemPosition.Start" CssClass="card-header">
+            <Items>
+                @*<DxMenuItem Text="ثبت مورد جدید" IconCssClass="fas fa-plus" @onclick="OnNewBtnClick" />*@
+                @*<DxMenuItem Text="ویرایش" IconCssClass="fas fa-pencil-alt" @onclick="OnEditBtnClick" />*@
+                <DxMenuItem>
+                    <Template>
+                        @*<DxButton RenderStyle="ButtonRenderStyle.Primary" Text="ثبت مورد جدید"
+                                  IconCssClass="fas fa-plus" Click="OnNewBtnClick" />*@
+                        <Button Color="Color.Primary" Text="جدید" Icon="fas fa-plus" OnClick="OnNewBtnClick"></Button>
+                    </Template>
+                </DxMenuItem>
+                <DxMenuItem CssClass="mx-3">
+                    <Template>
+                        <Button Color="Color.Warning" Text="ویرایش" Icon="fas fa-pencil-alt" OnClick="OnEditBtnClick"></Button>
+                    </Template>
+                </DxMenuItem>
+                <DxMenuItem>
+                    <Template>
+                        <PopConfirmButton Placement="Placement.Bottom" Color="Color.Danger" Icon="fas fa-trash-alt"
+                                          ConfirmIcon="fa-solid fa-triangle-exclamation text-danger"
+                                          ConfirmButtonColor="Color.Danger" Text="حذف"
+                                          Content="آیا از حذف کارت مطمئنید؟" OnConfirm="OnDelBtnClick" />
+                    </Template>
+                </DxMenuItem>
+            </Items>
+        </DxMenu>
+    </HeaderTemplate>
+    <BodyTemplate>
+        <Row ItemsPerRow="ItemsPerRow.Three">
+
+        </Row>
+        <br />
+        <DxGrid @ref="StopGrid" Data="@StopsList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"
+                UnboundColumnData="StopGridUnbound"
+                CustomizeElement="StopGrid_CustomizeElement"
+                ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true"
+                SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="true"
+                ColumnResizeMode="GridColumnResizeMode.ColumnsContainer"
+                SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center" ValidationEnabled="false">
+            <Columns>
+                <DxGridDataColumn FieldName="ReportDate" Caption="تاریخ گزارش" SortIndex="0" SortOrder="GridColumnSortOrder.Descending" MinWidth="100" />
+                <DxGridDataColumn FieldName="Location" Caption="محل مشاهده" MinWidth="200" />
+                <DxGridDataColumn FieldName="Observation" Caption="مشاهدات" MinWidth="400" />
+                <DxGridDataColumn FieldName="Responsible" Caption="مسئول پیگیری" MinWidth="100" />
+                <DxGridDataColumn FieldName="Risk" Caption="ریسک" MinWidth="70" UnboundType="GridUnboundColumnType.String" />
+                <DxGridDataColumn FieldName="Actions" Caption="اقدامات اصلاحی" MinWidth="400" />
+                <DxGridDataColumn FieldName="Status" Caption="وضعیت" MinWidth="70" />
+                <DxGridDataColumn FieldName="Comments" Caption="توضیحات" MinWidth="300" />
+                <DxGridDataColumn Caption="تأیید شده" FieldName="IsApproved" MinWidth="70">
+                    <CellDisplayTemplate>
+                        <DxCheckBox CssClass="d-inline-block" Checked="@((bool)context.Value)" Enabled="false" />
+                    </CellDisplayTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="Score" Caption="امتیاز" MinWidth="150">
+                    <CellDisplayTemplate>
+                        <Rate Value="@((int)context.Value)" IsDisable="true" Max="5" class="d-inline-block" />
+                    </CellDisplayTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="Agent.PersonnelName" Caption="کارشناس ایمنی" MinWidth="100" />
+            </Columns>
+        </DxGrid>
+    </BodyTemplate>
+</Card>
+
+<DxPopup @ref="@EditPopup" ShowFooter="true" HeaderText="@_cardEditorHeader" CloseOnOutsideClick="false">
+    <BodyTemplate Context="_">
+        <DxFormLayout>
+            <DxFormLayoutItem Caption="مشاهدات:">
+                <DxMemo @bind-Text="@SelectedCard.Observation" NullText="الزامی" Rows="8" />
+            </DxFormLayoutItem>
+            <DxFormLayoutItem Caption="تصاویر:">
+                <p class="alert alert-info my-1">فقط فایل‌های با پسوندهای .jpg و .png قابل انتخاب هستند.</p>
+                <div id="overviewDemoDropZone" class="card custom-drop-zone p-5 bg-light rounded-3 text-center">
+                    <i class="fas fa-file-arrow-up mb-3 mx-auto" role="img" style="font-size: 48px;"></i>
+                    <span>فایل را اینجا کشیده و رها کنید.</span>
+                </div>
+                <DxUpload Name="stopFile" UploadUrl="@(NavigationManager.BaseUri + "api/Upload/UploadSTOPImage/")"
+                          AllowedFileExtensions="@(new List<string> { ".jpg", ".jpeg", ".png" })"
+                          MaxFileSize="5242880" CssClass="ms-auto me-auto" AllowMultiFileUpload="true"
+                          ExternalDropZoneCssSelector="#overviewDemoDropZone"
+                          ExternalDropZoneDragOverCssClass="custom-drag-over border-light text-success"
+                          FileUploadStart="CardUploadStart" SelectButtonText="انتخاب فایل">
+                </DxUpload>
+            </DxFormLayoutItem>
+        </DxFormLayout>
+
+    </BodyTemplate>
+    <FooterContentTemplate>
+        <DxButton CssClass="popup-button" RenderStyle="ButtonRenderStyle.Success" Text="ثبت اطلاعات" Click="@SaveCardInfoClick" />
+        <DxButton CssClass="popup-button me-2" RenderStyle="ButtonRenderStyle.Danger" Text="انصراف" Click="@(() => EditPopup.CloseAsync())" />
+    </FooterContentTemplate>
+</DxPopup>

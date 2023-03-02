@@ -44,15 +44,23 @@
 </style>
 <div class="row">
     <div class="col ps-0">
-        <div style="display: @(_shamsiVisible? "none":"block")">
-            @*<DxDateEdit @bind-Date="@_date" MinDate="@DateTime.Parse("1900/01/01")" NullText="@NullText" />*@
-            <DateTimePicker @bind-Value="@Date" DisplayText="@DisplayText" MinValue="@DateTime.Parse("1900/01/01")" />
+        @{
+            if (_shamsiVisible)
+            {
+                <label class="d-inline">@DisplayText</label>
+                <DntInputPersianDate @bind-Value="@Date" CalendarDayButtonsCss="btn DNDDayBtn" CalendarNextPreviousButtonsCss="btn btn-secondary DNDDayBtn"
+                             BeginningOfCentury="1400" CalendarFromYear="1300" UsePersianNumbers="true"
+                             CalendarUseShortPersianDayNamesOfWeek="true" CalendarShowYearMonthDropdowns="true" CalendarShowTodayButton="true" />
+            }
+            else
+            {
+                <DateTimePicker @bind-Value="@Date" DisplayText="@DisplayText" MinValue="@DateTime.Parse("1900/01/01")" />
+            }
+        }
+        @* <div style="display: @(_shamsiVisible ? "none" : "block")">
         </div>
-        <div style="display: @(_shamsiVisible? "block":"none")">
-            <DntInputPersianDate @bind-Value="@Date" CalendarDayButtonsCss="btn DNDDayBtn" CalendarNextPreviousButtonsCss="btn btn-secondary DNDDayBtn"
-                                 BeginningOfCentury="1400" CalendarFromYear="1300" CalendarToYear="1500" UsePersianNumbers="true"
-                                 CalendarUseShortPersianDayNamesOfWeek="true" CalendarShowYearMonthDropdowns="true" CalendarShowTodayButton="true" />
-        </div>
+        <div style="display: @(_shamsiVisible ? "block" : "none")">
+        </div>*@
     </div>
     <div class="col-2 ps-0 pe-1">
         <div style="display: @(_shamsiVisible? "none":"block")">
@@ -100,4 +108,4 @@
     {
         _shamsiVisible = DefaultCalendar == CalendarType.Shamsi;
     }
-    }
+}

@@ -2,8 +2,6 @@
 using BootstrapBlazor.Components;
 using DevExpress.Blazor;
 using DevExpress.Data.Filtering;
-using DevExpress.Export;
-using DevExpress.Printing.ExportHelpers;
 using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using Samco_HSE.HSEData;
@@ -18,10 +16,6 @@ public partial class Personnel : IDisposable
     [Inject]
     [NotNull]
     private ToastService? ToastService { get; set; }
-
-    [Inject]
-    [NotNull]
-    private MessageService? MessageService { get; set; }
 
     private Session Session1 { get; set; } = null!;
     private IEnumerable<Samco_HSE.HSEData.Personnel>? Personnels { get; set; }

@@ -7,6 +7,7 @@
 @using Samco_HSE_Manager.Authentication
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IConfiguration Configuration
 @inject NavigationManager NavigationManager
 @inject ITokenManager TokenManager
 @inject IDataLayer DataLayer
@@ -20,30 +21,71 @@
                 <img src="images/logo.svg" alt="Samco HSE" style="width: 50%" />
             </div>
         </div>
-        <EditForm Model="_loginData" OnValidSubmit="@ValidateUser">
-            <div>
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-            </div>
-            <div class="container p-5">
-                <div class="row">
-                    <input class="form-control col-12" @bind="_loginData.Username" placeholder="نام کاربری" />
-                </div>
-                <br />
-                <div class="row">
-                    <input type="password" class="form-control col-12" @bind="_loginData.Password" placeholder="کلمه عبور" />
-                </div>
-                <br />
-                <div class="row">
-                    <button type="submit" class="form-control col-6 btn btn-primary">ورود به سیستم</button>
-                </div>
-                <br />
-                <div class="col-12 row animate__animated animate__headShake" style="text-align: center; font-weight: bold">
-                    <span class="col-12">@LoginMessage</span>
-                </div>
-            </div>
+        <DxTabs>
+            <DxTabPage Text="ورود کارمندان">
+                <EditForm Model="_loginData" OnValidSubmit="@ValidateUser">
+                    <div>
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                    </div>
+                    <div class="container p-5">
+                        <div class="row">
+                            <label>نام کاربری:</label>
+                            <input class="form-control col-12" @bind="_loginData.Username" placeholder="نام کاربری" />
+                        </div>
+                        <br />
+                        <div class="row">
+                            <label>کلمه عبور:</label>
+                            <input type="password" class="form-control col-12" @bind="_loginData.Password" placeholder="کلمه عبور" />
+                        </div>
+                        <br />
+                        <div class="row">
+                            <button type="submit" class="form-control col-6 btn btn-primary">ورود به سیستم</button>
+                        </div>
+                        <br />
+                        <div class="col-12 row animate__animated animate__headShake" style="text-align: center; font-weight: bold">
+                            <span class="col-12">@LoginMessage</span>
+                        </div>
+                    </div>
+                    @{
+                        if (Configuration["IsDemo"] == "true")
+                        {
+                            <Alert Color="Color.Info" ShowShadow="true" Icon="fas fa-info">
+                                <p>در حالت آزمایشی نام کاربری و کلمه عبور مدیر سیستم admin است.</p>
+                            </Alert>
+                        }
+                    }
+                </EditForm>
+            </DxTabPage>
+            <DxTabPage Text="ورود کارکنان">
+                <EditForm Model="_loginData" OnValidSubmit="@ValidatePersonnel">
+                    <div>
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                    </div>
+                    <div class="container p-5">
+                        <div class="row">
+                            <label>کد ملی:</label>
+                            <input class="form-control col-12" @bind="_loginData.Username" placeholder="کد ملی" />
+                        </div>
+                        <br />
+                        <div class="row">
+                            <label>شماره پرسنلی:</label>
+                            <input type="password" class="form-control col-12" @bind="_loginData.Password" placeholder="شماره پرسنلی" />
+                        </div>
+                        <br />
+                        <div class="row">
+                            <button type="submit" class="form-control col-6 btn btn-primary">ورود به سیستم</button>
+                        </div>
+                        <br />
+                        <div class="col-12 row animate__animated animate__headShake" style="text-align: center; font-weight: bold">
+                            <span class="col-12">@LoginMessage</span>
+                        </div>
+                    </div>
+                </EditForm>
+            </DxTabPage>
+        </DxTabs>
 
-        </EditForm>
     </div>
 </div>
 
@@ -87,7 +129,7 @@
             }
             catch (Exception)
             {
-                //_loggedUser = new User(session1);
+                return;
             }
 
             NavigationManager.NavigateTo("/");
@@ -96,6 +138,34 @@
         {
             LoginMessage = errorMessage;
         }
+    }
+    private async void ValidatePersonnel()
+    {
+        using var session1 = new Session(DataLayer);
+        var selUser = await session1.FindObjectAsync<Samco_HSE.HSEData.Personnel>(new BinaryOperator(nameof(Samco_HSE.HSEData.Personnel.NationalID), _loginData.Username));
+        try
+        {
+            if (selUser != null && _loginData.Password == selUser.PersonnelNum)
+            {
+                //Login user
+                TokenManager.Authenticate(selUser, DataLayer, out var token, out _, out _);
+                await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsAuthenticated(token);
+                SamcoSoftShared.CurrentUserId = selUser.Oid;
+                SamcoSoftShared.CurrentUserRole = SamcoSoftShared.SiteRoles.Personnel;
+            }
+            else
+            {
+                LoginMessage = "نام کاربری و یا کلمه عبور اشتباه است.";
+                return;
+            }
+        }
+        catch (Exception)
+        {
+            //_loggedUser = new User(session1);
+            return;
+        }
+
+        NavigationManager.NavigateTo("/personnelHome");
     }
 
     public class LoginModel

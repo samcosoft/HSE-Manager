@@ -1,0 +1,162 @@
+﻿@page "/permit"
+@using Samco_HSE.HSEData
+@attribute [Authorize(Roles = "Owner,Admin,Supervisor,Officer")]
+
+<PageTitle>مجوز کار ایمن</PageTitle>
+
+<Card>
+    <HeaderTemplate>
+        <DxMenu Title="مجوز کار ایمن" ItemsPosition="ItemPosition.Start" CssClass="card-header">
+            <Items>
+                <DxMenuItem Text="دریافت اطلاعات" IconCssClass="fas fa-paste" @onclick="OnPrintBtnClick" />
+            </Items>
+        </DxMenu>
+    </HeaderTemplate>
+    <BodyTemplate>
+        <DxButton Text="تنظیم ستون‌ها"
+                  RenderStyle="ButtonRenderStyle.Secondary"
+                  CssClass="column-chooser-button"
+                  Click="ColumnChooserOnClick" />
+        <p />
+        <DxGrid @ref="PermitGrid" Data="@PermitsList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"
+                EditModelSaving="OnEditModelSaving" UnboundColumnData="PermitGridUnbound"
+                DataItemDeleting="OnDataItemDeleting" CustomizeEditModel="PermitEditModel"
+                CustomizeElement="PermitGrid_CustomizeElement"
+                ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true"
+                SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="true"
+                ColumnResizeMode="GridColumnResizeMode.ColumnsContainer"
+                SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center" ValidationEnabled="false">
+            <Columns>
+                <DxGridCommandColumn MinWidth="100" />
+                <DxGridDataColumn FieldName="WorkID.RigNo.Name" Caption="دکل / دفتر" MinWidth="100">
+                    <FilterRowCellTemplate>
+                        <TagBoxFilterRow TData="Rig" FilterContext="context" DataSource="Rigs" TextFieldName="Name" />
+                    </FilterRowCellTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="WorkID.WellNo.Name" Caption="نام چاه" MinWidth="100" />
+                <DxGridDataColumn FieldName="@nameof(Permit.ArchiveNo)" Caption="شماره سریال" MinWidth="100" />
+                <DxGridDataColumn FieldName="@nameof(Permit.StartTime)" Caption="تاریخ شروع" SortIndex="0" SortOrder="GridColumnSortOrder.Descending"
+                                  MinWidth="180" DisplayFormat="yyyy/MM/dd">
+                    <FilterRowCellTemplate>
+                        <OperatorType FilterContext="@context" ShowFilterButton="true">
+                            <DxDateEdit Date="(DateTime?)context.FilterRowValue" Format="d"
+                                        DateChanged="(DateTime? v) => context.FilterRowValue = v" />
+                        </OperatorType>
+                    </FilterRowCellTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="@nameof(Permit.StartTime)" Caption="ساعت شروع" MinWidth="180"
+                                  DisplayFormat="hh:mm tt">
+                    <FilterRowCellTemplate>
+                        <OperatorType FilterContext="@context" ShowFilterButton="true">
+                            <DxTimeEdit Time="(DateTime?)context.FilterRowValue"
+                                        TimeChanged="(DateTime? v) => context.FilterRowValue = v" />
+                        </OperatorType>
+                    </FilterRowCellTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="@nameof(Permit.EndTime)" Caption="تاریخ پایان" MinWidth="180"DisplayFormat="yyyy/MM/dd">
+                    <FilterRowCellTemplate>
+                        <OperatorType FilterContext="@context" ShowFilterButton="true">
+                            <DxDateEdit Date="(DateTime?)context.FilterRowValue"
+                                        DateChanged="(DateTime? v) => context.FilterRowValue = v" />
+                        </OperatorType>
+                    </FilterRowCellTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="@nameof(Permit.EndTime)" Caption="ساعت پایان" MinWidth="180"
+                                  DisplayFormat="hh:mm tt">
+                    <FilterRowCellTemplate>
+                        <OperatorType FilterContext="@context" ShowFilterButton="true">
+                            <DxTimeEdit Time="(DateTime?)context.FilterRowValue"
+                                        TimeChanged="(DateTime? v) => context.FilterRowValue = v" />
+                        </OperatorType>
+                    </FilterRowCellTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="@nameof(Permit.PermitType)" Caption="نوع کار" MinWidth="100">
+                    <FilterRowCellTemplate>
+                        <TagBoxFilterRow TData="string" FilterContext="context" DataSource="_permitType"/>
+                    </FilterRowCellTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="@nameof(Permit.Location)" Caption="محل" MinWidth="400">
+                    <FilterRowCellTemplate>
+                        <TagBoxFilterRow TData="string" FilterContext="context" DataSource="_location" />
+                    </FilterRowCellTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="@nameof(Permit.Description)" Caption="شرح کار" MinWidth="400" />
+                <DxGridDataColumn FieldName="Holder.PersonnelName" Caption="دریافت کننده" MinWidth="100" />
+                <DxGridDataColumn FieldName="Responsible.PersonnelName" Caption="مسئول کار" MinWidth="100" />
+                <DxGridDataColumn FieldName="Approver.PersonnelName" Caption="تأیید کننده" MinWidth="100" />
+                <DxGridDataColumn Caption="بسته شده" FieldName="IsClosed" UnboundType="GridUnboundColumnType.Boolean" MinWidth="100">
+                    <CellDisplayTemplate>
+                        <DxCheckBox CssClass="d-inline-block" Checked="@((bool)context.Value)" Enabled="false" />
+                    </CellDisplayTemplate>
+                    <FilterRowCellTemplate>
+                        <OperatorType FilterContext="@context">
+                            <DxComboBox Data="SamcoSoftShared.ComboboxBoolean" TextFieldName="Key" ValueFieldName="Value"
+                                        Value="(bool?)context.FilterRowValue" AllowUserInput="true"
+                                        ValueChanged="(bool? v) => context.FilterRowValue = v" />
+                        </OperatorType>
+                    </FilterRowCellTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="Agent.PersonnelName" Caption="کارشناس ایمنی" MinWidth="100" />
+            </Columns>
+            <TotalSummary>
+                <DxGridSummaryItem SummaryType="GridSummaryItemType.Count" FieldName="WorkID.RigNo.Name" />
+            </TotalSummary>
+
+            <EditFormTemplate Context="editFormContext">
+                @{
+                    var permit = (Permit)editFormContext.EditModel;
+                }
+                <DxFormLayout>
+                    <DxFormLayoutItem Caption="دکل / دفتر:">
+                        <DxComboBox Data="@Rigs" @bind-Value="@_selRig" TextFieldName="@nameof(Rig.Name)" NullText="الزامی" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="شماره سریال:">
+                        <DxTextBox @bind-Text="@permit.ArchiveNo" NullText="الزامی"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="تاریخ و ساعت شروع:">
+                        <DxDateEdit @bind-Date="@permit.StartTime" Mask="@DateTimeMask.ShortDateTime"
+                                    NullText="الزامی" MinDate="@(new DateTime(2000,1,1))"
+                                    TimeSectionVisible="true" TimeSectionScrollPickerFormat="tt h m"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="تاریخ و ساعت پایان:">
+                        <DxDateEdit @bind-Date="@permit.EndTime" Mask="@DateTimeMask.ShortDateTime"
+                                    MinDate="@permit.StartTime"
+                                    TimeSectionVisible="true" TimeSectionScrollPickerFormat="tt h m"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="نوع کار:">
+                        <DxComboBox Data="@_permitType" @bind-Value="@permit.PermitType" NullText="الزامی"
+                                    FilteringMode="DataGridFilteringMode.Contains"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="محل:">
+                        <DxComboBox Data="@_location" @bind-Value="@permit.Location" NullText="الزامی"
+                                    FilteringMode="DataGridFilteringMode.Contains" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="شرح کار:">
+                        <DxTextBox @bind-Text="@permit.Description" NullText="الزامی" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="دریافت کننده:">
+                        <DxComboBox Data="@PersonnelList" @bind-Value="@permit.Holder" NullText="الزامی"
+                                    TextFieldName="@nameof(Samco_HSE.HSEData.Personnel.PersonnelName)" FilteringMode="DataGridFilteringMode.Contains">
+                            <DxListEditorColumn FieldName="@nameof(Samco_HSE.HSEData.Personnel.PersonnelName)" Caption="نام و نام خانوادگی" />
+                            <DxListEditorColumn FieldName="@nameof(Samco_HSE.HSEData.Personnel.CurrentRole)" Caption="سمت" />
+                        </DxComboBox>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="مسئول کار:">
+                        <DxComboBox Data="@PersonnelList" @bind-Value="@permit.Responsible" NullText="الزامی"
+                                    TextFieldName="@nameof(Samco_HSE.HSEData.Personnel.PersonnelName)" FilteringMode="DataGridFilteringMode.Contains">
+                            <DxListEditorColumn FieldName="@nameof(Samco_HSE.HSEData.Personnel.PersonnelName)" Caption="نام و نام خانوادگی" />
+                            <DxListEditorColumn FieldName="@nameof(Samco_HSE.HSEData.Personnel.CurrentRole)" Caption="سمت" />
+                        </DxComboBox>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="تأیید کننده:">
+                        <DxComboBox Data="@PersonnelList" @bind-Value="@permit.Approver" NullText="الزامی"
+                                    TextFieldName="@nameof(Samco_HSE.HSEData.Personnel.PersonnelName)" FilteringMode="DataGridFilteringMode.Contains">
+                            <DxListEditorColumn FieldName="@nameof(Samco_HSE.HSEData.Personnel.PersonnelName)" Caption="نام و نام خانوادگی" />
+                            <DxListEditorColumn FieldName="@nameof(Samco_HSE.HSEData.Personnel.CurrentRole)" Caption="سمت" />
+                        </DxComboBox>
+                    </DxFormLayoutItem>
+                </DxFormLayout>
+            </EditFormTemplate>
+        </DxGrid>
+    </BodyTemplate>
+</Card>
