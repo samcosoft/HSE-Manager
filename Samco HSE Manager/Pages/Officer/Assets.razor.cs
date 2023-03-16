@@ -31,8 +31,8 @@ public partial class Assets : IDisposable
         Session1 = new Session(DataLayer);
         if (SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Owner)
         {
-            var loggedUser =
-                Session1.FindObject<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
+            var loggedUser = await 
+                Session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
             Rigs = loggedUser.Rigs;
         }
         else

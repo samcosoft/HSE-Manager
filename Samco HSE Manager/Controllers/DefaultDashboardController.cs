@@ -2,7 +2,7 @@
 using DevExpress.DashboardWeb;
 using Microsoft.AspNetCore.DataProtection;
 
-namespace BlazorDashboardApp
+namespace Samco_HSE_Manager.Controllers
 {
     public class DefaultDashboardController : DashboardController
     {

@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Dashboard>
+  <Title Text="HSE Dashboard" />
+  <DataSources>
+    <SqlDataSource Name="Rig" ComponentName="sqlDataSource1">
+      <Connection Name="MainDatabase" FromAppConfig="true" />
+      <Query Type="SelectQuery" Name="Rig">
+        <Tables>
+          <Table Name="Rig" />
+          <Table Name="WellWork" />
+          <Table Name="StopCard" />
+          <Table Name="Personnel" />
+          <Relation Type="Inner" Parent="WellWork" Nested="Rig">
+            <KeyColumn Parent="RigNo" Nested="OID" />
+          </Relation>
+          <Relation Type="Inner" Parent="StopCard" Nested="WellWork">
+            <KeyColumn Parent="WorkID" Nested="OID" />
+          </Relation>
+          <Relation Type="Inner" Parent="Rig" Nested="Personnel">
+            <KeyColumn Parent="OID" Nested="ActiveRig" />
+          </Relation>
+          <Relation Type="Inner" Parent="StopCard" Nested="Personnel">
+            <KeyColumn Parent="Reporter" Nested="OID" />
+          </Relation>
+        </Tables>
+        <Columns>
+          <Column Table="Rig" Name="Name" />
+          <Column Table="WellWork" Name="WellNo" />
+          <Column Table="StopCard" Name="ReportDate" />
+          <Column Table="StopCard" Name="Location" />
+          <Column Table="StopCard" Name="Category" />
+          <Column Table="StopCard" Name="Observation" />
+          <Column Table="StopCard" Name="Responsible" />
+          <Column Table="StopCard" Name="Agent" />
+          <Column Table="Personnel" Name="PersonnelName" />
+          <Column Table="StopCard" Name="IsApproved" />
+          <Column Table="StopCard" Name="Status" />
+          <Column Table="StopCard" Name="Severity" />
+          <Column Table="StopCard" Name="Probablety" />
+        </Columns>
+      </Query>
+      <ConnectionOptions CloseConnection="true" />
+    </SqlDataSource>
+  </DataSources>
+  <Items>
+    <Pie ComponentName="pieDashboardItem1" Name="دسته بندی" ParentContainer="groupDashboardItem1" DataSource="sqlDataSource1" DataMember="Rig">
+      <DataItems>
+        <Dimension DataMember="Name" DefaultId="DataItem0" />
+        <Measure DataMember="Category" Name="Count" SummaryType="Count" DefaultId="DataItem1" />
+        <Dimension DataMember="Category" Name="Types" DefaultId="DataItem2" />
+      </DataItems>
+      <SeriesDimensions>
+        <SeriesDimension DefaultId="DataItem0" />
+      </SeriesDimensions>
+      <Arguments>
+        <Argument DefaultId="DataItem2" />
+      </Arguments>
+      <Values>
+        <Value DefaultId="DataItem1" />
+      </Values>
+    </Pie>
+    <Chart ComponentName="chartDashboardItem1" Name="تعداد کارت تأیید شده" ParentContainer="groupDashboardItem1" DataSource="sqlDataSource1" DataMember="Rig">
+      <DataItems>
+        <Measure DataMember="IsApproved" SummaryType="Count" DefaultId="DataItem0">
+          <NumericFormat FormatType="Number" Precision="0" Unit="Ones" />
+        </Measure>
+        <Dimension DataMember="Name" DefaultId="DataItem1" />
+        <Dimension DataMember="ReportDate" DateTimeGroupInterval="Month" DefaultId="DataItem2" />
+      </DataItems>
+      <SeriesDimensions>
+        <SeriesDimension DefaultId="DataItem1" />
+      </SeriesDimensions>
+      <Arguments>
+        <Argument DefaultId="DataItem2" />
+      </Arguments>
+      <Panes>
+        <Pane Name="Pane 1">
+          <AxisY>
+            <NumericFormat Precision="0" Unit="Ones" />
+          </AxisY>
+          <Series>
+            <Simple Name="تأیید شده">
+              <Value DefaultId="DataItem0" />
+            </Simple>
+          </Series>
+        </Pane>
+      </Panes>
+    </Chart>
+    <Pie ComponentName="pieDashboardItem2" Name="مسئول پیگیری" ParentContainer="groupDashboardItem1" DataSource="sqlDataSource1" DataMember="Rig">
+      <DataItems>
+        <Measure DataMember="Responsible" SummaryType="Count" DefaultId="DataItem0" />
+        <Dimension DataMember="Responsible" DefaultId="DataItem1" />
+        <Dimension DataMember="Name" DefaultId="DataItem2" />
+      </DataItems>
+      <SeriesDimensions>
+        <SeriesDimension DefaultId="DataItem2" />
+      </SeriesDimensions>
+      <Arguments>
+        <Argument DefaultId="DataItem1" />
+      </Arguments>
+      <Values>
+        <Value DefaultId="DataItem0" />
+      </Values>
+    </Pie>
+    <DateFilter ComponentName="dateFilterDashboardItem1" Name="تنظیم بازه زمانی" ParentContainer="groupDashboardItem1" DataSource="sqlDataSource1" DataMember="Rig">
+      <DataItems>
+        <Dimension DataMember="ReportDate" DateTimeGroupInterval="MonthYear" DefaultId="DataItem0" />
+      </DataItems>
+      <Dimension DefaultId="DataItem0" />
+    </DateFilter>
+  </Items>
+  <Groups>
+    <Group ComponentName="groupDashboardItem1" Name="STOP Cards" />
+  </Groups>
+  <LayoutOptions>
+    <Height Mode="Fixed" Value="1200" />
+  </LayoutOptions>
+  <LayoutTree>
+    <LayoutGroup Orientation="Vertical">
+      <LayoutGroup Orientation="Vertical" DashboardItem="groupDashboardItem1">
+        <LayoutGroup>
+          <LayoutItem DashboardItem="dateFilterDashboardItem1" Weight="0.7159882285923648" />
+          <LayoutItem DashboardItem="pieDashboardItem1" Weight="1.2896615144714498" />
+          <LayoutItem DashboardItem="pieDashboardItem2" Weight="1.0805210566757433" />
+        </LayoutGroup>
+        <LayoutItem DashboardItem="chartDashboardItem1" Weight="0.7688442211055277" />
+      </LayoutGroup>
+    </LayoutGroup>
+  </LayoutTree>
+</Dashboard>

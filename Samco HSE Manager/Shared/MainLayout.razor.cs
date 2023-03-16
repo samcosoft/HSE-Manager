@@ -6,10 +6,11 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Routing;
 using Samco_HSE.HSEData;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
 namespace Samco_HSE_Manager.Shared
 {
-    public partial class MainLayout: IDisposable
+    public partial class MainLayout : IDisposable
     {
         [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
         [Inject] private NavigationManager NavigationManager { get; set; } = null!;
@@ -78,6 +79,13 @@ namespace Samco_HSE_Manager.Shared
             toastContainer.SetPlacement(Placement.MiddleCenter);
             NavigationManager.LocationChanged += OnLocationChanged;
         }
+
+        private string? GetApplicationVersion()
+        {
+            return Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+                  ?.InformationalVersion;
+        }
+
         async void OnLocationChanged(object? sender, LocationChangedEventArgs args)
         {
             if (IsMobileLayout)

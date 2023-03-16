@@ -54,12 +54,16 @@
                 }
                 <DxFormLayout>
                     <DxFormLayoutGroup AnimationType="LayoutAnimationType.Slide" Caption="اطلاعات ورود به سیستم">
-                        <DxFormLayoutItem Caption="نام کاربری:">
+                        <DxFormLayoutItem Caption="نام کاربری:" ColSpanMd="4" ColSpanSm="12">
                             <DxTextBox @bind-Text="@user.Username" NullText="الزامی" CssClass="ltr" />
                         </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="نقش:">
+                        <DxFormLayoutItem Caption="نقش:" ColSpanMd="4" ColSpanSm="12">
                             <DxComboBox Data="_roles" TextFieldName="Value" ValueFieldName="Key" NullText="الزامی"
                                         @bind-Value="@user.SiteRole">
+                            </DxComboBox>
+                        </DxFormLayoutItem>
+                        <DxFormLayoutItem Caption="داشبورد:" ColSpanMd="4" ColSpanSm="12">
+                            <DxComboBox Data="Dashboards" @bind-Value="@user.DashboardId">
                             </DxComboBox>
                         </DxFormLayoutItem>
                     </DxFormLayoutGroup>

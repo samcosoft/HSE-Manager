@@ -1,6 +1,8 @@
 ﻿using Blazored.LocalStorage;
 using DevExpress.Blazor;
 using DevExpress.Blazor.Reporting;
+using DevExpress.DashboardAspNetCore;
+using DevExpress.DashboardWeb;
 using DevExpress.Xpo.DB;
 using DevExpress.XtraReports.Web.Extensions;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -32,18 +34,17 @@ builder.Services.AddCors(options => options.AddPolicy("AllowOrigin", builders =>
 builder.Services.AddBootstrapBlazor();
 builder.Services.AddDevExpressBlazorReporting();
 builder.Services.AddDevExpressBlazor(configure => configure.BootstrapVersion = BootstrapVersion.v5);
-//builder.Services.AddScoped<DashboardConfigurator>((IServiceProvider serviceProvider) => {
-//    DashboardConfigurator configurator = new DashboardConfigurator();
-//    configurator.SetDashboardStorage(new DashboardFileStorage(fileProvider.GetFileInfo("Data/Dashboards").PhysicalPath));
-//    // Create a sample JSON data source
-//    DataSourceInMemoryStorage dataSourceStorage = new DataSourceInMemoryStorage();
-//    DashboardXpoDataSource xpoDataSource = new DashboardXpoDataSource("XPO Data Source");
-//    xpoDataSource.ConnectionStringName = "MainDatabase";
-//    xpoDataSource.SetEntityType(typeof(Category));
-//    dataSourceStorage.RegisterDataSource("xpoDataSource", xpoDataSource.SaveToXml());
-//    configurator.SetDataSourceStorage(dataSourceStorage);
-//    return configurator;
-//});
+builder.Services.AddScoped(_ =>
+{
+    var configurator = new DashboardConfigurator();
+    var fileProvider = builder.Environment.ContentRootFileProvider;
+    configurator.SetDashboardStorage(
+        new DashboardFileStorage(fileProvider.GetFileInfo("Data/Dashboards").PhysicalPath));
+    var dataSourceStorage = new DataSourceInMemoryStorage();
+    configurator.SetDataSourceStorage(dataSourceStorage);
+    configurator.SetConnectionStringsProvider(new DashboardConnectionStringsProvider(builder.Configuration));
+    return configurator;
+});
 
 builder.Services.AddScoped<ReportStorageWebExtension, CustomReportStorageWebExtension>();
 builder.WebHost.UseWebRoot("wwwroot");
@@ -73,7 +74,7 @@ app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 app.UseAuthentication();
 
 app.UseRouting();
-//app.MapDashboardRoute("api/dashboard", "DefaultDashboard");
+app.MapDashboardRoute("api/dashboard", "DefaultDashboard");
 
 app.UseAuthorization();
 //TODO: Change this line on deployment

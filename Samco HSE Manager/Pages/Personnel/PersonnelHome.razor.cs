@@ -50,6 +50,7 @@ namespace Samco_HSE_Manager.Pages.Personnel
                 SamcoSoftShared.CurrentUserId = loggedUser.Oid;
                 SamcoSoftShared.CurrentUserRole = SamcoSoftShared.SiteRoles.Personnel;
                 StopsList = await Session1.Query<StopCard>().Where(x => x.Reporter.Oid == loggedUser.Oid).ToListAsync();
+                StateHasChanged();
             }
             catch (Exception)
             {
@@ -64,7 +65,8 @@ namespace Samco_HSE_Manager.Pages.Personnel
             {
                 e.CssClass = status switch
                 {
-                    "باز" => "danger-item",
+                    "باز" => "warning-item",
+                    "لغو شده" => "danger-item",
                     "بسته" => "safe-item",
                     _ => ""
                 };

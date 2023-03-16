@@ -37,8 +37,8 @@ public partial class Equipments : IDisposable
         EquipmentsList = await Session1.Query<Equipment>().ToListAsync();
         if (SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Owner)
         {
-            var loggedUser =
-                Session1.FindObject<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
+            var loggedUser = await 
+                Session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
             Rigs = loggedUser.Rigs;
         }
         else

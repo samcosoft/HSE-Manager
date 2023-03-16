@@ -316,6 +316,10 @@ blockquote {
     --dxbl-popup-max-width: 75%;
 }
 
+dx-dashboard-ellipsis {
+    font-family: iransansx;
+}
+
 .dxbl-popup.dxbl-popup-adaptivity.dxbl-popup-fixed-width {
     direction: ltr;
 }
@@ -374,6 +378,10 @@ blockquote {
 
 .dxbl-grid-group-row {
     text-align: initial;
+}
+
+.dxbl-grid-filter-row {
+    background-color: deepskyblue !important;
 }
 
 .custom-drop-zone {

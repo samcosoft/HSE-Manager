@@ -17,6 +17,7 @@ namespace Samco_HSE_Manager.Pages
         private IEnumerable<Rig>? _locationList;
         private IEnumerable<Rig>? _selLocation;
         private DateTime _fromDate, _toDate;
+        private string? _dashboardId;
 
         protected override async Task OnInitializedAsync()
         {
@@ -29,28 +30,20 @@ namespace Samco_HSE_Manager.Pages
                 NavigationManager.NavigateTo("/personnelHome");
                 return;
             }
-
-            //try
-            //{
-            //    _loggedUser = await _session1.FindObjectAsync<User>(new BinaryOperator("Username",
-            //        (await AuthenticationStateTask).User.Identity?.Name));
-            //    if (_loggedUser != null)
-            //    {
-            //        SamcoSoftShared.CurrentUser = _loggedUser;
-            //        SamcoSoftShared.CurrentUserId = _loggedUser.Oid;
-            //        SamcoSoftShared.CurrentUserRole = Enum.Parse<SamcoSoftShared.SiteRoles>(SamcoSoftShared.CurrentUser.SiteRole);
-            //    }
-            //    else
-            //    {
-            //        return;
-            //    }
-            //}
-            //catch (Exception)
-            //{
-            //    return;
-            //}
-
-            _locationList = await _session1.Query<Rig>().ToListAsync();
+            if (SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Owner)
+            {
+                _loggedUser = await 
+                    _session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
+                _locationList = _loggedUser.Rigs;
+            _dashboardId = _loggedUser.DashboardId ?? _loggedUser.SiteRole;
+            }
+            else
+            {
+                //Owner
+                _loggedUser = await _session1.FindObjectAsync<User>(new BinaryOperator("Username", "admin"));
+                _locationList = _session1.Query<Rig>().ToList();
+            _dashboardId = "Admin";
+            }
             _fromDate = DateTime.Parse("2023/01/01");
             _toDate = DateTime.Now;
         }

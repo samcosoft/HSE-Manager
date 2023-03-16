@@ -43,6 +43,12 @@ namespace Samco_HSE.HSEData
             get { return fLastLogin; }
             set { SetPropertyValue<DateTime?>(nameof(LastLogin), ref fLastLogin, value); }
         }
+        string fDashboardId;
+        public string DashboardId
+        {
+            get { return fDashboardId; }
+            set { SetPropertyValue<string>(nameof(DashboardId), ref fDashboardId, value); }
+        }
         [Association(@"ReportReferencesUser")]
         public XPCollection<Report> RecievedReports { get { return GetCollection<Report>(nameof(RecievedReports)); } }
         [Association(@"ReportReferencesUser1")]

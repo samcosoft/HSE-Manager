@@ -12,14 +12,11 @@
     <Description>A web-based application for managing HSE datas on oil rigs.</Description>
     <PackageProjectUrl>https://samcosoft.ir</PackageProjectUrl>
     <PackageIcon>HSE.png</PackageIcon>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
-    <FileVersion>2.0.0.0</FileVersion>
+    <AssemblyVersion>1.2.2.23072</AssemblyVersion>
+    <FileVersion>1.2.2.23072</FileVersion>
     <Copyright>Copyright $(Company) 2020 - 2023. All rights reserved.</Copyright>
+    <Version>$(VersionPrefix-alpha)</Version>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Controllers\DefaultDashboardController.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <Content Include="HSEME.ico" />
@@ -28,8 +25,9 @@
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
-    <PackageReference Include="BootstrapBlazor" Version="7.3.0" />
-    <PackageReference Include="BootstrapBlazor.FontAwesome" Version="7.0.2" />
+    <PackageReference Include="BootstrapBlazor" Version="7.4.0" />
+    <PackageReference Include="BootstrapBlazor.FontAwesome" Version="7.3.0" />
+    <PackageReference Include="DevExpress.AspNetCore.Dashboard" Version="22.2.3" />
     <PackageReference Include="DevExpress.Blazor" Version="22.2.3" />
     <PackageReference Include="DevExpress.Blazor.Dashboard" Version="22.2.3" />
     <PackageReference Include="DevExpress.Blazor.Reporting.JSBasedControls.BlazorServer" Version="22.2.3" />
@@ -42,7 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Dashboards\" />
     <Folder Include="Reports\" />
     <Folder Include="wwwroot\fonts\" />
     <Folder Include="wwwroot\images\filterIcons\" />
@@ -65,6 +62,9 @@
   <ItemGroup>
     <None Update="HSEData.xpo.diagram">
       <AutoGen>True</AutoGen>
+    </None>
+    <None Update="ReleaseNote.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

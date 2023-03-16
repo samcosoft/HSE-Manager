@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Dashboard>
+  <Title Text="Medic" />
+  <DataSources>
+    <SqlDataSource Name="Rig" ComponentName="sqlDataSource1">
+      <Connection Name="MainDatabase" FromAppConfig="true" />
+      <Query Type="SelectQuery" Name="Rig">
+        <Tables>
+          <Table Name="Rig" />
+          <Table Name="MedicalVisit" />
+          <Relation Type="Inner" Parent="MedicalVisit" Nested="Rig">
+            <KeyColumn Parent="RigNo" Nested="OID" />
+          </Relation>
+        </Tables>
+        <Columns>
+          <Column Table="Rig" Name="Name" />
+          <Column Table="MedicalVisit" Name="VisitDate" />
+          <Column Table="MedicalVisit" Name="VisitType" />
+          <Column Table="MedicalVisit" Name="DoctorName" />
+          <Column Table="MedicalVisit" Name="Category" />
+        </Columns>
+      </Query>
+      <ConnectionOptions CloseConnection="true" />
+    </SqlDataSource>
+  </DataSources>
+  <Items>
+    <Pie ComponentName="pieDashboardItem1" Name="Pies 1" DataSource="sqlDataSource1" DataMember="Rig">
+      <DataItems>
+        <Measure DataMember="Category" SummaryType="Count" DefaultId="DataItem0" />
+        <Dimension DataMember="Category" DefaultId="DataItem1" />
+        <Dimension DataMember="Name" DefaultId="DataItem2" />
+      </DataItems>
+      <SeriesDimensions>
+        <SeriesDimension DefaultId="DataItem2" />
+      </SeriesDimensions>
+      <Arguments>
+        <Argument DefaultId="DataItem1" />
+      </Arguments>
+      <Values>
+        <Value DefaultId="DataItem0" />
+      </Values>
+    </Pie>
+    <Chart ComponentName="chartDashboardItem1" Name="Chart 1" DataSource="sqlDataSource1" DataMember="Rig">
+      <DataItems>
+        <Measure DataMember="Category" SummaryType="Count" DefaultId="DataItem0">
+          <NumericFormat FormatType="Number" Precision="0" Unit="Ones" />
+        </Measure>
+        <Dimension DataMember="Name" DefaultId="DataItem1" />
+        <Dimension DataMember="VisitDate" DateTimeGroupInterval="Month" DefaultId="DataItem2" />
+      </DataItems>
+      <SeriesDimensions>
+        <SeriesDimension DefaultId="DataItem1" />
+      </SeriesDimensions>
+      <Arguments>
+        <Argument DefaultId="DataItem2" />
+      </Arguments>
+      <Panes>
+        <Pane Name="Pane 1">
+          <Series>
+            <Simple>
+              <Value DefaultId="DataItem0" />
+            </Simple>
+          </Series>
+        </Pane>
+      </Panes>
+    </Chart>
+    <DateFilter ComponentName="dateFilterDashboardItem1" Name="Date Filter 1" DataSource="sqlDataSource1" DataMember="Rig">
+      <DataItems>
+        <Dimension DataMember="VisitDate" DateTimeGroupInterval="MonthYear" DefaultId="DataItem0" />
+      </DataItems>
+      <Dimension DefaultId="DataItem0" />
+    </DateFilter>
+  </Items>
+  <LayoutOptions>
+    <Height Mode="Fixed" />
+  </LayoutOptions>
+  <LayoutTree>
+    <LayoutGroup Orientation="Vertical">
+      <LayoutGroup>
+        <LayoutItem DashboardItem="dateFilterDashboardItem1" />
+        <LayoutItem DashboardItem="pieDashboardItem1" />
+      </LayoutGroup>
+      <LayoutItem DashboardItem="chartDashboardItem1" />
+    </LayoutGroup>
+  </LayoutTree>
+</Dashboard>

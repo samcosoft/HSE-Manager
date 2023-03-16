@@ -1,0 +1,58 @@
+﻿@page "/about"
+@using System.Reflection
+@inject IWebHostEnvironment HostEnvironment
+<Row ItemsPerRow="ItemsPerRow.Twelve">
+    <Row ColSpan="8">
+        <div class="animate__animated animate__zoomIn">
+            <Card HeaderText="درباره برنامه">
+                <BodyTemplate>
+                    <p>
+                        سامانه مدیریت جامع HSE برنامه ایست که در عین سادگی مدیریت تمامی داده های واحد ایمنی، بهداشت و محیط زیست را پوشش میدهد. از این سیستم میتوان در تمامی شرکتهای نفتی، پالایشگاه ها و دکل های حفاری استفاده نمود.
+                    </p>
+                    <p>
+                        در تولید این نرم افزار از تجربیات دست اندرکاران و مدیران واحد ایمنی شرکتهای بزرگی چون دانا انرژی و پترو ایران استفاده شده است. محیط کاربری روان و زیبا، پشتیبانی از زبان فارسی و استفاده از به روزترین تکنولوژی برنامه نویسی از ویژگی های این محصول است.
+                    </p>
+                </BodyTemplate>
+            </Card>
+        </div>
+    </Row>
+    <Row ColSpan="4" ItemsPerRow="ItemsPerRow.One">
+        <div class="card opacity-85 animate__animated animate__fadeIn h-100">
+            <div class="card-body text-center">
+                <img alt="logo" src="images/logo.svg" width="150px"/>
+                <h4>Samco® HSE Management System</h4>
+                <p>Version: @GetApplicationVersion()</p>
+            </div>
+        </div>
+        <div class="mt-2">
+            <Card HeaderText="تماس با ما" IsShadow="true">
+                <BodyTemplate>
+                    <p>وب سایت: <a style="display: inline" href="https://samcosoft.ir">https://samcosoft.ir</a></p>
+                    <p>پشتیبانی: <a style="display: inline" href="mailto:support@samcosoft.ir">support@samcosoft.ir</a></p>
+                    <p>تلفن: <a dir="ltr" style="display: inline;" href="tell:+989397532159">+98 939 7532159</a></p>
+                </BodyTemplate>
+            </Card>
+        </div>
+    </Row>
+</Row>
+<Row ItemsPerRow="ItemsPerRow.One">
+    <Card HeaderText="تغییرات نسخه" IsShadow="true">
+        <BodyTemplate>
+            <textarea>@GetReleaseNote()</textarea>
+        </BodyTemplate>
+    </Card>
+</Row>
+
+@code {
+    private string? GetApplicationVersion()
+    {
+        return Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+            ?.InformationalVersion;
+    }
+
+    private string GetReleaseNote()
+    {
+        var path = Path.Combine(HostEnvironment.WebRootPath, "ReleaseNote.txt");
+        return File.Exists(path) ? File.ReadAllText(path) : string.Empty;
+    }
+}

@@ -1,4 +1,5 @@
 ﻿@page "/reportdesigner"
+@attribute [Authorize(Roles = "Owner,Admin")]
 <dir dir="ltr">
     <DxReportDesigner Height="1000px" Width="100%" AllowMDI="true" DataSources="_hseDataSources">
         <DxReportDesignerWizardSettings UseFullscreenWizard="true" />

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 using Samco_HSE.HSEData;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
+using DevExpress.DashboardWeb;
 
 namespace Samco_HSE_Manager.Pages.Admin
 {
@@ -13,6 +14,7 @@ namespace Samco_HSE_Manager.Pages.Admin
     {
         [Inject] private IDataLayer DataLayer { get; set; } = null!;
         [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
+        [Inject] private DashboardConfigurator DashboardConfigurator { get; set; }
 
         [Inject]
         [NotNull]
@@ -26,6 +28,7 @@ namespace Samco_HSE_Manager.Pages.Admin
         private IEnumerable<User>? SystemUsers { get; set; }
 
         private IEnumerable<string>? RigRoles { get; set; }
+        private IEnumerable<string>? Dashboards { get; set; }
 
         private readonly Dictionary<string, string> _roles = new()
         {
@@ -48,6 +51,7 @@ namespace Samco_HSE_Manager.Pages.Admin
         {
             Session1 = new Session(DataLayer);
             RigRoles = await File.ReadAllLinesAsync(Path.Combine(HostEnvironment.WebRootPath, "content", "RigRoles.txt"));
+            Dashboards = DashboardConfigurator.DashboardStorage.GetAvailableDashboardsInfo().Select(x => x.ID).ToList();
             await LoadInformation();
         }
 

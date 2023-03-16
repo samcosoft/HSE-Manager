@@ -104,7 +104,7 @@
 
         if (_claimsPrincipal.Identity is { IsAuthenticated: true })
         {
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("");
         }
     }
 
@@ -132,7 +132,7 @@
                 return;
             }
 
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("");
         }
         else
         {

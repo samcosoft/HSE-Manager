@@ -37,6 +37,10 @@
                             </Row>
                         </div>
                     </HeaderTemplate>
+                    <BodyTemplate>
+                        <DxDashboard @bind-DashboardId="@_dashboardId" WorkingMode="WorkingMode.ViewerOnly"
+                                     Endpoint="api/dashboard" style="width: 100%; height: 800px;"/>
+                    </BodyTemplate>
                 </Card>
             </div>
 
