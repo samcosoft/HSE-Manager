@@ -5,13 +5,10 @@ using DevExpress.Data.Filtering;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
-namespace Samco_HSE.HSEData
+namespace Samco_HSE.HSEData;
+
+public partial class Asset
 {
-
-    public partial class Asset
-    {
-        public Asset(Session session) : base(session) { }
-        public override void AfterConstruction() { base.AfterConstruction(); }
-    }
-
+    public Asset(Session session) : base(session) { }
+    public override void AfterConstruction() { base.AfterConstruction(); }
 }

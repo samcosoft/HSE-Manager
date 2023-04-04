@@ -12,11 +12,15 @@
     <Description>A web-based application for managing HSE datas on oil rigs.</Description>
     <PackageProjectUrl>https://samcosoft.ir</PackageProjectUrl>
     <PackageIcon>HSE.png</PackageIcon>
-    <AssemblyVersion>1.2.2.23072</AssemblyVersion>
-    <FileVersion>1.2.2.23072</FileVersion>
+    <AssemblyVersion>1.2.83.23094</AssemblyVersion>
+    <FileVersion>1.2.83.23094</FileVersion>
     <Copyright>Copyright $(Company) 2020 - 2023. All rights reserved.</Copyright>
-    <Version>$(VersionPrefix-alpha)</Version>
+    <Version>1.2.29.23083</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="LicenseValidator.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="HSEME.ico" />
@@ -25,7 +29,7 @@
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
-    <PackageReference Include="BootstrapBlazor" Version="7.4.0" />
+    <PackageReference Include="BootstrapBlazor" Version="7.5.0" />
     <PackageReference Include="BootstrapBlazor.FontAwesome" Version="7.3.0" />
     <PackageReference Include="DevExpress.AspNetCore.Dashboard" Version="22.2.3" />
     <PackageReference Include="DevExpress.Blazor" Version="22.2.3" />
@@ -34,8 +38,11 @@
     <PackageReference Include="DevExpress.Blazor.Themes" Version="22.2.3" />
     <PackageReference Include="DevExpress.Data" Version="22.2.3" />
     <PackageReference Include="DevExpress.Xpo" Version="22.2.3" />
+    <PackageReference Include="DeviceId" Version="6.3.0" />
+    <PackageReference Include="DeviceId.Linux" Version="6.3.0" />
+    <PackageReference Include="DeviceId.Windows.Wmi" Version="6.2.1" />
     <PackageReference Include="DNTPersianComponents.Blazor" Version="1.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.4" />
     <PackageReference Include="Otp.NET" Version="1.3.0" />
   </ItemGroup>
 
@@ -43,6 +50,7 @@
     <Folder Include="Reports\" />
     <Folder Include="wwwroot\fonts\" />
     <Folder Include="wwwroot\images\filterIcons\" />
+    <Folder Include="wwwroot\js\" />
     <Folder Include="wwwroot\upload\STOPCards\" />
   </ItemGroup>
 
@@ -54,8 +62,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="QlmLicenseLibNetCore">
-      <HintPath>D:\Program Files\Soraco\QuickLicenseMgr\Redistrib\.net core\QlmLicenseLibNetCore.dll</HintPath>
+    <Reference Include="LogicNP.CryptoLicensing.NetCore">
+      <HintPath>D:\Program Files (x86)\LogicNP Software\CryptoLicensing For .Net 2020\LogicNP.CryptoLicensing.NetCore.dll</HintPath>
     </Reference>
   </ItemGroup>
 

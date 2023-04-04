@@ -30,11 +30,11 @@ namespace Samco_HSE.HSEData
             get { return fPlateNo; }
             set { SetPropertyValue<string>(nameof(PlateNo), ref fPlateNo, value); }
         }
-        DateTime fLastCheckDate;
-        public DateTime LastCheckDate
+        DateTime? fLastCheckDate;
+        public DateTime? LastCheckDate
         {
             get { return fLastCheckDate; }
-            set { SetPropertyValue<DateTime>(nameof(LastCheckDate), ref fLastCheckDate, value); }
+            set { SetPropertyValue<DateTime?>(nameof(LastCheckDate), ref fLastCheckDate, value); }
         }
         short fProdDate;
         public short ProdDate

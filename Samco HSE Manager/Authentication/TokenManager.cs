@@ -7,141 +7,140 @@ using DevExpress.Xpo;
 using Microsoft.IdentityModel.Tokens;
 using Samco_HSE.HSEData;
 
-namespace Samco_HSE_Manager.Authentication
+namespace Samco_HSE_Manager.Authentication;
+
+public class TokenManager : ITokenManager
 {
-    public class TokenManager : ITokenManager
+    private readonly JwtSecurityTokenHandler _tokenHandler;
+    private readonly byte[] _secretkey;
+    private readonly string _issuer;
+    private readonly string _audience;
+
+
+    public TokenManager(string secretKey, string issuer, string audience)
     {
-        private readonly JwtSecurityTokenHandler _tokenHandler;
-        private readonly byte[] _secretkey;
-        private readonly string _issuer;
-        private readonly string _audience;
+        _tokenHandler = new JwtSecurityTokenHandler();
+        _secretkey = Encoding.ASCII.GetBytes(secretKey);
+        _issuer = issuer;
+        _audience = audience;
+    }
 
+    public bool Authenticate(string? username, string? password, IDataLayer dataLayer, out string tokenString, out string refreshToken, out string errorMessage)
+    {
+        tokenString = string.Empty;
+        refreshToken = string.Empty;
+        errorMessage = string.Empty;
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password)) return false;
 
-        public TokenManager(string secretKey, string issuer, string audience)
+        using var session1 = new Session(dataLayer);
+
+        var selUser = session1.FindObject<User>(new BinaryOperator(nameof(User.Username), username));
+
+        try
         {
-            _tokenHandler = new JwtSecurityTokenHandler();
-            _secretkey = Encoding.ASCII.GetBytes(secretKey);
-            _issuer = issuer;
-            _audience = audience;
-        }
-
-        public bool Authenticate(string? username, string? password, IDataLayer dataLayer, out string tokenString, out string refreshToken, out string errorMessage)
-        {
-            tokenString = string.Empty;
-            refreshToken = string.Empty;
-            errorMessage = string.Empty;
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password)) return false;
-
-            using var session1 = new Session(dataLayer);
-
-            var selUser = session1.FindObject<User>(new BinaryOperator(nameof(User.Username), username));
-
-            try
+            if (selUser == null || BCrypt.Net.BCrypt.EnhancedVerify(password, selUser.Password) == false)
             {
-                if (selUser == null || BCrypt.Net.BCrypt.EnhancedVerify(password, selUser.Password) == false)
-                {
-                    errorMessage = "نام کاربری و یا کلمه عبور اشتباه است.";
-                    return false;
-                }
-
-                if (selUser.SiteRole == SamcoSoftShared.SiteRoles.Disabled.ToString())
-                {
-                    errorMessage = "این کاربر توسط مدیر سیستم غیرفعال شده است.";
-                    return false;
-                }
-            }
-            catch (Exception)
-            {
-                errorMessage = "بروز خطا در سیستم. لطفاً دوباره تلاش کنید";
+                errorMessage = "نام کاربری و یا کلمه عبور اشتباه است.";
                 return false;
             }
 
-            //Generate Token
-
-            var securityDescriptor = new SecurityTokenDescriptor
+            if (selUser.SiteRole == SamcoSoftShared.SiteRoles.Disabled.ToString())
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Name, selUser.Username ?? string.Empty),
-                    new Claim(ClaimTypes.GivenName, selUser.PersonnelName ?? string.Empty),
-                    new Claim(ClaimTypes.MobilePhone, selUser.MobileNum ?? string.Empty),
-                    new Claim(ClaimTypes.Role,selUser.SiteRole?? string.Empty),
-                    new Claim(ClaimTypes.Sid, selUser.Oid.ToString())
-                }),
-                Issuer = _issuer,
-                Audience = _audience,
-                Expires = DateTime.UtcNow.AddHours(6),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_secretkey), SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            tokenString = _tokenHandler.WriteToken(_tokenHandler.CreateToken(securityDescriptor));
-            refreshToken = GenerateRefreshToken(selUser);
-            selUser.LastLogin = DateTime.Now;
-            selUser.Save();
-            return true;
+                errorMessage = "این کاربر توسط مدیر سیستم غیرفعال شده است.";
+                return false;
+            }
+        }
+        catch (Exception)
+        {
+            errorMessage = "بروز خطا در سیستم. لطفاً دوباره تلاش کنید";
+            return false;
         }
 
-        public bool Authenticate(Personnel? selUser, IDataLayer dataLayer, out string tokenString, out string refreshToken, out string errorMessage)
+        //Generate Token
+
+        var securityDescriptor = new SecurityTokenDescriptor
         {
-            tokenString = string.Empty;
-            refreshToken = string.Empty;
-            errorMessage = string.Empty;
-            if (selUser == null) return false;
-
-            //Generate Token
-
-            var securityDescriptor = new SecurityTokenDescriptor
+            Subject = new ClaimsIdentity(new[]
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Name, selUser.NationalID ?? string.Empty),
-                    new Claim(ClaimTypes.GivenName, selUser.PersonnelName ?? string.Empty),
-                    new Claim(ClaimTypes.MobilePhone, selUser.MobileNum ?? string.Empty),
-                    new Claim(ClaimTypes.Role,"Personnel"),
-                    new Claim(ClaimTypes.Sid, selUser.Oid.ToString())
-                }),
-                Issuer = _issuer,
-                Audience = _audience,
-                Expires = DateTime.UtcNow.AddHours(6),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_secretkey), SecurityAlgorithms.HmacSha256Signature)
-            };
+                new Claim(ClaimTypes.Name, selUser.Username ?? string.Empty),
+                new Claim(ClaimTypes.GivenName, selUser.PersonnelName ?? string.Empty),
+                new Claim(ClaimTypes.MobilePhone, selUser.MobileNum ?? string.Empty),
+                new Claim(ClaimTypes.Role,selUser.SiteRole?? string.Empty),
+                new Claim(ClaimTypes.Sid, selUser.Oid.ToString())
+            }),
+            Issuer = _issuer,
+            Audience = _audience,
+            Expires = DateTime.UtcNow.AddHours(6),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_secretkey), SecurityAlgorithms.HmacSha256Signature)
+        };
 
-            tokenString = _tokenHandler.WriteToken(_tokenHandler.CreateToken(securityDescriptor));
-            //refreshToken = GenerateRefreshToken(selUser);
-            selUser.Save();
-            return true;
-        }
-        public ClaimsPrincipal VerifyToken(string token)
+        tokenString = _tokenHandler.WriteToken(_tokenHandler.CreateToken(securityDescriptor));
+        refreshToken = GenerateRefreshToken(selUser);
+        selUser.LastLogin = DateTime.Now;
+        selUser.Save();
+        return true;
+    }
+
+    public bool Authenticate(Personnel? selUser, IDataLayer dataLayer, out string tokenString, out string refreshToken, out string errorMessage)
+    {
+        tokenString = string.Empty;
+        refreshToken = string.Empty;
+        errorMessage = string.Empty;
+        if (selUser == null) return false;
+
+        //Generate Token
+
+        var securityDescriptor = new SecurityTokenDescriptor
         {
-            if (string.IsNullOrEmpty(token)) return new ClaimsPrincipal();
-
-            var claim = _tokenHandler.ValidateToken(token, new TokenValidationParameters
+            Subject = new ClaimsIdentity(new[]
             {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(_secretkey),
-                ValidateIssuer = true,
-                ValidIssuer = _issuer,
-                ValidAudience = _audience,
-                ValidateLifetime = true,
-                ValidateAudience = true,
-                ClockSkew = TimeSpan.Zero
-            }, out _);
-            return claim;
-        }
-        private string GenerateRefreshToken(User selUser)
+                new Claim(ClaimTypes.Name, selUser.NationalID ?? string.Empty),
+                new Claim(ClaimTypes.GivenName, selUser.PersonnelName ?? string.Empty),
+                new Claim(ClaimTypes.MobilePhone, selUser.MobileNum ?? string.Empty),
+                new Claim(ClaimTypes.Role,"Personnel"),
+                new Claim(ClaimTypes.Sid, selUser.Oid.ToString())
+            }),
+            Issuer = _issuer,
+            Audience = _audience,
+            Expires = DateTime.UtcNow.AddHours(6),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_secretkey), SecurityAlgorithms.HmacSha256Signature)
+        };
+
+        tokenString = _tokenHandler.WriteToken(_tokenHandler.CreateToken(securityDescriptor));
+        //refreshToken = GenerateRefreshToken(selUser);
+        selUser.Save();
+        return true;
+    }
+    public ClaimsPrincipal VerifyToken(string token)
+    {
+        if (string.IsNullOrEmpty(token)) return new ClaimsPrincipal();
+
+        var claim = _tokenHandler.ValidateToken(token, new TokenValidationParameters
         {
-            // generate token that is valid for 7 days
-            var randomBytes = RandomNumberGenerator.GetBytes(64);
-            //var refreshToken = new RefreshTokens(SelUser.Session)
-            //{
-            //    Token = Convert.ToBase64String(randomBytes),
-            //    Expires = DateTime.UtcNow.AddDays(7),
-            //    User = SelUser
-            //};
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(_secretkey),
+            ValidateIssuer = true,
+            ValidIssuer = _issuer,
+            ValidAudience = _audience,
+            ValidateLifetime = true,
+            ValidateAudience = true,
+            ClockSkew = TimeSpan.Zero
+        }, out _);
+        return claim;
+    }
+    private string GenerateRefreshToken(User selUser)
+    {
+        // generate token that is valid for 7 days
+        var randomBytes = RandomNumberGenerator.GetBytes(64);
+        //var refreshToken = new RefreshTokens(SelUser.Session)
+        //{
+        //    Token = Convert.ToBase64String(randomBytes),
+        //    Expires = DateTime.UtcNow.AddDays(7),
+        //    User = SelUser
+        //};
 
-            //refreshToken.Save();
+        //refreshToken.Save();
 
-            return Convert.ToBase64String(randomBytes);
-        }
+        return Convert.ToBase64String(randomBytes);
     }
 }

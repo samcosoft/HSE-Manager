@@ -624,7 +624,7 @@
             <field Id="60b89561-ed44-49d0-8de6-535d13988aae" name="PlateNo" virtualColumnType="String" delayedUpdateModifiedOnly="false" />
           </generalXpObjectHasFields>
           <generalXpObjectHasFields Id="ef27e1b7-6e01-499d-b003-39de69ee438d">
-            <field Id="2d228569-e725-490b-883e-9e63bb573491" name="LastCheckDate" columnType="DateTime" virtualColumnType="DateTime" delayedUpdateModifiedOnly="false" />
+            <field Id="2d228569-e725-490b-883e-9e63bb573491" name="LastCheckDate" columnType="DateTime" virtualColumnType="DateTime" delayedUpdateModifiedOnly="false" isNullable="true" />
           </generalXpObjectHasFields>
           <generalXpObjectHasFields Id="6eeef8ba-3fd7-4086-ba99-abe3eb5ffdec">
             <field Id="d3c41f99-884d-45b5-ac82-0b2f5ec42024" name="ProdDate" columnType="Int16" virtualColumnType="Int16" delayedUpdateModifiedOnly="false" />

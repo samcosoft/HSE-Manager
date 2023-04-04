@@ -108,6 +108,14 @@
       </DataItems>
       <Dimension DefaultId="DataItem0" />
     </DateFilter>
+    <ListBox ComponentName="listBoxDashboardItem1" Name="تنظیم مکان" ParentContainer="groupDashboardItem1" DataSource="sqlDataSource1" DataMember="Rig">
+      <DataItems>
+        <Dimension DataMember="Name" DefaultId="DataItem0" />
+      </DataItems>
+      <FilterDimensions>
+        <Dimension DefaultId="DataItem0" />
+      </FilterDimensions>
+    </ListBox>
   </Items>
   <Groups>
     <Group ComponentName="groupDashboardItem1" Name="STOP Cards" />
@@ -117,13 +125,18 @@
   </LayoutOptions>
   <LayoutTree>
     <LayoutGroup Orientation="Vertical">
-      <LayoutGroup Orientation="Vertical" DashboardItem="groupDashboardItem1">
-        <LayoutGroup>
-          <LayoutItem DashboardItem="dateFilterDashboardItem1" Weight="0.7159882285923648" />
-          <LayoutItem DashboardItem="pieDashboardItem1" Weight="1.2896615144714498" />
-          <LayoutItem DashboardItem="pieDashboardItem2" Weight="1.0805210566757433" />
+      <LayoutGroup DashboardItem="groupDashboardItem1">
+        <LayoutGroup Orientation="Vertical">
+          <LayoutGroup>
+            <LayoutGroup Orientation="Vertical" Weight="0.7159882285923648">
+              <LayoutItem DashboardItem="dateFilterDashboardItem1" Weight="0.7159882285923648" />
+              <LayoutItem DashboardItem="listBoxDashboardItem1" />
+            </LayoutGroup>
+            <LayoutItem DashboardItem="pieDashboardItem1" Weight="1.2896615144714498" />
+            <LayoutItem DashboardItem="pieDashboardItem2" Weight="1.0805210566757433" />
+          </LayoutGroup>
+          <LayoutItem DashboardItem="chartDashboardItem1" Weight="0.7688442211055277" />
         </LayoutGroup>
-        <LayoutItem DashboardItem="chartDashboardItem1" Weight="0.7688442211055277" />
       </LayoutGroup>
     </LayoutGroup>
   </LayoutTree>

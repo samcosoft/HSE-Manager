@@ -23,7 +23,7 @@
                         <div class="me-2 w-100">
                             <Row ItemsPerRow="ItemsPerRow.Three">
                                 <h2 class="mt-2">آمار سیستم</h2>
-                                <Row ColSpan="2" ItemsPerRow="ItemsPerRow.Three">
+                                @*<Row ColSpan="2" ItemsPerRow="ItemsPerRow.Three">
                                     <label>محل:</label>
                                     <DxTagBox Data="@_locationList"
                                               @bind-Values="@_selLocation" ClearButtonDisplayMode="DataEditorClearButtonDisplayMode.Auto"
@@ -33,7 +33,7 @@
                                     <DxDateEdit @bind-Date="@_fromDate" MinDate="@(new DateTime(1900,01,01))" />
                                     <label>تا تاریخ:</label>
                                     <DxDateEdit @bind-Date="@_toDate" MinDate="@(new DateTime(1900,01,01))" />
-                                </Row>
+                                </Row>*@
                             </Row>
                         </div>
                     </HeaderTemplate>

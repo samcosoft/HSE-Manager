@@ -40,14 +40,14 @@
                     <NavMenu StateCssClass="@NavMenuCssClass" />
                 </Template>
             </DxGridLayoutItem>
-            <DxGridLayoutItem Area="content" CssClass="content top-space px-4 layout-item">
+            <DxGridLayoutItem Area="content" CssClass="content top-space px-4 layout-item h-100">
                 <Template>
                     @Body
                 </Template>
             </DxGridLayoutItem>
               <DxGridLayoutItem Area="footer" CssClass="layout-item">
                 <Template>
-                    <footer class="footer bg-light fixed-bottom d-flex flex-row" style="justify-content: center">Copyright 2022-@DateTime.Now.Year Samco Software Group. All rights reserved. Version: <a style="display: inline" href="/about">@GetApplicationVersion()</a></footer>
+                    <footer class="footer bg-light fixed-bottom d-flex flex-row" style="justify-content: center">Copyright 2022-@DateTime.Now.Year Samco Software Group. All rights reserved. Version: <a style="display: inline" href="about">@GetApplicationVersion()</a></footer>
                 </Template>
             </DxGridLayoutItem>
         </Items>

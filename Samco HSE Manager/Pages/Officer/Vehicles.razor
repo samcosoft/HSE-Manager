@@ -1,0 +1,102 @@
+﻿@page "/vehicle"
+@attribute [Authorize(Roles = "Owner,Admin,Supervisor,Officer")]
+@using Samco_HSE.HSEData
+@using Microsoft.AspNetCore.Components
+
+<PageTitle>مدیریت ماشین آلات</PageTitle>
+
+<Card>
+    <HeaderTemplate>
+        <DxMenu Title="لیست ماشین آلات سبک و سنگین" ItemsPosition="ItemPosition.Start" CssClass="card-header">
+            <Items>
+                <DxMenuItem Text="دریافت اطلاعات" IconCssClass="fas fa-paste" @onclick="OnPrintBtnClick" />
+                @*<DxMenuItem Text="تنظیم موجودی" IconCssClass="fas fa-shirt" @onclick="OnSetNumberBtnClick" />*@
+                @*<DxMenuItem Text="توزیع تجهیزات" IconCssClass="fas fa-boxes-packing" @onclick="OnDistributeBtnClick"/>*@
+            </Items>
+        </DxMenu>
+    </HeaderTemplate>
+    <BodyTemplate>
+        <DxGrid @ref="VehicleGrid" Data="@VehiclesList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm" EditModelSaving="OnEditModelSaving"
+                DataItemDeleting="OnDataItemDeleting" CustomizeEditModel="VehicleEditModel" CustomizeElement="VehicleGrid_CustomizeElement"
+                ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true"
+                SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="true"
+                ColumnResizeMode="GridColumnResizeMode.ColumnsContainer"
+                SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center" ValidationEnabled="false">
+            <Columns>
+                <DxGridCommandColumn MinWidth="100" />
+                <DxGridDataColumn FieldName="RigNo.Name" Caption="دکل / دفتر" MinWidth="100">
+                    <FilterRowCellTemplate>
+                        <TagBoxFilterRow TData="Rig" FilterContext="context" DataSource="Rigs" TextFieldName="Name" />
+                    </FilterRowCellTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="Name" Caption="نوع وسیله" MinWidth="400">
+                    <FilterRowCellTemplate>
+                        <TagBoxFilterRow TData="string" FilterContext="context" DataSource="_category" />
+                    </FilterRowCellTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn Caption="شماره پلاک" FieldName="PlateNo" MinWidth="150" />
+                <DxGridDataColumn FieldName="ProdDate" Caption="سال تولید" MinWidth="180" DisplayFormat="d">
+                    <FilterRowCellTemplate>
+                        <OperatorType FilterContext="@context" ShowFilterButton="true">
+                            <DxSpinEdit T="short?" Value="(short?)context.FilterRowValue" MaxValue="3000" MinValue="1350"
+                                        ValueChanged="(short? v) => context.FilterRowValue = v" />
+                        </OperatorType>
+                    </FilterRowCellTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="LastCheckDate" Caption="تاریخ اعتبار گواهی فنی" MinWidth="180">
+                    <FilterRowCellTemplate>
+                        <OperatorType FilterContext="@context" ShowFilterButton="true">
+                            <DxDateEdit Date="(DateTime?)context.FilterRowValue"
+                                        DateChanged="(DateTime? v) => context.FilterRowValue = v" />
+                        </OperatorType>
+                    </FilterRowCellTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="InsuranceDate" Caption="تاریخ بیمه‌نامه" MinWidth="180">
+                    <FilterRowCellTemplate>
+                        <OperatorType FilterContext="@context" ShowFilterButton="true">
+                            <DxDateEdit Date="(DateTime?)context.FilterRowValue"
+                                        DateChanged="(DateTime? v) => context.FilterRowValue = v" />
+                        </OperatorType>
+                    </FilterRowCellTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="Driver.PersonnelName" Caption="نام راننده" MinWidth="100" />
+            </Columns>
+            <EditFormTemplate Context="editFormContext">
+                @{
+                    var vehicle = (Vehicle)editFormContext.EditModel;
+                }
+                <DxFormLayout>
+                    <DxFormLayoutItem Caption="نام دکل / محل فعالیت:">
+                        <DxComboBox Data="@Rigs" TextFieldName="@nameof(Rig.Name)" @bind-Value="@vehicle.RigNo" NullText="الزامی" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="نوع وسیله:">
+                        <DxComboBox Data="@_category" @bind-Value="@vehicle.Name" FilteringMode="DataGridFilteringMode.Contains" NullText="الزامی"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="شماره پلاک:">
+                        @*<DxTextBox @bind-Text="@vehicle.PlateNo" NullText="الزامی" CssClass="ltr"/>*@
+                        <DxMaskedInput T="string" @bind-Value="@vehicle.PlateNo" NullText="الزامی" Mask="00 | 000 L 00" MaskMode="MaskMode.Text">
+                            <DxTextMaskProperties SaveLiteral="true"/>
+                        </DxMaskedInput>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="سال تولید:">
+                        <DxSpinEdit T="short" @bind-Value="@vehicle.ProdDate" MinValue="1340" Mask="d" MaxValue="3000"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="راننده:">
+                        <DxComboBox Data="@DriverList" @bind-Value="@vehicle.Driver"
+                                    TextFieldName="@nameof(Samco_HSE.HSEData.Personnel.PersonnelName)" FilteringMode="DataGridFilteringMode.Contains">
+                            <DxListEditorColumn FieldName="@nameof(Samco_HSE.HSEData.Personnel.PersonnelName)" Caption="نام و نام خانوادگی"/>
+                            <DxListEditorColumn Caption="اعتبار گواهینامه" FieldName="@nameof(Samco_HSE.HSEData.Personnel.LicenseDate)"/>
+                            <DxListEditorColumn Caption="شماره پرسنلی" FieldName="@nameof(Samco_HSE.HSEData.Personnel.PersonnelNum)"/>
+                        </DxComboBox>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="تاریخ اعتبار معاینه فنی:">
+                        <SamcoDateSelector TData="DateTime?" @bind-Date="@vehicle.LastCheckDate" DefaultCalendar="SamcoDateSelector<DateTime?>.CalendarType.Shamsi" />
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="تاریخ اعتبار بیمه:">
+                        <SamcoDateSelector TData="DateTime?" @bind-Date="@vehicle.InsuranceDate" DefaultCalendar="SamcoDateSelector<DateTime?>.CalendarType.Shamsi" />
+                    </DxFormLayoutItem>
+                </DxFormLayout>
+            </EditFormTemplate>
+        </DxGrid>
+    </BodyTemplate>
+</Card>

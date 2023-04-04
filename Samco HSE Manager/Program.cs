@@ -6,6 +6,7 @@ using DevExpress.DashboardWeb;
 using DevExpress.Xpo.DB;
 using DevExpress.XtraReports.Web.Extensions;
 using Microsoft.AspNetCore.Components.Authorization;
+using Samco_HSE_Manager;
 using Samco_HSE_Manager.Authentication;
 using Samco_HSE_Manager.Models;
 
@@ -45,7 +46,7 @@ builder.Services.AddScoped(_ =>
     configurator.SetConnectionStringsProvider(new DashboardConnectionStringsProvider(builder.Configuration));
     return configurator;
 });
-
+SamcoSoftShared.Lic = SamcoSoftShared.CreateLicense(Path.Combine(builder.Environment.WebRootPath, "Samco_HSE.lic"));
 builder.Services.AddScoped<ReportStorageWebExtension, CustomReportStorageWebExtension>();
 builder.WebHost.UseWebRoot("wwwroot");
 builder.WebHost.UseStaticWebAssets();
