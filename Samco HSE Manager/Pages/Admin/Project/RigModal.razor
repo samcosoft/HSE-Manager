@@ -1,0 +1,39 @@
+﻿@using Samco_HSE.HSEData
+@inject ISnackbar Snackbar
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="fas fa-oil-well" Class="me-3 mb-1" />
+            اطلاعات دکل / دفتر
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <div class="d-flex flex-column gap-4">
+            <MudTextField Label="نام دکل / دفتر" Variant="Variant.Outlined" AutoFocus="true" @bind-Value="@(SelRig.Name)" />
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">انصراف</MudButton>
+        <MudButton Color="Color.Success" Icon="fas fa-check" OnClick="Submit">تأیید</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public Rig SelRig { get; set; } = null!;
+
+    private void Submit()
+    {
+        if (SelRig.Name == null)
+        {
+            Snackbar.Add("نام مکان الزامی است.", Severity.Error);
+            return;
+        }
+        SelRig.Save();
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

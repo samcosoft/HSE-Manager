@@ -32,23 +32,4 @@ public partial class ReportViewer
 
         //ReportName = "MedicineRequest?RigNo=1&Title=شرکت پترو ایران - دکل DCI 2";
     }
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        //string paramQueryString;
-        //if (ParameterList != null)
-        //{
-        //    //Load parameters
-        //    paramQueryString = string.Join("&", ParameterList);
-        //}
-        //else
-        //{
-        //    paramQueryString = "RigNo=" + RigId;
-        //}
-
-        //ReportName = "MedicineRequest";
-        //paramQueryString = "RigNo=1";
-
-        //_dxDocumentViewer!.OpenReport(ReportName + "?" + paramQueryString);
-    }
 }

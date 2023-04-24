@@ -1,0 +1,43 @@
+﻿@using Samco_HSE.HSEData
+@inject ISnackbar Snackbar
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.AddHomeWork" Class="me-3 mb-1" />
+            اطلاعات چاه
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <div class="d-flex flex-column gap-4">
+            <MudTextField Label="نام چاه" Variant="Variant.Outlined" AutoFocus="true" @bind-Value="@(SelWell.Name)" />
+            <MudTextField Label="محل چاه" Variant="Variant.Outlined" AutoFocus="true" @bind-Value="@(SelWell.Location)" />
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">انصراف</MudButton>
+        <MudButton Color="Color.Success" Icon="fas fa-check" OnClick="Submit">تأیید</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public Well SelWell { get; set; } = null!;
+
+    [Parameter]
+    public Well SelProject { get; set; } = null!;
+
+    private void Submit()
+    {
+        if (SelWell.Name == null)
+        {
+            Snackbar.Add("نام چاه الزامی است.", Severity.Error);
+            return;
+        }
+        SelWell.Save();
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

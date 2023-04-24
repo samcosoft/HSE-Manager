@@ -1,10 +1,9 @@
-﻿using BootstrapBlazor.Components;
-using DevExpress.Blazor;
+﻿using DevExpress.Blazor;
 using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using Samco_HSE.HSEData;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Samco_HSE_Manager.Pages.Officer;
 
@@ -12,17 +11,16 @@ public partial class Assets : IDisposable
 {
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
 
-    [Inject]
-    [NotNull]
-    private ToastService? ToastService { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
     private Session Session1 { get; set; } = null!;
+    private DxGrid AssetGrid { get; set; } = null!;
     private IEnumerable<Asset>? AssetsList { get; set; }
     private IEnumerable<Rig> Rigs { get; set; } = null!;
-    private readonly IEnumerable<string> _owners = new List<string>()
+    private readonly IEnumerable<string> _owners = new List<string>
     {
         "واحد ایمنی","درمانگاه"
     };
-    private readonly IEnumerable<string> _status = new List<string>()
+    private readonly IEnumerable<string> _status = new List<string>
     {
         "سالم","نیاز به تعمیر","خارج از سرویس"
     };
@@ -31,7 +29,7 @@ public partial class Assets : IDisposable
         Session1 = new Session(DataLayer);
         if (SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Owner)
         {
-            var loggedUser = await 
+            var loggedUser = await
                 Session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
             Rigs = loggedUser.Rigs;
         }
@@ -106,7 +104,7 @@ public partial class Assets : IDisposable
         if (string.IsNullOrEmpty(editModel.Name) || string.IsNullOrEmpty(editModel.Owner) ||
             string.IsNullOrEmpty(editModel.Status) || editModel.RigNo == null)
         {
-            await ToastService.Error("خطا در افزودن تجهیز", "لطفاً موارد الزامی را تکمیل کنید.");
+            Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
             e.Cancel = true;
             return;
         }
@@ -117,9 +115,8 @@ public partial class Assets : IDisposable
             if (selEquip != null && string.IsNullOrEmpty(selEquip.Serial) && selEquip.Serial == editModel.Serial)
             {
                 //Equipment existed
-                await ToastService.Error("خطا در ثبت اطلاعات",
-                    "تجهیز با همین مشخصات در سیستم وجود دارد. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.");
-                e.Cancel = true;
+            Snackbar.Add("تجهیز با همین مشخصات در سیستم وجود دارد. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.", Severity.Error);
+            e.Cancel = true;
                 return;
             }
         }
@@ -129,8 +126,7 @@ public partial class Assets : IDisposable
                 string.IsNullOrEmpty(selEquip.Serial) && selEquip.Serial == editModel.Serial)
             {
                 //Equipment existed
-                await ToastService.Error("خطا در ثبت اطلاعات",
-                    "تجهیز با همین مشخصات در سیستم وجود دارد. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.");
+                Snackbar.Add("تجهیز با همین مشخصات در سیستم وجود دارد. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.", Severity.Error);
                 e.Cancel = true;
                 return;
             }
@@ -147,5 +143,17 @@ public partial class Assets : IDisposable
         await LoadInformation();
     }
 
+    private async Task OnPrintBtnClick()
+    {
+        //await ToastService.Information("دریافت گزارش", "سیستم در حال ایجاد فایل است. لطفاً شکیبا باشید...");
+        Snackbar.Add("سیستم در حال ایجاد فایل است. لطفاً تا دانلود گزارش شکیبا باشید...", Severity.Info);
+
+        await AssetGrid.ExportToXlsxAsync("StopCards", new GridXlExportOptions
+        {
+            CustomizeSheet = SamcoSoftShared.CustomizeSheet,
+            CustomizeCell = SamcoSoftShared.CustomizeCell,
+            CustomizeSheetFooter = SamcoSoftShared.CustomizeFooter
+        })!;
+    }
     #endregion
 }

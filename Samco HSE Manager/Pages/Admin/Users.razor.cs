@@ -1,12 +1,11 @@
-﻿using BootstrapBlazor.Components;
-using DevExpress.Blazor;
+﻿using DevExpress.Blazor;
 using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using Samco_HSE.HSEData;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using DevExpress.DashboardWeb;
+using MudBlazor;
 
 namespace Samco_HSE_Manager.Pages.Admin;
 
@@ -14,15 +13,8 @@ public partial class Users : IDisposable
 {
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
-    [Inject] private DashboardConfigurator DashboardConfigurator { get; set; }
-
-    [Inject]
-    [NotNull]
-    private ToastService? ToastService { get; set; }
-
-    [Inject]
-    [NotNull]
-    private MessageService? MessageService { get; set; }
+    [Inject] private DashboardConfigurator DashboardConfigurator { get; set; } = null!;
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
 
     private Session Session1 { get; set; } = null!;
     private IEnumerable<User>? SystemUsers { get; set; }
@@ -39,7 +31,7 @@ public partial class Users : IDisposable
         { "Teacher", "مدرس ایمنی" },
         { "Disabled", "غیر فعال" },
     };
-    private readonly IEnumerable<string> _status = new List<string>()
+    private readonly IEnumerable<string> _status = new List<string>
     {
         "فعال","خاتمه همکاری","انتقال به سایر شرکت‌ها"
     };
@@ -83,10 +75,10 @@ public partial class Users : IDisposable
         e.Value = e.FieldName switch
         {
             "EquipmentsCount" => (from itm in currentUser.MaterialRequests
-                select itm.MaterialLists
+                                  select itm.MaterialLists
                 into grp
-                from listItm in grp
-                select listItm).Sum(x => x.Counts),
+                                  from listItm in grp
+                                  select listItm).Sum(x => x.Counts),
             "WarningsCount" => currentUser.Warnings.Count,
             "AccidentsCount" => currentUser.AccidentReports.Count,
             "PracticeCount" => currentUser.Practices.Count,
@@ -95,13 +87,13 @@ public partial class Users : IDisposable
         };
     }
 
-    private async Task UserGrid_EditStart(GridEditStartEventArgs e)
+    private void UserGrid_EditStart(GridEditStartEventArgs e)
     {
         //prevent owner editing
         var dataItem = (User?)e.DataItem ?? new User(Session1);
         if (e.IsNew == false && dataItem.SiteRole == "Owner")
         {
-            await ToastService.Error("خطا در ویرایش کاربر", "شما اجازه تغییر اطلاعات مدیر سیستم را ندارید.");
+            Snackbar.Add("شما اجازه تغییر اطلاعات مدیر سیستم را ندارید.", Severity.Error);
             e.Cancel = true;
         }
     }
@@ -118,18 +110,24 @@ public partial class Users : IDisposable
         if (string.IsNullOrEmpty(editModel.Username) || string.IsNullOrEmpty(editModel.SiteRole) || editModel.ActiveRig == null ||
             string.IsNullOrEmpty(editModel.PersonnelName) || string.IsNullOrEmpty(editModel.CurrentRole) || string.IsNullOrEmpty(editModel.Status))
         {
-            await ToastService.Error("خطا در افزودن کاربر", "لطفاً موارد الزامی را تکمیل کنید.");
+            Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
             e.Cancel = true;
             return;
         }
 
         if (Regex.IsMatch(editModel.Username, "[^a-z0-9.]+"))
         {
-            await ToastService.Error("خطا در افزودن کاربر", "نام کاربری فقط می‌تواند به زبان انگلیسی شامل حروف کوچک، عدد و نقطه (.) باشد.");
+            Snackbar.Add("نام کاربری فقط می‌تواند به زبان انگلیسی شامل حروف کوچک، عدد و نقطه (.) باشد.", Severity.Error);
             e.Cancel = true;
             return;
         }
 
+        if (string.IsNullOrEmpty(editModel.NationalID) == false && editModel.NationalID.Length < 10)
+        {
+            Snackbar.Add("کد ملی باید حداقل 10 رقم باشد.", Severity.Error);
+            e.Cancel = true;
+            return;
+        }
         //Check user not existed before
         var selPersonnel =
             Session1.FindObject<Samco_HSE.HSEData.Personnel>(new BinaryOperator(nameof(Samco_HSE.HSEData.Personnel.NationalID), editModel.NationalID));
@@ -138,8 +136,7 @@ public partial class Users : IDisposable
             if (selPersonnel != null)
             {
                 //User existed
-                await ToastService.Error("خطا در ثبت اطلاعات",
-                    $"پرسنل با نام {selPersonnel.PersonnelName} با همین کد ملی در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.");
+                Snackbar.Add($"پرسنل با نام {selPersonnel.PersonnelName} با همین کد ملی در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.", Severity.Error);
                 e.Cancel = true;
                 return;
             }
@@ -149,8 +146,7 @@ public partial class Users : IDisposable
             if (selPersonnel != null && selPersonnel.Oid != editModel.Oid)
             {
                 //User existed
-                await ToastService.Error("خطا در ثبت اطلاعات",
-                    $"پرسنل با نام {selPersonnel.PersonnelName} با همین کد ملی در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.");
+                Snackbar.Add($"پرسنل با نام {selPersonnel.PersonnelName} با همین کد ملی در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.", Severity.Error);
                 e.Cancel = true;
                 return;
             }
@@ -163,8 +159,7 @@ public partial class Users : IDisposable
         if (selPerson != null && e.IsNew)
         {
             //Duplicate username
-            await ToastService.Error("خطا در ثبت اطلاعات",
-                "کاربر دیگری با همین نام کاربری وجود دارد. لطفاً نام کاربری دیگری را برگزینید.");
+            Snackbar.Add("کاربر دیگری با همین نام کاربری وجود دارد. لطفاً نام کاربری دیگری را برگزینید.", Severity.Error);
             e.Cancel = true;
             return;
         }
@@ -172,8 +167,7 @@ public partial class Users : IDisposable
         if (selPerson != null && selPerson.Oid != editModel.Oid)
         {
             //Duplicate username
-            await ToastService.Error("خطا در ثبت اطلاعات",
-                "کاربر دیگری با همین نام کاربری وجود دارد. لطفاً نام کاربری دیگری را برگزینید.");
+            Snackbar.Add("کاربر دیگری با همین نام کاربری وجود دارد. لطفاً نام کاربری دیگری را برگزینید.", Severity.Error);
             e.Cancel = true;
             return;
         }
@@ -195,7 +189,7 @@ public partial class Users : IDisposable
             //prevent delete Owner
             if (dataItem.SiteRole == "Owner")
             {
-                await ToastService.Error("خطا در حذف کاربر", "شما اجازه حذف مدیر سیستم را ندارید.");
+                Snackbar.Add("شما اجازه حذف مدیر سیستم را ندارید.", Severity.Error);
                 e.Cancel = true;
                 return;
             }
@@ -203,7 +197,7 @@ public partial class Users : IDisposable
             //prevent delete  current user
             if (dataItem.Oid == SamcoSoftShared.CurrentUser?.Oid)
             {
-                await ToastService.Error("خطا در حذف کاربر", "شما اجازه‌ی حذف اطلاعات کاربری خود را ندارید.");
+                Snackbar.Add("شما اجازه‌ی حذف اطلاعات کاربری خود را ندارید.", Severity.Error);
                 e.Cancel = true;
                 return;
             }
@@ -214,17 +208,17 @@ public partial class Users : IDisposable
 
     #region ChangePassword
 
-    private Modal? PassModal { get; set; }
+    private DxPopup? PassModal { get; set; }
     private string? _newPass, _confPass;
     private async Task OnNewPassBtnClick()
     {
         if (UserGrid?.SelectedDataItems.Any() == false)
         {
-            await ToastService.Warning("خطا در تغییر رمز", "لطفاً یک کاربر را از لیست زیر انتخاب کنید.");
+            Snackbar.Add("لطفاً یک کاربر را از لیست زیر انتخاب کنید.", Severity.Warning);
             return;
         }
 
-        await PassModal!.Show();
+        await PassModal!.ShowAsync();
     }
 
     private async Task PassOkBtnClick()
@@ -232,94 +226,65 @@ public partial class Users : IDisposable
         //check password
         if (string.IsNullOrWhiteSpace(_newPass))
         {
-            await MessageService.Show(new MessageOption()
-            {
-                Color = Color.Danger,
-                IsAutoHide = true,
-                ShowDismiss = true,
-                Content = "کلمه عبور جدید را وارد کنید."
-            });
+            Snackbar.Add("کلمه عبور جدید را وارد کنید.", Severity.Error);
             return;
         }
 
         if (_newPass != _confPass)
         {
-            await MessageService.Show(new MessageOption()
-            {
-                Color = Color.Danger,
-                IsAutoHide = true,
-                ShowDismiss = true,
-                Content = "کلمه‌های عبور وارد شده با هم همخوانی ندارند."
-            });
+            Snackbar.Add("کلمه‌های عبور وارد شده با هم همخوانی ندارند.", Severity.Error);
             return;
         }
 
         if (SamcoSoftShared.PasswordStrengthChecker(_newPass) < SamcoSoftShared.PasswordScore.Medium)
         {
-            await MessageService.Show(new MessageOption()
-            {
-                Color = Color.Warning,
-                IsAutoHide = true,
-                ShowDismiss = true,
-                Content = "کلمه عبور وارد شده بسیار ضعیف است. کلمه عبور پیچیده‌تری انتخاب کنید."
-            });
+            Snackbar.Add("کلمه عبور وارد شده بسیار ضعیف است. کلمه عبور پیچیده‌تری انتخاب کنید.", Severity.Warning);
             return;
         }
 
         var selUser = (User)UserGrid!.SelectedDataItem;
         selUser.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(_newPass);
         selUser.Save();
-        await MessageService.Show(new MessageOption()
-        {
-            Color = Color.Success,
-            IsAutoHide = true,
-            ShowDismiss = true,
-            Content = $"کلمه عبور برای کاربر {selUser.Username} با موفقیت تغییر یافت."
-        });
+        Snackbar.Add($"کلمه عبور برای کاربر {selUser.Username} با موفقیت تغییر یافت.", Severity.Success);
         _newPass = string.Empty;
         _confPass = string.Empty;
-        await PassModal!.Close();
+        await PassModal!.CloseAsync();
     }
 
     #endregion
 
     #region Permission
 
-    private Modal? PermitModal { get; set; }
+    private DxPopup? PermitModal { get; set; }
     private IEnumerable<Rig>? PermitRigList { get; set; }
 
     private async Task OnPermitBtnClick()
     {
         if (UserGrid!.SelectedDataItems.Any() == false)
         {
-            await ToastService.Warning("خطا در تعیین دسترسی", "لطفاً یک کاربر را از لیست زیر انتخاب کنید.");
+            Snackbar.Add("لطفاً یک کاربر را از لیست زیر انتخاب کنید.", Severity.Warning);
             return;
         }
         var selUser = (User)UserGrid.SelectedDataItem;
         if (selUser.SiteRole == "Owner")
         {
-            await ToastService.Warning("خطا در تعیین دسترسی", "مدیر سیستم همواره به همه اطلاعات دسترسی دارد.");
+            Snackbar.Add("مدیر سیستم همواره به همه اطلاعات دسترسی دارد.", Severity.Warning);
             return;
         }
         if (selUser.Oid == SamcoSoftShared.CurrentUser?.Oid)
         {
-            await ToastService.Warning("خطا در تعیین دسترسی", "شما نمی‌توانید سطح دسترسی خود را تغییر دهید.");
+            Snackbar.Add("شما نمی‌توانید سطح دسترسی خود را تغییر دهید.", Severity.Warning);
             return;
         }
         PermitRigList = selUser.Rigs.ToList();
-        await PermitModal!.Show();
+        await PermitModal!.ShowAsync();
     }
 
     private async Task PermitOkBtnClick()
     {
         if (PermitRigList?.Any() == false)
         {
-            await MessageService.Show(new MessageOption()
-            {
-                Color = Color.Danger,
-                Content = "لطفاً حداقل یک دکل را انتخاب کنید.",
-                IsAutoHide = true
-            });
+            Snackbar.Add("لطفاً حداقل یک دکل را انتخاب کنید.", Severity.Error);
             return;
         }
 
@@ -331,13 +296,8 @@ public partial class Users : IDisposable
         selUser.Rigs.AddRange(PermitRigList);
         selUser.Rigs.Add(selUser.ActiveRig);
         selUser.Save();
-        await MessageService.Show(new MessageOption()
-        {
-            Color = Color.Success,
-            Content = "دسترسی‌ها با موفقیت ثبت شدند.",
-            IsAutoHide = true
-        });
-        await PermitModal!.Close();
+        Snackbar.Add("دسترسی‌ها با موفقیت ثبت شدند.", Severity.Success);
+        await PermitModal!.CloseAsync();
     }
 
     #endregion
@@ -363,13 +323,13 @@ public partial class Users : IDisposable
         //Validation
         if (string.IsNullOrEmpty(_personnelUsername) || string.IsNullOrEmpty(_personnelRole) || _selPersonnel == null)
         {
-            await ToastService.Error("خطا در افزودن کاربر", "لطفاً موارد الزامی را تکمیل کنید.");
+            Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
             return;
         }
 
         if (Regex.IsMatch(_personnelUsername, "[^a-z0-9.]+"))
         {
-            await ToastService.Error("خطا در افزودن کاربر", "نام کاربری فقط می‌تواند به زبان انگلیسی شامل حروف کوچک، عدد و نقطه (.) باشد.");
+            Snackbar.Add("نام کاربری فقط می‌تواند به زبان انگلیسی شامل حروف کوچک، عدد و نقطه (.) باشد.", Severity.Error);
             return;
         }
 
@@ -380,8 +340,7 @@ public partial class Users : IDisposable
         if (selPerson != null)
         {
             //Duplicate username
-            await ToastService.Error("خطا در ثبت اطلاعات",
-                "کاربر دیگری با همین نام کاربری وجود دارد. لطفاً نام کاربری دیگری را برگزینید.");
+            Snackbar.Add("کاربر دیگری با همین نام کاربری وجود دارد. لطفاً نام کاربری دیگری را برگزینید.", Severity.Error);
             return;
         }
 
@@ -395,15 +354,13 @@ public partial class Users : IDisposable
             if (updateResult == 0)
             {
                 //Error occurred
-                await ToastService.Error("خطا در ثبت اطلاعات",
-                    "بروز خطای سیستمی. با پشتیبانی تماس بگیرید.");
+                Snackbar.Add("بروز خطای سیستمی. با پشتیبانی تماس بگیرید.", Severity.Error);
                 return;
             }
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            await ToastService.Error("خطا در ثبت اطلاعات",
-                "بروز خطای سیستمی. با پشتیبانی تماس بگیرید." + Environment.NewLine + e.Message);
+            Snackbar.Add("بروز خطای سیستمی. با پشتیبانی تماس بگیرید.", Severity.Error);
             return;
         }
 
@@ -411,20 +368,13 @@ public partial class Users : IDisposable
         var selUser = await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", _selPersonnel.Oid));
         if (selUser == null)
         {
-            await ToastService.Error("خطا در ثبت اطلاعات",
-                "بروز خطای سیستمی. با پشتیبانی تماس بگیرید.");
+            Snackbar.Add("بروز خطای سیستمی. با پشتیبانی تماس بگیرید.", Severity.Error);
             return;
         }
 
         selUser.Rigs.Add(selUser.ActiveRig);
         selUser.Save();
-        await MessageService.Show(new MessageOption()
-        {
-            Color = Color.Success,
-            IsAutoHide = true,
-            ShowDismiss = true,
-            Content = $"دسترسی برای {selUser.PersonnelName} ایجاد شد. لطفاً کلمه عبور ایشان را نیز تعیین کنید."
-        });
+        Snackbar.Add($"دسترسی برای {selUser.PersonnelName} ایجاد شد. لطفاً کلمه عبور ایشان را نیز تعیین کنید.", Severity.Success);
         await UpgradeModal!.CloseAsync();
         await LoadInformation();
     }

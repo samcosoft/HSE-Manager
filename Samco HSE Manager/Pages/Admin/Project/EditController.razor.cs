@@ -1,9 +1,6 @@
-﻿using BootstrapBlazor.Components;
-using DevExpress.Xpo;
-using Microsoft.AspNetCore.Components;
-using Samco_HSE.HSEData;
+﻿using Microsoft.AspNetCore.Components;
 
-namespace Samco_HSE_Manager.Pages.Admin;
+namespace Samco_HSE_Manager.Pages.Admin.Project;
 
 public partial class EditController
 {
@@ -19,6 +16,7 @@ public partial class EditController
     [Parameter] public EventCallback<EditType> OnEditButtonClicked { get; set; }
     [Parameter] public EventCallback<EditType> OnDelButtonClicked { get; set; }
 
+    private bool _isOpen;
     private async void OpenNewClick()
     {
         await OnNewButtonClicked.InvokeAsync(EditorType);

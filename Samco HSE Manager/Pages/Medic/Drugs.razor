@@ -4,16 +4,16 @@
 @using Microsoft.AspNetCore.Components
 
 <PageTitle>داروها و تجهیزات پزشکی</PageTitle>
-<Card>
-    <HeaderTemplate>
+<MudCard>
+    <MudCardHeader>
         <DxMenu Title="داروها و تجهیزات پزشکی" ItemsPosition="ItemPosition.Start" CssClass="card-header">
             <Items>
                 <DxMenuItem Text="تنظیم موجودی" IconCssClass="fas fa-suitcase-medical" @onclick="OnSetNumberBtnClick" />
                 <DxMenuItem Text="درخواست دارو / تجهیزات" IconCssClass="fas fa-truck-medical" @onclick="OnDrugRequestBtnClick" />
             </Items>
         </DxMenu>
-    </HeaderTemplate>
-    <BodyTemplate>
+    </MudCardHeader>
+    <MudCardContent>
         <DxGrid @ref="MedicineGrid" Data="@MedicineList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"
                 EditModelSaving="OnEditModelSaving" DataItemDeleting="OnDataItemDeleting" UnboundColumnData="MedicationGridUnbound"
                 CustomizeEditModel="MedicineEditModel" EditStart="MedicineEditStart"
@@ -84,8 +84,8 @@
                 </DxFormLayout>
             </EditFormTemplate>
         </DxGrid>
-    </BodyTemplate>
-</Card>
+    </MudCardContent>
+</MudCard>
 
 <DxPopup @ref="SetNumberModal" HeaderText="تنظیم تعداد تجهیز" ShowFooter="true" CloseOnOutsideClick="false" CloseOnEscape="false">
     <BodyContentTemplate Context="_">
@@ -102,13 +102,13 @@
         </DxFormLayout>
     </BodyContentTemplate>
     <FooterContentTemplate>
-        <Button Color="Color.Success" Icon="fas fa-check" OnClick="SetCountOkBtnClick">تأیید</Button>
+        <MudButton Color="Color.Success" StartIcon="fas fa-check" OnClick="SetCountOkBtnClick">تأیید</MudButton>
     </FooterContentTemplate>
 </DxPopup>
 
 <DxPopup @ref="DrugRequestModal" HeaderText="درخواست دارو / تجهیزات" ShowFooter="true" CloseOnOutsideClick="false" CloseOnEscape="false">
     <BodyContentTemplate Context="_">
-        <Alert Color="Color.Info" Icon="fas fa-info" ShowBar="true">درخواست داروها بر اساس حداقل تعداد دارو / تجهیز تنظیم می‌شود. شما می‌توانید پس از دریافت فایل درخواست مقادیر آن‌ها را تغییر دهید.</Alert>
+        <MudAlert Severity="Severity.Info" Icon="fas fa-info" Elevation="3">درخواست داروها بر اساس حداقل تعداد دارو / تجهیز تنظیم می‌شود. شما می‌توانید پس از دریافت فایل درخواست مقادیر آن‌ها را تغییر دهید.</MudAlert>
         <DxFormLayout>
             <DxFormLayoutItem Caption="نام دکل / دفتر:" ColSpanMd="4" ColSpanSm="12">
                 <DxComboBox Data="@Rigs" @bind-Value="_selRig" TextFieldName="@nameof(Rig.Name)" NullText="الزامی"/>
@@ -116,6 +116,6 @@
         </DxFormLayout>
     </BodyContentTemplate>
     <FooterContentTemplate>
-        <Button Color="Color.Success" Icon="fas fa-check" OnClick="RequestBtnClick">تأیید</Button>
+        <MudButton Color="Color.Success" StartIcon="fas fa-check" OnClick="RequestBtnClick">تأیید</MudButton>
     </FooterContentTemplate>
 </DxPopup>

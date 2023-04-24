@@ -4,8 +4,8 @@
 
 <PageTitle>گزارش اعمال / شرایط ایمن و نا ایمن</PageTitle>
 
-<Card>
-    <HeaderTemplate>
+<MudCard>
+    <MudCardHeader>
         <DxMenu Title="گزارش اعمال / شرایط ایمن و نا ایمن" ItemsPosition="ItemPosition.Start" CssClass="card-header">
             <Items>
                 <DxMenuItem Text="دریافت اطلاعات" IconCssClass="fas fa-paste" @onclick="OnPrintBtnClick" />
@@ -13,8 +13,8 @@
                 @*<DxMenuItem Text="توزیع تجهیزات" IconCssClass="fas fa-boxes-packing" @onclick="OnDistributeBtnClick" />*@
             </Items>
         </DxMenu>
-    </HeaderTemplate>
-    <BodyTemplate>
+    </MudCardHeader>
+    <MudCardContent>
         <DxButton Text="تنظیم ستون‌ها"
                   RenderStyle="ButtonRenderStyle.Secondary"
                   CssClass="column-chooser-button"
@@ -94,7 +94,7 @@
                 </DxGridDataColumn>
                 <DxGridDataColumn FieldName="Score" Caption="امتیاز" MinWidth="150">
                     <CellDisplayTemplate>
-                        <Rate Value="@((int)context.Value)" IsDisable="true" Max="5" class="d-inline-block" />
+                        <MudRating SelectedValue="@((int)context.Value)" Disabled="true" MaxValue="5" Class="d-inline-block" />
                     </CellDisplayTemplate>
                     <FilterRowCellTemplate>
                         <OperatorType FilterContext="@context">
@@ -120,10 +120,10 @@
                 }
                 <DxFormLayout>
                     <DxFormLayoutItem Caption="دکل / دفتر:">
-                        <DxComboBox Data="@Rigs" @bind-Value="@_selRig" TextFieldName="@nameof(Rig.Name)" NullText="الزامی" />
+                        <DxComboBox Data="@Rigs" @bind-Value="@_selRig" TextFieldName="@nameof(Rig.Name)" NullText="الزامی" SelectedItemChanged="@((Rig rig) => RigChanged(rig))"/>
                     </DxFormLayoutItem>
                     <DxFormLayoutItem Caption="تاریخ گزارش:">
-                        <SamcoDateSelector TData="DateTime?" @bind-Date="@stopCard.ReportDate" DefaultCalendar="SamcoDateSelector<DateTime?>.CalendarType.Shamsi" />
+                        <SamcoDateSelector @bind-Date="@stopCard.ReportDate" DefaultCalendar="SamcoDateSelector.CalendarType.Shamsi" />
                     </DxFormLayoutItem>
                     <DxFormLayoutItem Caption="گزارش دهنده:">
                         <DxComboBox Data="@PersonnelList" @bind-Value="@stopCard.Reporter" NullText="الزامی"
@@ -166,7 +166,7 @@
                         <DxCheckBox @bind-Checked="@stopCard.IsApproved" />
                     </DxFormLayoutItem>
                     <DxFormLayoutItem Caption="امتیاز ایمنی:">
-                        <Rate @bind-Value="@stopCard.Score" Max="5" />
+                        <MudRating @bind-SelectedValue="@stopCard.Score" MaxValue="5" />
                     </DxFormLayoutItem>
                     @{
                         if (stopCard.Oid >= 0 && _photoList != null)
@@ -179,12 +179,16 @@
                 </DxFormLayout>
             </EditFormTemplate>
         </DxGrid>
-    </BodyTemplate>
-</Card>
+    </MudCardContent>
+</MudCard>
 
 <DxPopup @bind-Visible="@_photoShowVisible" ShowFooter="true" HeaderText="تصاویر" MaxWidth="500">
     <BodyTemplate Context="_">
-        <Carousel Images="_photoList" ShowControls="true" ShowIndicators="true" />
+        <MudCarousel ItemsSource="@_photoList" AutoCycle="true" AutoCycleTime="TimeSpan.FromSeconds(10)">
+            <ItemTemplate>
+                <MudImage Src="@context" Elevation="2"/>
+            </ItemTemplate>
+        </MudCarousel>
     </BodyTemplate>
     <FooterContentTemplate>
         <DxButton CssClass="popup-button me-2" RenderStyle="ButtonRenderStyle.Danger" Text="بستن" Click="@(() => _photoShowVisible = false)" />

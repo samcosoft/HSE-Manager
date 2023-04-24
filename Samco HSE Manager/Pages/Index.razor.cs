@@ -14,9 +14,6 @@ public partial class Index
 
     private Session? _session1;
     private User? _loggedUser;
-    private IEnumerable<Rig>? _locationList;
-    private IEnumerable<Rig>? _selLocation;
-    private DateTime _fromDate, _toDate;
     private string? _dashboardId;
 
     protected override async Task OnInitializedAsync()
@@ -27,14 +24,14 @@ public partial class Index
 
         if (claimsPrincipal.Identity is { IsAuthenticated: true } && claimsPrincipal.IsInRole("Personnel"))
         {
-            NavigationManager.NavigateTo("/personnelHome");
+            NavigationManager.NavigateTo("personnelHome");
             return;
         }
         if (SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Owner)
         {
             _loggedUser = await 
                 _session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
-            _locationList = _loggedUser.Rigs;
+            //_locationList = _loggedUser.Rigs;
             //TODO: Change this later
             //_dashboardId = _loggedUser.DashboardId ?? _loggedUser.SiteRole;
             _dashboardId = "Admin";
@@ -43,11 +40,11 @@ public partial class Index
         {
             //Owner
             _loggedUser = await _session1.FindObjectAsync<User>(new BinaryOperator("Username", "admin"));
-            _locationList = _session1.Query<Rig>().ToList();
+            //_locationList = _session1.Query<Rig>().ToList();
             _dashboardId = "Admin";
         }
-        _fromDate = DateTime.Parse("2023/01/01");
-        _toDate = DateTime.Now;
+        //_fromDate = DateTime.Parse("2023/01/01");
+        //_toDate = DateTime.Now;
     }
 
     #region Dashboard

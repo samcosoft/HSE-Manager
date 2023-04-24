@@ -1,0 +1,125 @@
+﻿@using Samco_HSE.HSEData
+@page "/projects"
+@attribute [Authorize(Roles = "Owner,Admin")]
+
+<PageTitle>مدیریت عملیات حفاری</PageTitle>
+
+<MudGrid>
+    <MudItem md="4" sm="12">
+        <MudCard Elevation="3" Outlined="true">
+            <MudCardHeader>
+                <CardHeaderAvatar>
+                    <MudIcon Icon="@Icons.Material.Filled.Work"/>
+                </CardHeaderAvatar>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">پروژه‌ها</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <DxListBox Data="@DrillProjects" TextFieldName="@nameof(Project.Name)" @bind-Value="@_selProject" SelectionMode="ListBoxSelectionMode.Single"/>
+                <EditController EditorType="EditController.EditType.Project" OnNewButtonClicked="NewBtnClick" OnEditButtonClicked="EditBtnClick"
+                                OnDelButtonClicked="DelBtnClick"></EditController>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+    <MudItem md="4" sm="12">
+        <MudCard Elevation="3" Outlined="true">
+            <MudCardHeader>
+                <CardHeaderAvatar>
+                    <MudIcon Icon="fas fa-oil-well" />
+                </CardHeaderAvatar>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">چاه‌ها</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <DxListBox Data="@_selProject?.Wells" TextFieldName="@nameof(Well.Name)" @bind-Value="@_selWell" SelectionMode="ListBoxSelectionMode.Single"/>
+                <EditController EditorType="EditController.EditType.Well" OnNewButtonClicked="NewBtnClick" OnEditButtonClicked="EditBtnClick"
+                                OnDelButtonClicked="DelBtnClick"></EditController>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+    <MudItem md="4" sm="12">
+        <MudCard Elevation="3" Outlined="true">
+            <MudCardHeader>
+                <CardHeaderAvatar>
+                    <MudIcon Icon="@Icons.Material.Filled.AddHomeWork" />
+                </CardHeaderAvatar>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">دکل / پالایشگاه / دفتر</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <DxListBox Data="@Rigs" TextFieldName="@nameof(Rig.Name)" @bind-Value="@_selRig" SelectionMode="ListBoxSelectionMode.Single"/>
+                <EditController EditorType="EditController.EditType.Rig" OnNewButtonClicked="NewBtnClick" OnEditButtonClicked="EditBtnClick"
+                                OnDelButtonClicked="DelBtnClick"></EditController>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
+<div class="mt-3">
+    <MudGrid>
+        <MudItem>
+            <MudCard Elevation="3" Outlined="true">
+                <MudCardHeader>
+                    <CardHeaderAvatar>
+                        <MudIcon Icon="fas fa-person-digging" />
+                    </CardHeaderAvatar>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h5">عملیات حفاری</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <DxGrid Data="@WellWorks" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"
+                            EditModelSaving="OnEditModelSaving" DataItemDeleting="OnDataItemDeleting" CustomizeEditModel="ProjectEditModel"
+                            UnboundColumnData="ProjectsGridUnbound" ShowSearchBox="true" ShowFilterRow="true">
+                        <Columns>
+                            <DxGridCommandColumn MinWidth="85" />
+                            <DxGridDataColumn Caption="دکل" FieldName="RigNo.Name" TextAlignment="GridTextAlignment.Center" MinWidth="85" />
+                            <DxGridDataColumn Caption="چاه" FieldName="WellNo.Name" TextAlignment="GridTextAlignment.Center" MinWidth="85" />
+                            <DxGridDataColumn Caption="عملیات فعال" FieldName="IsActive" SortIndex="1" MinWidth="85">
+                                <CellDisplayTemplate>
+                                    <DxCheckBox CssClass="d-inline-block" Checked="@((bool)context.Value)" Enabled="false" />
+                                </CellDisplayTemplate>
+                            </DxGridDataColumn>
+                            <DxGridDataColumn Caption="تاریخ شروع" FieldName="StartDate" SortIndex="0" SortOrder="GridColumnSortOrder.Descending" TextAlignment="GridTextAlignment.Center" MinWidth="85" />
+                            <DxGridDataColumn Caption="تاریخ پایان" FieldName="EndDate" TextAlignment="GridTextAlignment.Center" />
+                            @*<DxGridDataColumn Caption="تعداد تجهیزات  تحویل شده" FieldName="EquipmentsCount" UnboundType="GridUnboundColumnType.Integer" TextAlignment="GridTextAlignment.Center" MinWidth="85" />*@
+                            <DxGridDataColumn Caption="تعداد اخطارهای صادر شده" FieldName="WarningsCount" UnboundType="GridUnboundColumnType.Integer" TextAlignment="GridTextAlignment.Center" MinWidth="85" />
+                            <DxGridDataColumn Caption="تعداد حوادث اتفاق افتاده" FieldName="AccidentsCount" UnboundType="GridUnboundColumnType.Integer" TextAlignment="GridTextAlignment.Center" MinWidth="85" />
+                            <DxGridDataColumn Caption="تعداد مانورهای برگزار شده" FieldName="PracticeCount" UnboundType="GridUnboundColumnType.Integer" TextAlignment="GridTextAlignment.Center" MinWidth="85" />
+                            <DxGridDataColumn Caption="تعداد آموزش‌های برگزار شده" FieldName="TrainingCount" UnboundType="GridUnboundColumnType.Integer" TextAlignment="GridTextAlignment.Center" MinWidth="85" />
+                        </Columns>
+                        <EditFormTemplate Context="editFormContext">
+                            @{
+                                var wellWork = (WellWork)editFormContext.EditModel;
+                            }
+                            <DxFormLayout>
+                                <DxFormLayoutItem Caption="انتخاب دکل:">
+                                    <DxComboBox Data="@Rigs" TextFieldName="@nameof(Rig.Name)" @bind-Value="@wellWork.RigNo" NullText="الزامی" />
+                                </DxFormLayoutItem>
+                                <DxFormLayoutItem Caption="انتخاب چاه:">
+                                    <DxComboBox Data="@Wells" TextFieldName="@nameof(Well.Name)" @bind-Value="@wellWork.WellNo" NullText="الزامی">
+                                        <DxListEditorColumn FieldName="Name" Caption="نام چاه" />
+                                        <DxListEditorColumn FieldName="ProjectName.Name" Caption="نام پروژه" />
+                                        <DxListEditorColumn FieldName="Location" Caption="محل" />
+                                    </DxComboBox>
+                                </DxFormLayoutItem>
+                                <DxFormLayoutItem Caption="تاریخ شروع:">
+                                    <SamcoDateSelector @bind-DateNotNull="@wellWork.StartDate" NullText="الزامی" DefaultCalendar="SamcoDateSelector.CalendarType.Miladi" />
+                                </DxFormLayoutItem>
+                                <DxFormLayoutItem Caption="تاریخ پایان:">
+                                    <SamcoDateSelector @bind-Date="@wellWork.EndDate" NullText="الزامی" DefaultCalendar="SamcoDateSelector.CalendarType.Miladi" />
+                                </DxFormLayoutItem>
+                                <DxFormLayoutItem Caption="وضعیت:">
+                                    <DxCheckBox @bind-Checked="@wellWork.IsActive">عملیات فعال است</DxCheckBox>
+                                </DxFormLayoutItem>
+                            </DxFormLayout>
+                        </EditFormTemplate>
+                    </DxGrid>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</div>

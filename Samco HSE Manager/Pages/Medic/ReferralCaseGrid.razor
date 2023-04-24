@@ -1,0 +1,31 @@
+﻿<div>
+    <MudAlert Severity="Severity.Normal">ارجاع بیمار به متخصص</MudAlert>
+</div>
+@{
+    if (IsEditable)
+    {
+        <MudCard>
+            <MudCardContent>
+                <DxFormLayout>
+                    <DxFormLayoutItem Caption="تخصص:">
+                        <DxComboBox Data="@_specialistList" @bind-Value="@_selReferral!.Specialist" NullText="الزامی" InputCssClass="w-50"/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="توضیح:">
+                        <DxTextBox @bind-Text="@_selReferral.Comment" NullText="دلیل ارجاع و درمان احتمالی..."/>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem>
+                        <MudButton StartIcon="fa-solid fa-check" Color="Color.Primary" OnClick="AddReferralBtnClick"/>
+                    </DxFormLayoutItem>
+                </DxFormLayout>
+            </MudCardContent>
+        </MudCard>
+    }
+}
+<DxGrid @ref="ReferralGrid" Data="DetailGridData"
+        PageSize="5" SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="@IsEditable"
+        AutoExpandAllGroupRows="true" SelectedDataItemChanged="ReferralGrid_SelectionChanged">
+    <Columns>
+        <DxGridDataColumn FieldName="Specialist" Caption="نام تخصص" Width="40%" />
+        <DxGridDataColumn FieldName="Comment" Caption="توضیح" />
+    </Columns>
+</DxGrid>

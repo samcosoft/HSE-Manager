@@ -1,20 +1,20 @@
-﻿URI / LRI
-SKIN DISEASES
-EYE DISEASE
-EAR DISEASE
-MOUTH / TOOTH
-HEART DISEASE
-HEADACHE
-HEAT DISTRESS
-KIDNEY / URINARY TRACT
-ALLERGY
-ABDOMINAL PAIN
-MUSCULAR / JOINT
-GASTRITIS
-GASTROENTERITIS
-TRAUMA
-FIRST AID
-FOLLOW UP
-HEALTH CHECK-UP
-MISCELLANEOUS
-BODY TEMPRATURE CHECK
+﻿General Health Issues
+Skin Disease
+Heat Distress
+Eye Disease
+Ear Disease
+Mouth / Tooth
+Psychological Problem
+Headache
+Heart Disease
+Respiratory Infection
+Asthma / Allergy
+Gastritis / Acid Reflux
+Gastroenteritis
+Unspecific Abdominal Pain
+Kidney / Urinary Tract
+Muscular / Joint
+Trauma
+Followup
+Health Check-Up
+Miscellaneous

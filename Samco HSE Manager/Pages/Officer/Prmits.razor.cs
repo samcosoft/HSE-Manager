@@ -1,10 +1,9 @@
-﻿using BootstrapBlazor.Components;
-using DevExpress.Xpo;
+﻿using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using Samco_HSE.HSEData;
-using System.Diagnostics.CodeAnalysis;
 using DevExpress.Blazor;
 using DevExpress.Data.Filtering;
+using MudBlazor;
 
 namespace Samco_HSE_Manager.Pages.Officer;
 
@@ -12,9 +11,7 @@ public partial class Prmits : IDisposable
 {
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
-    [Inject]
-    [NotNull]
-    private ToastService? ToastService { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
 
     private Session Session1 { get; set; } = null!;
     private IEnumerable<Permit>? PermitsList { get; set; }
@@ -75,6 +72,11 @@ public partial class Prmits : IDisposable
         if (dataItem.WorkID != null) _selRig = dataItem.WorkID.RigNo;
         e.EditModel = dataItem;
     }
+    private async Task RigChanged(Rig obj)
+    {
+        PersonnelList = await Session1.Query<Samco_HSE.HSEData.Personnel>().Where(x => x.ActiveRig.Oid == obj.Oid).ToListAsync();
+    }
+
     private async Task OnEditModelSaving(GridEditModelSavingEventArgs e)
     {
         var editModel = (Permit)e.EditModel;
@@ -85,14 +87,14 @@ public partial class Prmits : IDisposable
             editModel.Responsible == null || editModel.Approver == null || string.IsNullOrEmpty(editModel.PermitType) ||
             string.IsNullOrEmpty(editModel.Location) || string.IsNullOrEmpty(editModel.Description))
         {
-            await ToastService.Error("خطا در ثبت مجوز", "لطفاً موارد الزامی را تکمیل کنید.");
+            Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
             e.Cancel = true;
             return;
         }
 
         if (editModel.EndTime != null && editModel.EndTime < editModel.StartTime)
         {
-            await ToastService.Error("خطا در ثبت مجوز", "تاریخ و ساعت پایان کار نباید قبل از شروع آن باشد.");
+            Snackbar.Add("تاریخ و ساعت پایان کار نباید قبل از شروع آن باشد.", Severity.Error);
             e.Cancel = true;
             return;
         }
@@ -102,7 +104,14 @@ public partial class Prmits : IDisposable
 
         if (wellWork == null)
         {
-            await ToastService.Error("خطا در ثبت مجوز", "دکل انتخاب شده در هیچ پروژه‌ای فعال نیست.");
+            Snackbar.Add("دکل انتخاب شده در هیچ پروژه‌ای فعال نیست.", Severity.Error);
+            e.Cancel = true;
+            return;
+        }
+        //Check date
+        if (editModel.StartTime < wellWork.StartDate)
+        {
+            Snackbar.Add("تاریخ و ساعت انتخاب شده با تاریخ شروع پروژه مطابقت ندارد.", Severity.Error);
             e.Cancel = true;
             return;
         }
@@ -114,7 +123,7 @@ public partial class Prmits : IDisposable
 
         if (prevItem != null && prevItem.Oid != editModel.Oid)
         {
-            await ToastService.Error("خطا در ثبت مجوز", "شماره سریال مجوز تکراری است. لطفاً آن را بررسی کرده و دوباره تلاش کنید.");
+            Snackbar.Add("شماره سریال مجوز تکراری است. لطفاً آن را بررسی کرده و دوباره تلاش کنید.", Severity.Error);
             e.Cancel = true;
             return;
         }
@@ -134,15 +143,7 @@ public partial class Prmits : IDisposable
     }
     private async Task OnPrintBtnClick()
     {
-        await ToastService.Show(new ToastOption
-        {
-            Content = "سیستم در حال ایجاد فایل است. لطفاً تا دانلود گزارش شکیبا باشید...",
-            Title = "دریافت گزارش",
-            Category = ToastCategory.Information,
-            Delay = 6000,
-            ForceDelay = true
-        });
-
+        Snackbar.Add("سیستم در حال ایجاد فایل است. لطفاً تا دانلود گزارش شکیبا باشید...", Severity.Info);
         //var getReport = PersonnelGrid?.ExportToXlsxAsync("Personnel", new GridXlExportOptions
         await PermitGrid?.ExportToXlsxAsync("Permits", new GridXlExportOptions
         {

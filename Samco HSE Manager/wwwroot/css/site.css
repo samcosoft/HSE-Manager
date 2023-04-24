@@ -7,7 +7,7 @@
 body {
     font-family: IRANSansX, serif !important;
     direction: rtl;
-    background-color: #cdcdcd;
+    /*background-color: #cdcdcd;*/
     margin: 0;
 }
 
@@ -17,7 +17,7 @@ input, textarea, p ,pre {
 
 h1, h2, h3, h4, h5, h6 {
     font-family: dana, serif !important;
-    color: var(--primary-color);
+    /*color: var(--primary-color);*/
     font-weight: bold;
 }
 
@@ -331,6 +331,14 @@ dx-dashboard-ellipsis {
 .dxbl-grid-header-content span {
     margin-right: auto;
     margin-left: auto;
+}
+
+.dx-dashboard-typography text {
+    font-family: IranSansX, Dana !important
+}
+
+.dx-toolbar-item {
+    font-family: Dana, IranSansX
 }
 
 .form-select, .popover {

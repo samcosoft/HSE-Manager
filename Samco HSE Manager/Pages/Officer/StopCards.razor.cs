@@ -1,10 +1,9 @@
-﻿using BootstrapBlazor.Components;
-using DevExpress.Blazor;
+﻿using DevExpress.Blazor;
 using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using Samco_HSE.HSEData;
-using System.Diagnostics.CodeAnalysis;
+using MudBlazor;
 
 namespace Samco_HSE_Manager.Pages.Officer;
 
@@ -13,10 +12,7 @@ public partial class StopCards : IDisposable
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
-
-    [Inject]
-    [NotNull]
-    private ToastService? ToastService { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
 
     private Session Session1 { get; set; } = null!;
     private IEnumerable<StopCard>? StopsList { get; set; }
@@ -138,11 +134,14 @@ public partial class StopCards : IDisposable
         }
         else
         {
-            ToastService.Warning("نمایش تصویر", "تصویری وجود ندارد.");
+            Snackbar.Add("تصویری وجود ندارد.", Severity.Warning);
         }
-            
-    }
 
+    }
+    private async Task RigChanged(Rig obj)
+    {
+        PersonnelList = await Session1.Query<Samco_HSE.HSEData.Personnel>().Where(x => x.ActiveRig.Oid == obj.Oid).ToListAsync();
+    }
     private async Task OnEditModelSaving(GridEditModelSavingEventArgs e)
     {
         var editModel = (StopCard)e.EditModel;
@@ -153,7 +152,7 @@ public partial class StopCards : IDisposable
             string.IsNullOrEmpty(editModel.Location) || string.IsNullOrEmpty(editModel.Category) ||
             string.IsNullOrEmpty(editModel.Observation))
         {
-            await ToastService.Error("خطا در ثبت STOP Card", "لطفاً موارد الزامی را تکمیل کنید.");
+            Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
             e.Cancel = true;
             return;
         }
@@ -163,11 +162,18 @@ public partial class StopCards : IDisposable
 
         if (wellWork == null)
         {
-            await ToastService.Error("خطا در ثبت STOP Card", "دکل انتخاب شده در هیچ پروژه‌ای فعال نیست.");
+            Snackbar.Add("دکل انتخاب شده در هیچ پروژه‌ای فعال نیست.", Severity.Error);
             e.Cancel = true;
             return;
         }
 
+        //Check date
+        if (editModel.ReportDate < wellWork.StartDate)
+        {
+            Snackbar.Add("تاریخ انتخاب شده با تاریخ شروع پروژه مطابقت ندارد.", Severity.Error);
+            e.Cancel = true;
+            return;
+        }
         editModel.WorkID = wellWork;
         editModel.Agent ??= loggedUser;
         editModel.Save();
@@ -184,15 +190,7 @@ public partial class StopCards : IDisposable
 
     private async Task OnPrintBtnClick()
     {
-        //await ToastService.Information("دریافت گزارش", "سیستم در حال ایجاد فایل است. لطفاً شکیبا باشید...");
-        await ToastService.Show(new ToastOption
-        {
-            Content = "سیستم در حال ایجاد فایل است. لطفاً تا دانلود گزارش شکیبا باشید...",
-            Title = "دریافت گزارش",
-            Category = ToastCategory.Information,
-            Delay = 6000,
-            ForceDelay = true
-        });
+        Snackbar.Add("سیستم در حال ایجاد فایل است. لطفاً تا دانلود گزارش شکیبا باشید...", Severity.Info);
 
         //var getReport = PersonnelGrid?.ExportToXlsxAsync("Personnel", new GridXlExportOptions
         await StopGrid?.ExportToXlsxAsync("StopCards", new GridXlExportOptions

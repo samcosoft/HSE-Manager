@@ -8,7 +8,10 @@
         <div class="col d-flex px-0 me-4 header">
             <img style="margin-right: auto" src="images/logo.svg" alt="logo" height="40">
             <h4 class="mt-2 ms-2 me-3 text-white title-text">سامانه مدیریت ایمنی، بهداشت و محیط زیست</h4>
-            <div style="align-self: center; margin-right: auto">
+            <div class="d-flex" style="align-self: center; margin-right: auto">
+                <MudSwitch T="bool" @bind-Checked="@DarkMode" Class="me-3"
+                           ThumbIcon="@(DarkMode ? Icons.Material.Filled.DarkMode : Icons.Material.Filled.LightMode)"
+                           ThumbIconColor="@(DarkMode ? Color.Dark : Color.Default)" Color="Color.Primary" UnCheckedColor="Color.Secondary"/>
                 <AuthorizeView>
                     <Authorized>
                         <button type="button" class="btn btn-danger" @onclick="LogOut_Click">خروج از سیستم</button>
@@ -25,13 +28,28 @@
 
 @code {
     [Parameter] public bool ToggleOn { get; set; }
+
+    [Parameter]
+    public bool DarkMode
+    {
+        get => _darkMode;
+        set
+        {
+            if (_darkMode == value) return;
+            _darkMode = value;
+            DarkModeChanged.InvokeAsync(_darkMode);
+        }
+    }
+
     [Parameter] public EventCallback<bool> ToggleOnChanged { get; set; }
+    [Parameter] public EventCallback<bool> DarkModeChanged { get; set; }
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    private bool _darkMode;
 
-    async Task OnToggleClick() => await Toggle();
+    private async Task OnToggleClick() => await Toggle();
 
-    async Task Toggle(bool? value = null)
+    private async Task Toggle(bool? value = null)
     {
         var newValue = value ?? !ToggleOn;
         if (ToggleOn != newValue)

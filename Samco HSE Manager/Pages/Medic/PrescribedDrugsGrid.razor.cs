@@ -1,19 +1,16 @@
-﻿using BootstrapBlazor.Components;
-using DevExpress.Xpo;
+﻿using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using Samco_HSE.HSEData;
 using System.Diagnostics.CodeAnalysis;
 using DevExpress.Blazor;
+using MudBlazor;
 
 namespace Samco_HSE_Manager.Pages.Medic;
 
 public partial class PrescribedDrugsGrid
 {
-    [Inject] private IDataLayer DataLayer { get; set; } = null!;
-    
-    [Inject]
-    [NotNull]
-    private MessageService? MessageService { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
+
     [Parameter]
     public MedicalVisit? Visit { get; set; }
     [Parameter]
@@ -47,22 +44,14 @@ public partial class PrescribedDrugsGrid
         //validation
         if (_selUsedMedicine?.MedicName == null || _selUsedMedicine.MedCount == 0)
         {
-            MessageService.Show(new MessageOption
-            {
-                Color = Color.Danger,
-                Content = "لطفاً نام دارو و یا تجهیز و همچنین تعداد آن را وارد کنید."
-            });
+            Snackbar.Add("لطفاً نام دارو و یا تجهیز و همچنین تعداد آن را وارد کنید.", Severity.Error);
             return;
         }
         //Check repeated data
         var prevDrug = Visit!.UsedMedicines.FirstOrDefault(x => x.MedicName.Oid == _selUsedMedicine.MedicName.Oid);
         if (prevDrug != null && prevDrug.Oid != _selUsedMedicine.Oid)
         {
-            MessageService.Show(new MessageOption
-            {
-                Color = Color.Danger,
-                Content = "دارو / تجهیز تکراری است."
-            });
+            Snackbar.Add("دارو / تجهیز تکراری است.", Severity.Error);
             return;
         }
         //Check availability
@@ -70,11 +59,7 @@ public partial class PrescribedDrugsGrid
             x.MedicName.Oid == _selUsedMedicine.MedicName.Oid);
         if (availDrug == null || availDrug.AvailCount < _selUsedMedicine.MedCount)
         {
-            MessageService.Show(new MessageOption
-            {
-                Color = Color.Danger,
-                Content = "تعداد داروی درخواست شده از موجودی دکل بیشتر است."
-            });
+            Snackbar.Add("تعداد داروی درخواست شده از موجودی دکل بیشتر است.", Severity.Error);
             return;
         }
 
@@ -107,15 +92,11 @@ public partial class PrescribedDrugsGrid
     {
         if (MedicineGrid?.SelectedDataItem == null)
         {
-            MessageService.Show(new MessageOption
-            {
-                Color = Color.Danger,
-                Content = "لطفاً یک مورد را از لیست زیر انتخاب کنید."
-            });
+            Snackbar.Add("لطفاً یک مورد را از لیست زیر انتخاب کنید.", Severity.Error);
             return;
         }
 
-        var dataItem = ((UsedMedicine)MedicineGrid.SelectedDataItem);
+        var dataItem = (UsedMedicine)MedicineGrid.SelectedDataItem;
         //Check availability
         var availDrug = Session1.Query<MedicationStock>().First(x => x.RigNo.Oid == Visit!.Patient.ActiveRig.Oid &&
                                                                               x.MedicName.Oid == dataItem.MedicName.Oid);
@@ -125,6 +106,7 @@ public partial class PrescribedDrugsGrid
 
         dataItem.Delete();
         DetailGridData = Visit?.UsedMedicines.ToList();
+        _selUsedMedicine = new UsedMedicine(Session1) { MedCount = 1 };
     }
 
     #endregion

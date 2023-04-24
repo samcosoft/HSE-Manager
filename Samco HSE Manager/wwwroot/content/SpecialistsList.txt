@@ -1,0 +1,33 @@
+Allergy and Immunologist
+Anesthesiologist
+Cardiologist
+Dermatologist
+Emergency Medicine
+Endocrinologist
+Family Medicine
+Gastroenterologist
+Geriatrics
+Hematologist
+Infectious Disease
+Internal Medicine
+Medical Genetics
+Nephrologist
+Neurologist
+Obstetrics and gistnecologist (OB/gistN)
+Oncologist
+Ophthalmologist
+Orthopedics
+Otolaryngologist (ENT)
+Pathologist
+Pediatrics
+Physical Medicine and Rehabilitation (PM&R)
+Plastic Surgery
+Preventive Medicine/Public Health
+Psychiatry and Behavioral Health
+Pulmonologist/Critical Care Medicine
+Radiologist
+Rheumatologist
+Sleep Medicine
+Sports Medicine
+Surgery/General Surgery/Other Surgeon
+Urologist

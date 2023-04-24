@@ -1,0 +1,51 @@
+﻿@using Samco_HSE.HSEData
+@inject ISnackbar Snackbar
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Work" Class="me-3 mb-1" />
+            اطلاعات پروژه
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <div class="d-flex flex-column gap-4">
+            <MudTextField Label="نام پروژه" Variant="Variant.Outlined" AutoFocus="true"
+                          @bind-Value="@(SelProject.Name)"></MudTextField>
+            <SamcoDateSelector @bind-Date="SelProject.StartDate" DisplayText="تاریخ شروع (الزامی)" CalenderVariant="Variant.Outlined"/>
+            <SamcoDateSelector @bind-Date="SelProject.EndDate" DisplayText="تاریخ پایان"/>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">انصراف</MudButton>
+        <MudButton Color="Color.Success" Icon="fas fa-check" OnClick="Submit">تأیید</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public Project SelProject { get; set; } = null!;
+
+    private void Submit()
+    {
+        if (SelProject.Name == null)
+        {
+            Snackbar.Add("نام پروژه الزامی است.", Severity.Error);
+            return;
+        }
+        if (SelProject.StartDate == null)
+        {
+            Snackbar.Add("وارد نمودن تاریخ شروع پروژه الزامی است.", Severity.Error);
+            return;
+        }
+        if (SelProject.EndDate != null && SelProject.EndDate < SelProject.StartDate)
+        {
+            Snackbar.Add("تاریخ پایان پروژه باید از شروع آن بزرگتر باشد.", Severity.Error);
+            return;
+        }
+        SelProject.Save();
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

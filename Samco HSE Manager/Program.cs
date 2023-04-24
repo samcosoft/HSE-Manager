@@ -6,6 +6,8 @@ using DevExpress.DashboardWeb;
 using DevExpress.Xpo.DB;
 using DevExpress.XtraReports.Web.Extensions;
 using Microsoft.AspNetCore.Components.Authorization;
+using MudBlazor;
+using MudBlazor.Services;
 using Samco_HSE_Manager;
 using Samco_HSE_Manager.Authentication;
 using Samco_HSE_Manager.Models;
@@ -24,15 +26,22 @@ builder.Services.AddXpoDefaultDataLayer(ServiceLifetime.Singleton, dl => dl
         : builder.Configuration.GetConnectionString("MainDatabase"))
     .UseThreadSafeDataLayer(true)
     .UseAutoCreationOption(AutoCreateOption.DatabaseAndSchema) // Remove this line if the database already exists
-    .UseCustomDictionaryFactory(Samco_HSE_Manager.SamcoSoftShared.GetDatabaseAssemblies));
+    .UseCustomDictionaryFactory(SamcoSoftShared.GetDatabaseAssemblies));
 
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization();
 builder.Services.AddLocalization();
-builder.Services.AddCors(options => options.AddPolicy("AllowOrigin", builders => builders.AllowAnyOrigin()));
-builder.Services.AddBootstrapBlazor();
+builder.Services.AddCors(options => options.AddPolicy("AllowOrigin", builders => builders.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+builder.Services.AddMudServices(config =>
+{
+    config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.TopCenter;
+    config.SnackbarConfiguration.PreventDuplicates = true;
+    config.SnackbarConfiguration.NewestOnTop = false;
+    config.SnackbarConfiguration.ShowCloseIcon = false;
+    config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+});
 builder.Services.AddDevExpressBlazorReporting();
 builder.Services.AddDevExpressBlazor(configure => configure.BootstrapVersion = BootstrapVersion.v5);
 builder.Services.AddScoped(_ =>
@@ -78,16 +87,9 @@ app.UseRouting();
 app.MapDashboardRoute("api/dashboard", "DefaultDashboard");
 
 app.UseAuthorization();
-//TODO: Change this line on deployment
-//app.UsePathBase("/hse");
+
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
-
-#pragma warning disable ASP0014 // Suggest using top level route registrations
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-});
-#pragma warning restore ASP0014 // Suggest using top level route registrations
+app.MapControllers();
 
 app.Run();

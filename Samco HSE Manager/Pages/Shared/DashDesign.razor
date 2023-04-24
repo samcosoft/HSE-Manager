@@ -1,8 +1,8 @@
 ﻿@page "/dashboard"
 @attribute [Authorize(Roles = "Owner,Admin")]
 
-<Card>
-    <HeaderTemplate>
+<MudCard>
+    <MudCardHeader>
         <DxMenu Title="مدیریت داشبوردها" ItemsPosition="ItemPosition.Start" CssClass="card-header">
             <Items>
                 <DxMenuItem>
@@ -12,13 +12,13 @@
                 </DxMenuItem>
             </Items>
         </DxMenu>
-    </HeaderTemplate>
-    <BodyTemplate>
+    </MudCardHeader>
+    <MudCardContent>
         <div dir="ltr">
             <DxDashboard @bind-DashboardId="_selDash" Endpoint="api/dashboard" style="width: 100%; height: 75vh;">
             </DxDashboard>
         </div>
-    </BodyTemplate>
-</Card>
+    </MudCardContent>
+</MudCard>
 
 

@@ -1,0 +1,29 @@
+﻿@using Samco_HSE.HSEData
+
+<div class="mt-3">
+    <MudGrid Justify="Justify.Center">
+        <MudItem Class="text-center" md="4" sm="4">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="fas fa-plus" OnClick="OpenNewClick">
+                افزودن
+            </MudButton>
+        </MudItem>
+        <MudItem Class="text-center" md="4" sm="4">
+            <MudButton Variant="Variant.Filled" Color="Color.Tertiary" StartIcon="fas fa-pen" OnClick="EditClick">
+                ویرایش
+            </MudButton>
+        </MudItem>
+        <MudItem Class="text-center" md="4" sm="4">
+            <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="fas fa-trash-alt" OnClick="() => _isOpen = !_isOpen">
+                حذف
+            </MudButton>
+            <MudPopover Open="@_isOpen" Fixed="true"
+                        OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.BottomCenter"
+                        TransformOrigin="Origin.TopCenter">
+                <div class="d-flex flex-column">
+                    <MudText>آیا از حذف این مورد مطمئنید؟</MudText>
+                    <MudButton OnClick="@DeleteClick" Class="ms-auto me-3 mb-1" Color="Color.Error" StartIcon="fas -trash-alt">حذف</MudButton>
+                </div>
+            </MudPopover>
+        </MudItem>
+    </MudGrid>
+</div>

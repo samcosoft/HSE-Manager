@@ -1,9 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using BootstrapBlazor.Components;
-using DevExpress.Blazor;
+﻿using DevExpress.Blazor;
 using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using Samco_HSE.HSEData;
 
 namespace Samco_HSE_Manager.Pages.Officer;
@@ -13,9 +12,7 @@ public partial class Personnel : IDisposable
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
 
-    [Inject]
-    [NotNull]
-    private ToastService? ToastService { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
 
     private Session Session1 { get; set; } = null!;
     private IEnumerable<Samco_HSE.HSEData.Personnel>? Personnels { get; set; }
@@ -68,24 +65,24 @@ public partial class Personnel : IDisposable
             "AccidentsCount" => currentUser.Accidents.Count,
             "PracticeCount" => currentUser.Practices.Count,
             "TrainingCount" => currentUser.Trainings.Count,
-            "StopReportCount" => currentUser.StopCardsReports.Count(x=>x.IsApproved),
+            "StopReportCount" => currentUser.StopCardsReports.Count(x => x.IsApproved),
             "MedicalVisitsCount" => currentUser.MedicalVisits.Count,
             _ => e.Value
         };
     }
 
-    private async Task PersonnelGrid_EditStart(GridEditStartEventArgs e)
+    private void PersonnelGrid_EditStart(GridEditStartEventArgs e)
     {
         var dataItem = (Samco_HSE.HSEData.Personnel)e.DataItem;
         //prevent owner editing
         if (e.IsNew == false && dataItem.GetType() == typeof(User) && ((User)dataItem).SiteRole == "Owner")
         {
-            await ToastService.Error("خطا در ویرایش کاربر", "شما اجازه تغییر اطلاعات مدیر سیستم را ندارید.");
+            Snackbar.Add("شما اجازه تغییر اطلاعات مدیر سیستم را ندارید.", Severity.Error);
             e.Cancel = true;
         }
         if (e.IsNew == false && dataItem.GetType() == typeof(User) && dataItem.Oid != SamcoSoftShared.CurrentUserId)
         {
-            await ToastService.Error("خطا در ویرایش کاربر", "شما اجازه تغییر اطلاعات کاربران سیستم را ندارید.");
+            Snackbar.Add("شما اجازه تغییر اطلاعات کاربران سیستم را ندارید.", Severity.Error);
             e.Cancel = true;
         }
     }
@@ -103,7 +100,14 @@ public partial class Personnel : IDisposable
         if (editModel.ActiveRig == null || string.IsNullOrEmpty(editModel.PersonnelName) ||
             string.IsNullOrEmpty(editModel.CurrentRole) || string.IsNullOrEmpty(editModel.Status))
         {
-            await ToastService.Error("خطا در افزودن پرسنل", "لطفاً موارد الزامی را تکمیل کنید.");
+            Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
+            e.Cancel = true;
+            return;
+        }
+
+        if (string.IsNullOrEmpty(editModel.NationalID) == false && editModel.NationalID.Length < 10)
+        {
+            Snackbar.Add("کد ملی باید حداقل 10 رقم باشد.", Severity.Error);
             e.Cancel = true;
             return;
         }
@@ -114,8 +118,7 @@ public partial class Personnel : IDisposable
             if (selPerson != null)
             {
                 //User existed
-                await ToastService.Error("خطا در ثبت اطلاعات",
-                    $"پرسنل با نام {selPerson.PersonnelName} با همین کد ملی در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.");
+                Snackbar.Add($"پرسنل با نام {selPerson.PersonnelName} با همین کد ملی در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.", Severity.Error);
                 e.Cancel = true;
                 return;
             }
@@ -125,8 +128,7 @@ public partial class Personnel : IDisposable
             if (selPerson != null && selPerson.Oid != editModel.Oid)
             {
                 //User existed
-                await ToastService.Error("خطا در ثبت اطلاعات",
-                    $"پرسنل با نام {selPerson.PersonnelName} با همین کد ملی در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.");
+                Snackbar.Add($"پرسنل با نام {selPerson.PersonnelName} با همین کد ملی در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.", Severity.Error);
                 e.Cancel = true;
                 return;
             }
@@ -142,7 +144,7 @@ public partial class Personnel : IDisposable
         if (dataItem != null && dataItem.GetType() == typeof(User))
         {
             //prevent delete users
-            await ToastService.Error("خطا در حذف کاربر", "شما اجازه‌ی حذف اطلاعات کاربران سیستم را ندارید.");
+            Snackbar.Add("شما اجازه‌ی حذف اطلاعات کاربران سیستم را ندارید.", Severity.Error);
             e.Cancel = true;
             return;
         }
@@ -163,14 +165,7 @@ public partial class Personnel : IDisposable
     private async Task OnPrintBtnClick()
     {
         //await ToastService.Information("دریافت گزارش", "سیستم در حال ایجاد فایل است. لطفاً شکیبا باشید...");
-        await ToastService.Show(new ToastOption
-        {
-            Content = "سیستم در حال ایجاد فایل است. لطفاً تا دانلود گزارش شکیبا باشید...",
-            Title = "دریافت گزارش",
-            Category = ToastCategory.Information,
-            Delay = 6000,
-            ForceDelay = true
-        });
+        Snackbar.Add("سیستم در حال ایجاد فایل است. لطفاً تا دانلود گزارش شکیبا باشید...", Severity.Info);
 
         await PersonnelGrid?.ExportToXlsxAsync("StopCards", new GridXlExportOptions
         {

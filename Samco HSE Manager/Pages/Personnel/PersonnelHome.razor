@@ -2,40 +2,37 @@
 @attribute [Authorize(Roles = "Owner,Personnel")]
 @inject NavigationManager NavigationManager
 <PageTitle>گزارش اعمال / شرایط ایمن و نا ایمن</PageTitle>
-<Card>
-    <HeaderTemplate>
+<MudCard>
+    <MudCardHeader>
         <DxMenu Title="گزارش اعمال / شرایط ایمن و نا ایمن" ItemsPosition="ItemPosition.Start" CssClass="card-header">
             <Items>
-                @*<DxMenuItem Text="ثبت مورد جدید" IconCssClass="fas fa-plus" @onclick="OnNewBtnClick" />*@
-                @*<DxMenuItem Text="ویرایش" IconCssClass="fas fa-pencil-alt" @onclick="OnEditBtnClick" />*@
                 <DxMenuItem>
                     <Template>
-                        @*<DxButton RenderStyle="ButtonRenderStyle.Primary" Text="ثبت مورد جدید"
-                                  IconCssClass="fas fa-plus" Click="OnNewBtnClick" />*@
-                        <Button Color="Color.Secondary" Text="جدید" Icon="fas fa-plus" OnClick="OnNewBtnClick"></Button>
+                        <MudButton Color="Color.Secondary" StartIcon="fas fa-plus" OnClick="OnNewBtnClick">جدید</MudButton>
                     </Template>
                 </DxMenuItem>
                 <DxMenuItem CssClass="mx-3">
                     <Template>
-                        <Button Color="Color.Warning" Text="ویرایش" Icon="fas fa-pencil-alt" OnClick="OnEditBtnClick"></Button>
+                        <MudButton Color="Color.Warning" StartIcon="fas fa-pencil-alt" OnClick="OnEditBtnClick">ویرایش</MudButton>
                     </Template>
                 </DxMenuItem>
                 <DxMenuItem>
                     <Template>
-                        <PopConfirmButton Placement="Placement.Bottom" Color="Color.Danger" Icon="fas fa-trash-alt"
-                                          ConfirmIcon="fa-solid fa-triangle-exclamation text-danger"
-                                          ConfirmButtonColor="Color.Danger" Text="حذف"
-                                          Content="آیا از حذف کارت مطمئنید؟" OnConfirm="OnDelBtnClick" />
+                        <MudButton Color="Color.Error" StartIcon="fas fa-trash-alt" OnClick="() => _isOpen = !_isOpen">حذف</MudButton>
+                        <MudPopover Open="@_isOpen" Fixed="true"
+                                    OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.BottomCenter"
+                                    TransformOrigin="Origin.TopCenter">
+                            <div class="d-flex flex-column">
+                                <MudText>"آیا از حذف کارت مطمئنید؟"</MudText>
+                                <MudButton OnClick="@OnDelBtnClick" Class="ms-auto me-3 mb-1" Color="Color.Error" StartIcon="fas -trash-alt">حذف</MudButton>
+                            </div>
+                        </MudPopover>
                     </Template>
                 </DxMenuItem>
             </Items>
         </DxMenu>
-    </HeaderTemplate>
-    <BodyTemplate>
-        <Row ItemsPerRow="ItemsPerRow.Three">
-
-        </Row>
-        <br />
+    </MudCardHeader>
+    <MudCardContent>
         <DxGrid @ref="StopGrid" Data="@StopsList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"
                 UnboundColumnData="StopGridUnbound"
                 CustomizeElement="StopGrid_CustomizeElement"
@@ -59,14 +56,14 @@
                 </DxGridDataColumn>
                 <DxGridDataColumn FieldName="Score" Caption="امتیاز" MinWidth="150">
                     <CellDisplayTemplate>
-                        <Rate Value="@((int)context.Value)" IsDisable="true" Max="5" class="d-inline-block" />
+                        <MudRating SelectedValue="@((int)context.Value)" Disabled="true" MaxValue="5" Class="d-inline-block" />
                     </CellDisplayTemplate>
                 </DxGridDataColumn>
                 <DxGridDataColumn FieldName="Agent.PersonnelName" Caption="کارشناس ایمنی" MinWidth="100" />
             </Columns>
         </DxGrid>
-    </BodyTemplate>
-</Card>
+    </MudCardContent>
+</MudCard>
 
 <DxPopup @ref="@EditPopup" ShowFooter="true" HeaderText="@_cardEditorHeader" CloseOnOutsideClick="false">
     <BodyTemplate Context="_">

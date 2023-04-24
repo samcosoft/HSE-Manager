@@ -1,32 +1,69 @@
 ﻿@page "/about"
 
 @inject IWebHostEnvironment HostEnvironment
-<Row ItemsPerRow="ItemsPerRow.Twelve">
-    <Row ColSpan="8">
+<MudGrid>
+    <MudItem sm="8">
         <div class="animate__animated animate__fadeInRight">
-            <Card HeaderText="درباره برنامه">
-                <BodyTemplate>
+            <MudCard Elevation="3">
+                <MudCardHeader>
+                    <MudText Typo="Typo.h4">
+                        درباره برنامه
+                    </MudText>
+                </MudCardHeader>
+                <MudCardContent>
                     <p>
                         سامانه مدیریت جامع HSE برنامه ایست که در عین سادگی مدیریت تمامی داده های واحد ایمنی، بهداشت و محیط زیست را پوشش میدهد. از این سیستم میتوان در تمامی شرکتهای نفتی، پالایشگاه ها و دکل های حفاری استفاده نمود.
                     </p>
                     <p>
                         در تولید این نرم افزار از تجربیات دست اندرکاران و مدیران واحد ایمنی شرکتهای بزرگی چون دانا انرژی و پترو ایران استفاده شده است. محیط کاربری روان و زیبا، پشتیبانی از زبان فارسی و استفاده از به روزترین تکنولوژی برنامه نویسی از ویژگی های این محصول است.
                     </p>
-                </BodyTemplate>
-            </Card>
+                </MudCardContent>
+            </MudCard>
         </div>
+    </MudItem>
+    <MudItem sm="4">
+        <div class="d-flex flex-column">
+            <div class="card opacity-75 animate__animated animate__fadeInUp h-100">
+                <div class="card-body text-center">
+                    <img alt="logo" src="images/logo.svg" width="150" />
+                    <h4>Samco® HSE Management System</h4>
+                    <p>Version: @GetApplicationVersion()</p>
+                </div>
+            </div>
+            <div class="mt-2 animate__animated animate__fadeInUp">
+                <MudCard Elevation="3">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h4">
+                            تماس با ما
+                        </MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <p>وب سایت: <a style="display: inline" href="https://samcosoft.ir">https://samcosoft.ir</a></p>
+                        <p>پشتیبانی: <a style="display: inline" href="mailto:support@samcosoft.ir">support@samcosoft.ir</a></p>
+                        <p>تلفن: <a dir="ltr" style="display: inline;" href="tell:+989397532159">+98 939 7532159</a></p>
+                    </MudCardContent>
+                </MudCard>
+            </div>
+        </div>
+    </MudItem>
+</MudGrid>
+<MudGrid>
+    <MudItem sm="8">
         <div class="animate__animated animate__fadeInRight mt-2">
-            <Row ItemsPerRow="ItemsPerRow.One">
-                <Card HeaderText="تغییرات نسخه" IsShadow="true">
-                    <BodyTemplate>
-                        <textarea placeholder="No Information" class="w-100" style="height: 165px;" readonly>@GetReleaseNote()</textarea>
-                    </BodyTemplate>
-                </Card>
-            </Row>
+            <MudCard Elevation="3">
+                <MudCardHeader>
+                    <MudText Typo="Typo.h4">
+                        تغییرات نسخه
+                    </MudText>
+                </MudCardHeader>
+                <MudCardContent>
+                    <textarea placeholder="No Information" class="w-100" style="height: 165px;" readonly>@GetReleaseNote()</textarea>
+                </MudCardContent>
+            </MudCard>
         </div>
-    </Row>
-    <Row ColSpan="4" ItemsPerRow="ItemsPerRow.One">
-        <div class="card opacity-85 animate__animated animate__fadeInUp h-100">
+    </MudItem>
+    <MudItem sm="4">
+        <div class="card opacity-75 animate__animated animate__fadeInUp h-100">
             <div class="card-body text-center">
                 <img alt="logo" src="images/logo.svg" width="150" />
                 <h4>Samco® HSE Management System</h4>
@@ -34,70 +71,78 @@
             </div>
         </div>
         <div class="mt-2 animate__animated animate__fadeInUp">
-            <Card HeaderText="تماس با ما" IsShadow="true">
-                <BodyTemplate>
+            <MudCard Elevation="3">
+                <MudCardHeader>
+                    <MudText Typo="Typo.h4">
+                        تماس با ما
+                    </MudText>
+                </MudCardHeader>
+                <MudCardContent>
                     <p>وب سایت: <a style="display: inline" href="https://samcosoft.ir">https://samcosoft.ir</a></p>
                     <p>پشتیبانی: <a style="display: inline" href="mailto:support@samcosoft.ir">support@samcosoft.ir</a></p>
                     <p>تلفن: <a dir="ltr" style="display: inline;" href="tell:+989397532159">+98 939 7532159</a></p>
-                </BodyTemplate>
-            </Card>
+                </MudCardContent>
+            </MudCard>
         </div>
-    </Row>
-</Row>
+    </MudItem>
+</MudGrid>
 <AuthorizeView>
     <Authorized Context="formContext">
         <div class="mt-3 animate__animated animate__zoomInUp">
-            <Row ItemsPerRow="ItemsPerRow.One">
-                <Card HeaderText="اطلاعات مجوز" IsShadow="true">
-                    <BodyTemplate>
+            <MudCard Elevation="3">
+                <MudCardHeader>
+                    <MudText Typo="Typo.h4">
+                        اطلاعات مجوز
+                    </MudText>
+                </MudCardHeader>
+                <MudCardContent>
+                    @{
+                        if (_isTrial)
+                        {
+                            <MudAlert Severity="Severity.Warning" Elevation="3">
+                                شما از نسخه آزمایشی برنامه استفاده می‌کنید. برای دریافت کد فعالسازی با واحد فروش شرکت و یا پشتیبانی فنی تماس بگیرید. برای فعالسازی دسترسی به اینترنت الزامی است.
+                            </MudAlert>
+                        }
+                        if (!string.IsNullOrEmpty(_returnMsg))
+                        {
+                            <MudAlert Severity="Severity.Info" Elevation="3">
+                                @_returnMsg
+                            </MudAlert>
+                        }
+                    }
+                    <DxFormLayout>
                         @{
-                            if (_isTrial)
+                            if (_isTrial || !_isValid)
                             {
-                                <Alert Color="Color.Warning" ShowShadow="true" ShowBorder="true">
-                                    شما از نسخه آزمایشی برنامه استفاده می‌کنید. برای دریافت کد فعالسازی با واحد فروش شرکت و یا پشتیبانی فنی تماس بگیرید. برای فعالسازی دسترسی به اینترنت الزامی است.
-                                </Alert>
+                                <DxFormLayoutGroup Caption="فعالسازی" ColSpanLg="6" ColSpanMd="12">
+                                    <DxFormLayoutItem Caption="کد فعالسازی:" ColSpanMd="9" ColSpanSm="12">
+                                        <DxMaskedInput @bind-Value="_activationKey" Mask="AAAA-AAAA-AAAA-AAAA-AAAA-AAAA-AAAA-AAAA" MaskMode="MaskMode.Text" CssClass="ltr text-center w-100">
+                                            <DxTextMaskProperties SaveLiteral="true" />
+                                        </DxMaskedInput>
+                                    </DxFormLayoutItem>
+                                    <DxFormLayoutItem ColSpanMd="3" ColSpanSm="12">
+                                        <DxButton RenderStyle="ButtonRenderStyle.Primary" Text="فعالسازی" Click="Activate" />
+                                    </DxFormLayoutItem>
+                                </DxFormLayoutGroup>
+                                <DxFormLayoutGroup Caption="اطلاعات مجوز" ColSpanLg="6" ColSpanMd="12">
+                                    <DxMemo @bind-Text="@_licenseInfo" Rows="3" CssClass="w-100 h-100" InputCssClass="text-center ltr" />
+                                </DxFormLayoutGroup>
                             }
-                            if (!string.IsNullOrEmpty(_returnMsg))
+                            else
                             {
-                                <Alert Color="Color.Secondary" ShowShadow="true" ShowBorder="true">
-                                    @_returnMsg
-                                </Alert>
+                                <DxFormLayoutGroup Caption="اطلاعات مجوز" ColSpanLg="12" ColSpanMd="12">
+                                    <DxFormLayoutItem ColSpanLg="12" ColSpanMd="12">
+                                        <DxMemo @bind-Text="@_licenseInfo" Rows="3" CssClass="w-100 h-100" InputCssClass="text-center ltr" />
+                                    </DxFormLayoutItem>
+                                    <DxFormLayoutItem ColSpanLg="12" ColSpanMd="12">
+                                        <DxButton RenderStyle="ButtonRenderStyle.Danger" IconCssClass="fas fa-unlock-keyhole" Click="Deactivate" Text="غیرفعالسازی" />
+                                    </DxFormLayoutItem>
+                                </DxFormLayoutGroup>
                             }
                         }
-                        <DxFormLayout>
-                            @{
-                                if (_isTrial || !_isValid)
-                                {
-                                    <DxFormLayoutGroup Caption="فعالسازی" ColSpanLg="6" ColSpanMd="12">
-                                        <DxFormLayoutItem Caption="کد فعالسازی:" ColSpanMd="9" ColSpanSm="12">
-                                            <DxMaskedInput @bind-Value="_activationKey" Mask="AAAA-AAAA-AAAA-AAAA-AAAA-AAAA-AAAA-AAAA" MaskMode="MaskMode.Text" CssClass="ltr text-center w-100">
-                                                <DxTextMaskProperties SaveLiteral="true" />
-                                            </DxMaskedInput>
-                                        </DxFormLayoutItem>
-                                        <DxFormLayoutItem ColSpanMd="3" ColSpanSm="12">
-                                            <DxButton RenderStyle="ButtonRenderStyle.Primary" Text="فعالسازی" Click="Activate" />
-                                        </DxFormLayoutItem>
-                                    </DxFormLayoutGroup>
-                                    <DxFormLayoutGroup Caption="اطلاعات مجوز" ColSpanLg="6" ColSpanMd="12">
-                                        <DxMemo @bind-Text="@_licenseInfo" Rows="3" CssClass="w-100 h-100" InputCssClass="text-center ltr" />
-                                    </DxFormLayoutGroup>
-                                }
-                                else
-                                {
-                                    <DxFormLayoutGroup Caption="اطلاعات مجوز" ColSpanLg="12" ColSpanMd="12">
-                                        <DxFormLayoutItem ColSpanLg="12" ColSpanMd="12">
-                                            <DxMemo @bind-Text="@_licenseInfo" Rows="3" CssClass="w-100 h-100" InputCssClass="text-center ltr" />
-                                        </DxFormLayoutItem>
-                                        <DxFormLayoutItem ColSpanLg="12" ColSpanMd="12">
-                                            <DxButton RenderStyle="ButtonRenderStyle.Danger" IconCssClass="fas fa-unlock-keyhole" Click="Deactivate" Text="غیرفعالسازی" />
-                                        </DxFormLayoutItem>
-                                    </DxFormLayoutGroup>
-                                }
-                            }
-                        </DxFormLayout>
-                    </BodyTemplate>
-                </Card>
-            </Row>
+                    </DxFormLayout>
+                </MudCardContent>
+            </MudCard>
         </div>
     </Authorized>
 </AuthorizeView>

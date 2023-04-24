@@ -1,11 +1,10 @@
-﻿using BootstrapBlazor.Components;
-using DevExpress.Blazor;
+﻿using DevExpress.Blazor;
 using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using Samco_HSE.HSEData;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components.Rendering;
+using MudBlazor;
 
 namespace Samco_HSE_Manager.Pages.Officer;
 
@@ -13,14 +12,8 @@ public partial class Equipments : IDisposable
 {
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
 
-    [Inject]
-    [NotNull]
-    private ToastService? ToastService { get; set; }
-
-    [Inject]
-    [NotNull]
-    private MessageService? MessageService { get; set; }
     private Session Session1 { get; set; } = null!;
     private IEnumerable<Equipment>? EquipmentsList { get; set; }
     private IEnumerable<Rig> Rigs { get; set; } = null!;
@@ -37,7 +30,7 @@ public partial class Equipments : IDisposable
         EquipmentsList = await Session1.Query<Equipment>().ToListAsync();
         if (SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Owner)
         {
-            var loggedUser = await 
+            var loggedUser = await
                 Session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
             Rigs = loggedUser.Rigs;
         }
@@ -101,16 +94,16 @@ public partial class Equipments : IDisposable
         var equipStock = tempSession.Query<EquipmentStock>().FirstOrDefault(itm => itm.RigNo.Oid == int.Parse(e.FieldName) && itm.EquipmentName.Oid == currentEquipment.Oid);
         e.Value = equipStock?.Counts ?? 0;
     }
+    private void ColumnChooserOnClick()
+    {
+        EquipmentGrid?.ShowColumnChooser(".column-chooser-button");
+    }
+
     private IEnumerable<string>? Consumers { get; set; }
     private void EquipmentGrid_EditStart(GridEditStartEventArgs e)
     {
         if (SamcoSoftShared.CurrentUserRole < SamcoSoftShared.SiteRoles.Supervisor) return;
-        MessageService.Show(new MessageOption
-        {
-            Color = Color.Warning,
-            Content = "شما اجازه ویرایش تجهیزات را ندارید.",
-            IsAutoHide = true
-        });
+        Snackbar.Add("شما اجازه ویرایش تجهیزات را ندارید.", Severity.Warning);
         e.Cancel = true;
     }
     private void EquipmentEditModel(GridCustomizeEditModelEventArgs e)
@@ -130,7 +123,7 @@ public partial class Equipments : IDisposable
         if (string.IsNullOrEmpty(editModel.Name) || string.IsNullOrEmpty(editModel.EquipType) ||
             Consumers == null)
         {
-            await ToastService.Error("خطا در افزودن تجهیز", "لطفاً موارد الزامی را تکمیل کنید.");
+            Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
             e.Cancel = true;
             return;
         }
@@ -141,8 +134,7 @@ public partial class Equipments : IDisposable
             if (selEquip != null && selEquip.Model == editModel.Model)
             {
                 //Equipment existed
-                await ToastService.Error("خطا در ثبت اطلاعات",
-                    "تجهیز با همین نام در سیستم وجود دارد. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.");
+                Snackbar.Add("تجهیز با همین نام در سیستم وجود دارد. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.", Severity.Error);
                 e.Cancel = true;
                 return;
             }
@@ -152,8 +144,7 @@ public partial class Equipments : IDisposable
             if (selEquip != null && selEquip.Oid != editModel.Oid && selEquip.Model == editModel.Model)
             {
                 //Equipment existed
-                await ToastService.Error("خطا در ثبت اطلاعات",
-                    "تجهیز با همین نام در سیستم وجود دارد. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.");
+                Snackbar.Add("تجهیز با همین نام در سیستم وجود دارد. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.", Severity.Error);
                 e.Cancel = true;
                 return;
             }
@@ -166,12 +157,7 @@ public partial class Equipments : IDisposable
     {
         if (SamcoSoftShared.CurrentUserRole > SamcoSoftShared.SiteRoles.Supervisor)
         {
-            await MessageService.Show(new MessageOption
-            {
-                Color = Color.Warning,
-                Content = "شما اجازه ویرایش تجهیزات را ندارید.",
-                IsAutoHide = true
-            });
+            Snackbar.Add("شما اجازه ویرایش تجهیزات را ندارید.", Severity.Warning);
             e.Cancel = true;
             return;
         }
@@ -193,7 +179,7 @@ public partial class Equipments : IDisposable
     {
         if (EquipmentGrid!.SelectedDataItems.Any() == false)
         {
-            await ToastService.Warning("خطا در تعیین تعداد", "لطفاً یک تجهیز را از لیست زیر انتخاب کنید.");
+            Snackbar.Add("لطفاً یک تجهیز را از لیست زیر انتخاب کنید.", Severity.Warning);
             return;
         }
 
@@ -230,19 +216,11 @@ public partial class Equipments : IDisposable
     {
         if (_selEquipmentStock?.RigNo == null)
         {
-            await MessageService.Show(new MessageOption
-            {
-                Color = Color.Danger,
-                Content = "لطفاً دکل را انتخاب کنید."
-            });
+            Snackbar.Add("لطفاً دکل را انتخاب کنید.", Severity.Error);
             return;
         }
         _selEquipmentStock?.Save();
-        await MessageService.Show(new MessageOption
-        {
-            Color = Color.Success,
-            Content = "اطلاعات با موفقیت ثبت شد."
-        });
+        Snackbar.Add("اطلاعات با موفقیت ثبت شد.", Severity.Success);
         EquipmentGrid!.Reload();
         await SetNumberModal!.CloseAsync();
     }
@@ -260,7 +238,7 @@ public partial class Equipments : IDisposable
     {
         if (EquipmentGrid!.SelectedDataItems.Any() == false)
         {
-            await ToastService.Warning("خطا در توزیع تجهیزات", "لطفاً یک تجهیز را از لیست زیر انتخاب کنید.");
+            Snackbar.Add("لطفاً یک تجهیز را از لیست زیر انتخاب کنید.", Severity.Warning);
             return;
         }
 
@@ -305,11 +283,7 @@ public partial class Equipments : IDisposable
         //Validation
         if (!PersonnelGrid!.SelectedDataItems.Any())
         {
-            await MessageService.Show(new MessageOption 
-            {
-                Color = Color.Danger,
-                Content = "لطفاً پرسنل مورد نظر را از لیست زیر انتخاب کنید."
-            });
+            Snackbar.Add("لطفاً پرسنل مورد نظر را از لیست زیر انتخاب کنید.", Severity.Error);
             return;
         }
         var selPersonnel = PersonnelGrid.SelectedDataItems.Cast<Samco_HSE.HSEData.Personnel>().ToList();
@@ -317,11 +291,7 @@ public partial class Equipments : IDisposable
         var personnelRigGroup = selPersonnel.GroupBy(x => x.ActiveRig).Select(x => new { RigName = x.Key, PersonnelCount = x.Count() }).ToList();
         foreach (var itm in from itm in personnelRigGroup let availableStock = selEquipment.EquipmentStocks.FirstOrDefault(x => x.RigNo.Oid == itm.RigName.Oid) where availableStock == null || itm.PersonnelCount > availableStock.Counts select itm)
         {
-            await MessageService.Show(new MessageOption
-            {
-                Color = Color.Danger,
-                Content = $"تعداد افراد انتخاب شده در {itm.RigName.Name} از موجودی این تجهیز در آنجا بیشتر است."
-            });
+            Snackbar.Add($"تعداد افراد انتخاب شده در {itm.RigName.Name} از موجودی این تجهیز در آنجا بیشتر است.", Severity.Error);
             return;
         }
 
@@ -348,12 +318,7 @@ public partial class Equipments : IDisposable
             equipStack.Save();
         }
 
-        await MessageService.Show(new MessageOption
-        {
-            Color = Color.Success,
-            Content = "اطلاعات با موفقیت ذخیره شد."
-        });
-
+        Snackbar.Add("اطلاعات با موفقیت ذخیره شد.", Severity.Success);
         await DistModal!.CloseAsync();
     }
 }

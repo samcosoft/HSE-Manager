@@ -3,69 +3,142 @@
 @using Samco_HSE.HSEData
 @using Microsoft.AspNetCore.Components
 
-<PageTitle>ویزیت بیمار</PageTitle>
-<Card>
-    <HeaderTemplate>
-        <DxMenu Title="ویزیت بیمار" ItemsPosition="ItemPosition.Start" CssClass="card-header">
-        </DxMenu>
-    </HeaderTemplate>
-    <BodyTemplate>
-        <Alert Color="Color.Info" ShowDismiss="true">همکار گرامی، از این قسمت فقط برای ثبت ویزیت سرپایی بیماران و FAC استفاده نمایید. برای سایر موارد شامل اعزام از قسمت گزارش حوادث استفاده کنید.</Alert>
-        <DxGrid Data="@VisitList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"
-                EditModelSaving="OnEditModelSaving" DataItemDeleting="OnDataItemDeleting"
-                CustomizeEditModel="VisitEditModel" EditStart="VisitEditStart"
-                ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true" ValidationEnabled="false"
-                SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="true"
-                ColumnResizeMode="GridColumnResizeMode.ColumnsContainer"
-                SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center">
-            <Columns>
-                <DxGridCommandColumn MinWidth="100" />
-                <DxGridDataColumn Caption="دکل / دفتر" FieldName="RigNo.Name" MinWidth="100" />
-                <DxGridDataColumn Caption="نام پزشک" FieldName="DoctorName.PersonnelName" MinWidth="150" />
-                <DxGridDataColumn Caption="نام بیمار" FieldName="Patient.PersonnelName" MinWidth="150" Visible="_showNames"/>
-                <DxGridDataColumn Caption="سمت" FieldName="Patient.CurrentRole" MinWidth="150" Visible="_showNames" />
-                <DxGridDataColumn Caption="تاریخ ویزیت" FieldName="VisitDate" MinWidth="100" SortIndex="0" SortOrder="GridColumnSortOrder.Descending" />
-                <DxGridDataColumn Caption="علائم" FieldName="Symptoms" MinWidth="200" />
-                <DxGridDataColumn Caption="تشخیص" FieldName="Diagnose" MinWidth="200" />
-                <DxGridDataColumn Caption="دسته بندی" FieldName="Category" MinWidth="200" />
-                <DxGridDataColumn Caption="توضیحات" FieldName="Comment" MinWidth="200" />
-            </Columns>
-            <DetailRowTemplate>
-                <PrescribedDrugsGrid Visit="(MedicalVisit)context.DataItem" />
-            </DetailRowTemplate>
-            <EditFormTemplate Context="editFormContext">
-                @{
-                    var visit = (MedicalVisit)editFormContext.EditModel;
-                }
-                <DxFormLayout>
-                    <DxFormLayoutItem Caption="نام بیمار:">
-                        <DxComboBox Data="@PersonnelList" @bind-Value="@visit.Patient" NullText="الزامی"
-                                    TextFieldName="@nameof(Personnel.PersonnelName)" FilteringMode="DataGridFilteringMode.Contains">
-                            <DxListEditorColumn FieldName="@nameof(Personnel.PersonnelName)" Caption="نام و نام خانوادگی" />
-                            <DxListEditorColumn FieldName="@nameof(Personnel.CurrentRole)" Caption="سمت" />
-                            <DxListEditorColumn FieldName="@nameof(Personnel.ActiveRig.Name)" Caption="دکل / دفتر" />
-                        </DxComboBox>
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="تاریخ ویزیت:">
-                        @*<DxDateEdit @bind-Date="@asset.ExpireDate" />*@
-                        <SamcoDateSelector TData="DateTime" @bind-Date="@visit.VisitDate" DefaultCalendar="SamcoDateSelector<DateTime>.CalendarType.Shamsi" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="علائم:">
-                        <DxTextBox @bind-Text="@visit.Symptoms" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="تشخیص:">
-                        <DxTextBox @bind-Text="@visit.Diagnose" NullText="الزامی" CssClass="ltr" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="دسته بندی:">
-                        <DxComboBox Data="_category" NullText="الزامی" @bind-Value="@visit.Category" CssClass="ltr"
-                                    FilteringMode="DataGridFilteringMode.Contains" />
-
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem BeginRow="true" ColSpanLg="12">
-                        <PrescribedDrugsGrid Visit="@visit" IsEditable="true" />
-                    </DxFormLayoutItem>
-                </DxFormLayout>
-            </EditFormTemplate>
-        </DxGrid>
-    </BodyTemplate>
-</Card>
+<PageTitle>مدیریت بیماران</PageTitle>
+<DxTabs>
+    <DxTabPage Text="ویزیت بیماران">
+        <MudCard>
+            <MudCardHeader>
+                <DxMenu Title="ویزیت بیماران" ItemsPosition="ItemPosition.Start" CssClass="card-header">
+                    <Items>
+                        <DxMenuItem Text="دریافت اطلاعات" IconCssClass="fas fa-paste" @onclick="OnVisitPrintBtnClick" />
+                    </Items>
+                </DxMenu>
+            </MudCardHeader>
+            <MudCardContent>
+                @*<Alert Color="Color.Info" ShowDismiss="true">همکار گرامی، از این قسمت فقط برای ثبت ویزیت سرپایی بیماران و FAC استفاده نمایید. برای سایر موارد شامل اعزام از قسمت گزارش حوادث استفاده کنید.</Alert>*@
+                <DxButton Text="تنظیم ستون‌ها"
+                          RenderStyle="ButtonRenderStyle.Secondary"
+                          CssClass="column-chooser-button visit-column-chooser"
+                          Click="VisitColumnChooserOnClick" />
+                <p />
+                <DxGrid @ref="VisitGrid" Data="@VisitList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"
+                        EditModelSaving="OnEditModelSaving" DataItemDeleting="OnDataItemDeleting"
+                        CustomizeEditModel="VisitEditModel" EditStart="VisitEditStart"
+                        ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true" ValidationEnabled="false"
+                        SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="true"
+                        ColumnResizeMode="GridColumnResizeMode.ColumnsContainer"
+                        SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center">
+                    <Columns>
+                        <DxGridCommandColumn MinWidth="100" />
+                        <DxGridDataColumn Caption="دکل / دفتر" FieldName="RigNo.Name" MinWidth="100">
+                            <FilterRowCellTemplate>
+                                <TagBoxFilterRow TData="Rig" FilterContext="context" DataSource="Rigs" TextFieldName="Name" />
+                            </FilterRowCellTemplate>
+                        </DxGridDataColumn> <DxGridDataColumn Caption="نام پزشک" FieldName="DoctorName.PersonnelName" MinWidth="150" />
+                        <DxGridDataColumn Caption="نام بیمار" FieldName="Patient.PersonnelName" MinWidth="150" Visible="_showNames" />
+                        <DxGridDataColumn Caption="سمت" FieldName="Patient.CurrentRole" MinWidth="150" Visible="_showNames" />
+                        <DxGridDataColumn Caption="تاریخ ویزیت" FieldName="VisitDate" MinWidth="100" SortIndex="0" SortOrder="GridColumnSortOrder.Descending" />
+                        <DxGridDataColumn Caption="علائم" FieldName="Symptoms" MinWidth="200" />
+                        <DxGridDataColumn Caption="تشخیص" FieldName="Diagnose" MinWidth="200" />
+                        <DxGridDataColumn Caption="دسته بندی" FieldName="Category" MinWidth="200" />
+                        <DxGridDataColumn Caption="توضیحات" FieldName="Comment" MinWidth="200" />
+                    </Columns>
+                    <DetailRowTemplate>
+                        <PrescribedDrugsGrid Visit="(MedicalVisit)context.DataItem" />
+                        <ReferralCaseGrid Visit="(MedicalVisit)context.DataItem" />
+                    </DetailRowTemplate>
+                    <EditFormTemplate Context="editFormContext">
+                        @{
+                            var visit = (MedicalVisit)editFormContext.EditModel;
+                        }
+                        <DxFormLayout>
+                            <DxFormLayoutItem Caption="نام بیمار:">
+                                <DxComboBox Data="@PersonnelList" @bind-Value="@visit.Patient" NullText="الزامی"
+                                            TextFieldName="@nameof(Personnel.PersonnelName)" FilteringMode="DataGridFilteringMode.Contains">
+                                    <DxListEditorColumn FieldName="@nameof(Personnel.PersonnelName)" Caption="نام و نام خانوادگی" />
+                                    <DxListEditorColumn FieldName="@nameof(Personnel.CurrentRole)" Caption="سمت" />
+                                    <DxListEditorColumn FieldName="ActiveRig.Name" Caption="دکل / دفتر" />
+                                </DxComboBox>
+                            </DxFormLayoutItem>
+                            <DxFormLayoutItem Caption="تاریخ ویزیت:">
+                                @*<DxDateEdit @bind-Date="@asset.ExpireDate" />*@
+                                <SamcoDateSelector @bind-DateNotNull="@visit.VisitDate" DefaultCalendar="SamcoDateSelector.CalendarType.Shamsi" />
+                            </DxFormLayoutItem>
+                            <DxFormLayoutItem Caption="نوع ویزیت:">
+                                <DxComboBox Data="_visitType" TextFieldName="Value" ValueFieldName="Key" NullText="الزامی"
+                                            @bind-Value="@visit.VisitType" CssClass="ltr" FilteringMode="DataGridFilteringMode.Contains"
+                                            SelectedItemChanged="@((KeyValuePair<string, string> obj) => MedicalTypeChanged(obj))">
+                                </DxComboBox>
+                            </DxFormLayoutItem>
+                            <DxFormLayoutItem Caption="استراحت (روز):" Visible="_showLwd">
+                                <DxSpinEdit T="short?" @bind-Value="@visit.LWD" MinValue="1" MaxValue="1024" Increment="1"
+                                            ClearButtonDisplayMode="DataEditorClearButtonDisplayMode.Auto" />
+                            </DxFormLayoutItem>
+                            <DxFormLayoutItem Caption="علائم:">
+                                <DxTextBox @bind-Text="@visit.Symptoms" />
+                            </DxFormLayoutItem>
+                            <DxFormLayoutItem Caption="تشخیص:">
+                                <DxTextBox @bind-Text="@visit.Diagnose" NullText="الزامی" CssClass="ltr" />
+                            </DxFormLayoutItem>
+                            <DxFormLayoutItem Caption="دسته بندی بیماری:">
+                                <DxComboBox Data="_category" NullText="الزامی" @bind-Value="@visit.Category" CssClass="ltr"
+                                            FilteringMode="DataGridFilteringMode.Contains" />
+                            </DxFormLayoutItem>
+                            <DxFormLayoutItem BeginRow="true" ColSpanLg="12">
+                                <PrescribedDrugsGrid Visit="@visit" IsEditable="true" />
+                            </DxFormLayoutItem>
+                            <DxFormLayoutItem BeginRow="true" ColSpanLg="12">
+                                <ReferralCaseGrid Visit="@visit" IsEditable="true" />
+                            </DxFormLayoutItem>
+                        </DxFormLayout>
+                    </EditFormTemplate>
+                </DxGrid>
+            </MudCardContent>
+        </MudCard>
+    </DxTabPage>
+    <DxTabPage Text="ارجاع بیماران">
+        <MudCard>
+            <MudCardHeader>
+                <DxMenu Title="ارجاع بیماران" ItemsPosition="ItemPosition.Start" CssClass="card-header">
+                    <Items>
+                        <DxMenuItem Text="ویرایش ارجاع" IconCssClass="fas fa-pencil" @onclick="OnReferEditBtnClick" />
+                        <DxMenuItem Text="حذف" IconCssClass="fas fa-trash" @onclick="OnReferDeleteBtnClick" />
+                        <DxMenuItem Text="دریافت اطلاعات" IconCssClass="fas fa-paste" @onclick="OnReferPrintBtnClick" />
+                    </Items>
+                </DxMenu>
+            </MudCardHeader>
+            <MudCardContent>
+                <DxButton Text="تنظیم ستون‌ها"
+                          RenderStyle="ButtonRenderStyle.Secondary"
+                          CssClass="column-chooser-button refer-column-chooser"
+                          Click="ReferColumnChooserOnClick" />
+                <p />
+                <DxGrid @ref="ReferGrid" Data="@ReferList" KeyFieldName="Oid"
+                        ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true" ValidationEnabled="false"
+                        SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="true"
+                        ColumnResizeMode="GridColumnResizeMode.ColumnsContainer"
+                        SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center">
+                    <Columns>
+                        <DxGridDataColumn Caption="دکل / دفتر" FieldName="MedicalVisit.RigNo.Name" MinWidth="100">
+                            <FilterRowCellTemplate>
+                                <TagBoxFilterRow TData="Rig" FilterContext="context" DataSource="Rigs" TextFieldName="Name" />
+                            </FilterRowCellTemplate>
+                        </DxGridDataColumn>
+                        <DxGridDataColumn Caption="نام پزشک" FieldName="MedicalVisit.DoctorName.PersonnelName" MinWidth="150" />
+                        <DxGridDataColumn Caption="نام بیمار" FieldName="MedicalVisit.Patient.PersonnelName" MinWidth="150" Visible="_showNames" />
+                        <DxGridDataColumn Caption="سمت" FieldName="MedicalVisit.Patient.CurrentRole" MinWidth="150" Visible="_showNames">
+                            @* <FilterRowCellTemplate>
+                            <TagBoxFilterRow TData="Personnel" FilterContext="context" DataSource="role" TextFieldName="Name" />
+                            </FilterRowCellTemplate>*@
+                        </DxGridDataColumn>
+                        <DxGridDataColumn Caption="تاریخ ارجاع" FieldName="MedicalVisit.VisitDate" MinWidth="100" SortIndex="0" SortOrder="GridColumnSortOrder.Descending" />
+                        <DxGridDataColumn Caption="تخصص مورد نظر" FieldName="Specialist" MinWidth="200" />
+                        <DxGridDataColumn Caption="توضیحات" FieldName="Comment" MinWidth="200" />
+                        <DxGridDataColumn Caption="وضعیت" FieldName="Status" MinWidth="150" />
+                        <DxGridDataColumn Caption="تاریخ بازگشت به کار" FieldName="ReturnDate" MinWidth="100" />
+                    </Columns>
+                </DxGrid>
+            </MudCardContent>
+        </MudCard>
+    </DxTabPage>
+</DxTabs>

@@ -31,6 +31,12 @@ namespace Samco_HSE.HSEData
             get { return fVisitDate; }
             set { SetPropertyValue<DateTime>(nameof(VisitDate), ref fVisitDate, value); }
         }
+        string fVisitType;
+        public string VisitType
+        {
+            get { return fVisitType; }
+            set { SetPropertyValue<string>(nameof(VisitType), ref fVisitType, value); }
+        }
         string fCategory;
         public string Category
         {
@@ -70,10 +76,18 @@ namespace Samco_HSE.HSEData
             get { return fComment; }
             set { SetPropertyValue<string>(nameof(Comment), ref fComment, value); }
         }
+        short? fLWD;
+        public short? LWD
+        {
+            get { return fLWD; }
+            set { SetPropertyValue<short?>(nameof(LWD), ref fLWD, value); }
+        }
         [Association(@"ReportReferencesPatient")]
         public XPCollection<Report> Reports { get { return GetCollection<Report>(nameof(Reports)); } }
         [Association(@"UsedMedicineReferencesPatient"), Aggregated]
         public XPCollection<UsedMedicine> UsedMedicines { get { return GetCollection<UsedMedicine>(nameof(UsedMedicines)); } }
+        [Association(@"MedicalReferralReferencesMedicalVisit"), Aggregated]
+        public XPCollection<MedicalReferral> MedicalReferrals { get { return GetCollection<MedicalReferral>(nameof(MedicalReferrals)); } }
     }
 
 }

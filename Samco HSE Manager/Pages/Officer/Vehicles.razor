@@ -5,17 +5,15 @@
 
 <PageTitle>مدیریت ماشین آلات</PageTitle>
 
-<Card>
-    <HeaderTemplate>
+<MudCard>
+    <MudCardHeader>
         <DxMenu Title="لیست ماشین آلات سبک و سنگین" ItemsPosition="ItemPosition.Start" CssClass="card-header">
             <Items>
                 <DxMenuItem Text="دریافت اطلاعات" IconCssClass="fas fa-paste" @onclick="OnPrintBtnClick" />
-                @*<DxMenuItem Text="تنظیم موجودی" IconCssClass="fas fa-shirt" @onclick="OnSetNumberBtnClick" />*@
-                @*<DxMenuItem Text="توزیع تجهیزات" IconCssClass="fas fa-boxes-packing" @onclick="OnDistributeBtnClick"/>*@
             </Items>
         </DxMenu>
-    </HeaderTemplate>
-    <BodyTemplate>
+    </MudCardHeader>
+    <MudCardContent>
         <DxGrid @ref="VehicleGrid" Data="@VehiclesList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm" EditModelSaving="OnEditModelSaving"
                 DataItemDeleting="OnDataItemDeleting" CustomizeEditModel="VehicleEditModel" CustomizeElement="VehicleGrid_CustomizeElement"
                 ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true"
@@ -90,13 +88,13 @@
                         </DxComboBox>
                     </DxFormLayoutItem>
                     <DxFormLayoutItem Caption="تاریخ اعتبار معاینه فنی:">
-                        <SamcoDateSelector TData="DateTime?" @bind-Date="@vehicle.LastCheckDate" DefaultCalendar="SamcoDateSelector<DateTime?>.CalendarType.Shamsi" />
+                        <SamcoDateSelector @bind-Date="@vehicle.LastCheckDate" DefaultCalendar="SamcoDateSelector.CalendarType.Shamsi" />
                     </DxFormLayoutItem>
                     <DxFormLayoutItem Caption="تاریخ اعتبار بیمه:">
-                        <SamcoDateSelector TData="DateTime?" @bind-Date="@vehicle.InsuranceDate" DefaultCalendar="SamcoDateSelector<DateTime?>.CalendarType.Shamsi" />
+                        <SamcoDateSelector @bind-Date="@vehicle.InsuranceDate" DefaultCalendar="SamcoDateSelector.CalendarType.Shamsi" />
                     </DxFormLayoutItem>
                 </DxFormLayout>
             </EditFormTemplate>
         </DxGrid>
-    </BodyTemplate>
-</Card>
+    </MudCardContent>
+</MudCard>

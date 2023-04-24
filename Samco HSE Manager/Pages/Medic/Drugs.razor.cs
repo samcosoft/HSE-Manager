@@ -1,11 +1,10 @@
-﻿using BootstrapBlazor.Components;
-using DevExpress.Blazor;
+﻿using DevExpress.Blazor;
 using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Samco_HSE.HSEData;
-using System.Diagnostics.CodeAnalysis;
+using MudBlazor;
 
 namespace Samco_HSE_Manager.Pages.Medic;
 
@@ -16,13 +15,7 @@ public partial class Drugs
     private IConfiguration Configuration { get; set; } = null!;
     [Inject]
     private NavigationManager NavigationManager { get; set; } = null!;
-    [Inject]
-    [NotNull]
-    private ToastService? ToastService { get; set; }
-
-    [Inject]
-    [NotNull]
-    private MessageService? MessageService { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
 
     private Session Session1 { get; set; } = null!;
     private IEnumerable<Rig> Rigs { get; set; } = null!;
@@ -104,15 +97,10 @@ public partial class Drugs
         e.Value = medStock?.AvailCount ?? 0;
     }
 
-    private async Task MedicineEditStart(GridEditStartEventArgs e)
+    private void MedicineEditStart(GridEditStartEventArgs e)
     {
         if (SamcoSoftShared.CurrentUserRole <= SamcoSoftShared.SiteRoles.Supervisor) return;
-        await MessageService.Show(new MessageOption
-        {
-            Color = Color.Warning,
-            Content = "شما اجازه ویرایش دارو و تجهیزات را ندارید.",
-            IsAutoHide = true
-        });
+        Snackbar.Add("شما اجازه ویرایش دارو و تجهیزات را ندارید.", Severity.Warning);
         e.Cancel = true;
     }
     private void MedicineEditModel(GridCustomizeEditModelEventArgs e)
@@ -128,7 +116,7 @@ public partial class Drugs
         if (string.IsNullOrEmpty(editModel.Name) || string.IsNullOrEmpty(editModel.Dose) ||
             string.IsNullOrEmpty(editModel.DrugForm) || string.IsNullOrEmpty(editModel.Category))
         {
-            await ToastService.Error("خطا در افزودن دارو / تجهیز", "لطفاً موارد الزامی را تکمیل کنید.");
+            Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
             e.Cancel = true;
             return;
         }
@@ -142,8 +130,7 @@ public partial class Drugs
             if (selMedication != null)
             {
                 //drug existed
-                await ToastService.Error("خطا در ثبت اطلاعات",
-                    "دارو / تجهیز با همین مشخصات در سیستم موجود است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.");
+                Snackbar.Add("دارو / تجهیز با همین مشخصات در سیستم موجود است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.", Severity.Error);
                 e.Cancel = true;
                 return;
             }
@@ -153,8 +140,7 @@ public partial class Drugs
             if (selMedication != null && selMedication.Oid != editModel.Oid)
             {
                 //User existed
-                await ToastService.Error("خطا در ثبت اطلاعات",
-                    "دارو / تجهیز با همین مشخصات در سیستم موجود است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.");
+                Snackbar.Add("دارو / تجهیز با همین مشخصات در سیستم موجود است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.", Severity.Error);
                 e.Cancel = true;
                 return;
             }
@@ -169,12 +155,7 @@ public partial class Drugs
         //prevent owner editing
         if (SamcoSoftShared.CurrentUserRole > SamcoSoftShared.SiteRoles.Supervisor)
         {
-            await MessageService.Show(new MessageOption
-            {
-                Color = Color.Warning,
-                Content = "شما اجازه ویرایش دارو و تجهیزات را ندارید.",
-                IsAutoHide = true
-            });
+            Snackbar.Add("شما اجازه ویرایش دارو و تجهیزات را ندارید.", Severity.Warning);
             e.Cancel = true;
             return;
         }
@@ -199,7 +180,7 @@ public partial class Drugs
     {
         if (MedicineGrid!.SelectedDataItems.Any() == false)
         {
-            await ToastService.Warning("خطا در تعیین تعداد", "لطفاً یک دارو / تجهیز را از لیست زیر انتخاب کنید.");
+            Snackbar.Add("لطفاً یک دارو / تجهیز را از لیست زیر انتخاب کنید.", Severity.Warning);
             return;
         }
 
@@ -236,19 +217,11 @@ public partial class Drugs
         //Validation
         if (_selMedicationStock?.RigNo == null)
         {
-            await MessageService.Show(new MessageOption
-            {
-                Color = Color.Danger,
-                Content = "لطفاً یک دکل را انتخاب کنید."
-            });
+            Snackbar.Add("لطفاً یک دکل را انتخاب کنید.", Severity.Error);
             return;
         }
         _selMedicationStock?.Save();
-        await MessageService.Show(new MessageOption
-        {
-            Color = Color.Success,
-            Content = "اطلاعات با موفقیت ثبت شد."
-        });
+        Snackbar.Add("اطلاعات با موفقیت ثبت شد.", Severity.Success);
         MedicineGrid!.Reload();
         await SetNumberModal!.CloseAsync();
     }
@@ -265,15 +238,11 @@ public partial class Drugs
         await DrugRequestModal!.ShowAsync();
     }
 
-    private async Task RequestBtnClick()
+    private void RequestBtnClick()
     {
         if (_selRig == null)
         {
-            await MessageService.Show(new MessageOption
-            {
-                Color = Color.Danger,
-                Content = "لطفاً یک دکل را انتخاب کنید."
-            });
+            Snackbar.Add("لطفاً یک دکل را انتخاب کنید.", Severity.Error);
             return;
         }
 

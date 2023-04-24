@@ -1,18 +1,14 @@
 ﻿using DevExpress.Xpo;
 using DevExpress.Xpo.Metadata;
 using Microsoft.AspNetCore.Components;
-using Samco_HSE.HSEData;
-using Samco_HSE_Manager.Pages.Admin;
 
 namespace Samco_HSE_Manager.Pages.Shared;
 
 public partial class ReportDesign
 {
-    [Inject]
-    private IDataLayer DataLayer { get; set; }
+    [Inject] private IDataLayer DataLayer { get; set; } = null!;
 
-    [Inject] private IConfiguration Configuration { get; set; }
-    private Session Session1 { get; set; }
+    private Session? Session1 { get; set; }
     private readonly Dictionary<string, object> _hseDataSources = new();
     protected override void OnInitialized()
     {

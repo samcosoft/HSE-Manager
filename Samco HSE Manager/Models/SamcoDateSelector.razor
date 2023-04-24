@@ -1,101 +1,79 @@
-﻿@typeparam TData
+﻿@using System.Globalization
+@using System.Reflection
+@*@typeparam TData*@
 
 <style>
-    .DNDDayBtn {
-        padding: 3px;
+    .mud-input-control, .mud-input {
+        margin-top: 0;
     }
-
-    .row.mb-3 {
-        margin-bottom: 0 !important;
-    }
-
-        .row.mb-3 .col-lg-9 {
-            width: 100%;
-        }
-
-    .input-group > :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback):not(#persianYear) {
-        margin-left: -1px;
-        margin-right: -1px;
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-        border-top-left-radius: .2rem;
-        border-bottom-left-radius: .2rem;
-    }
-
-    .input-group:not(.has-validation) > :not(:last-child):not(.dropdown-toggle):not(.dropdown-menu):not(.form-floating):not(#persianYear) {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-        border-top-right-radius: .2rem;
-        border-bottom-right-radius: .2rem;
-    }
-
-    #_date {
-        border-top-right-radius: 3px !important;
-        border-bottom-right-radius: 3px !important;
-        border-top-left-radius: 0 !important;
-        border-bottom-left-radius: 0 !important;
-    }
-
-    #persianYear, #persianMonth {
-        padding: 0;
-        padding-right: 30px
-    }
-
 </style>
-<div class="row">
-    <div class="col ps-0">
-        @{
-            if (_shamsiVisible)
-            {
-                <label class="d-inline">@DisplayText</label>
-                <DntInputPersianDate @bind-Value="@Date" CalendarDayButtonsCss="btn DNDDayBtn" CalendarNextPreviousButtonsCss="btn btn-secondary DNDDayBtn"
-                             BeginningOfCentury="1400" CalendarFromYear="1300" UsePersianNumbers="true"
-                             CalendarUseShortPersianDayNamesOfWeek="true" CalendarShowYearMonthDropdowns="true" CalendarShowTodayButton="true" />
+<MudContainer>
+    <div class="row align-items-center pb-2">
+        <div class="col">
+            @{
+                if (_shamsiVisible)
+                {
+                    <MudDatePicker @bind-Date="@Date" Label="@DisplayText" DisableToolbar="true" Rounded="true"
+                           Culture="@GetPersianCulture()" IconSize="Size.Small" MinDate="@DateTime.Parse("2000/01/01")" Variant="Variant.Outlined" />
+                }
+                else
+                {
+                    <MudDatePicker @bind-Date="@Date" Label="@DisplayText" DisableToolbar="true"
+                           Rounded="true" IconSize="Size.Small" MinDate="@DateTime.Parse("2000/01/01")" Variant="Variant.Outlined" />
+                }
             }
-            else
-            {
-                <DateTimePicker @bind-Value="@Date" DisplayText="@DisplayText" MinValue="@DateTime.Parse("1900/01/01")" />
-            }
-        }
-        @* <div style="display: @(_shamsiVisible ? "none" : "block")">
         </div>
-        <div style="display: @(_shamsiVisible ? "block" : "none")">
-        </div>*@
-    </div>
-    <div class="col-2 ps-0 pe-1">
-        <div style="display: @(_shamsiVisible? "none":"block")">
-            <Button Color="Color.Primary" Icon="fas fa-cross" TooltipText="تقویم میلادی" OnClick="() => _shamsiVisible=!_shamsiVisible"></Button>
-        </div>
-        <div style="display: @(_shamsiVisible? "block":"none")">
-            <Button Color="Color.Primary" Icon="fas fa-sun" TooltipText="تقویم شمسی" OnClick="() => _shamsiVisible=!_shamsiVisible"></Button>
+        <div class="col-2">
+            <div style="display: @(_shamsiVisible? "none":"block")">
+                <MudButton Color="Color.Primary" Size="Size.Small" StartIcon="fas fa-cross" OnClick="() => _shamsiVisible=!_shamsiVisible" />
+            </div>
+            <div style="display: @(_shamsiVisible? "block":"none")">
+                <MudButton Color="Color.Primary" Size="Size.Small" StartIcon="fas fa-sun" OnClick="() => _shamsiVisible=!_shamsiVisible" />
+            </div>
         </div>
     </div>
-</div>
+</MudContainer>
 
 @code
 {
-    private TData? _date;
+    private DateTime? _date;
 
     [Parameter]
-    public TData Date
+    public DateTime? Date
     {
         get => _date!;
         set
         {
-            if (value == null || EqualityComparer<TData>.Default.Equals(value, _date)) return;
+            if (value == null || _date == value) return;
             _date = value;
             DateChanged.InvokeAsync(value);
+            DateNotNullChanged.InvokeAsync(value.Value);
+        }
+    }
+    
+    [Parameter]
+    public EventCallback<DateTime?> DateChanged { get; set; }
+
+    [Parameter]
+    public DateTime DateNotNull
+    {
+        get => _date.GetValueOrDefault(DateTime.Today);
+        set
+        {
+            if (_date == value || value == DateTime.MinValue) return;
+            Date = value;
+            DateNotNullChanged.InvokeAsync(value);
         }
     }
     [Parameter]
-    public EventCallback<TData> DateChanged { get; set; }
+    public EventCallback<DateTime> DateNotNullChanged { get; set; }
 
-    [Parameter]
-    public string? NullText { get; set; }
+    [Parameter] public string? NullText { get; set; }
 
-    [Parameter]
-    public string? DisplayText { get; set; }
+    [Parameter] public string? DisplayText { get; set; }
     [Parameter] public CalendarType DefaultCalendar { get; set; }
+
+    [Parameter] public Variant CalenderVariant { get; set; }
 
     public enum CalendarType
     {
@@ -107,5 +85,38 @@
     protected override void OnInitialized()
     {
         _shamsiVisible = DefaultCalendar == CalendarType.Shamsi;
+    }
+
+    private CultureInfo GetPersianCulture()
+    {
+        var culture = new CultureInfo("fa-IR");
+        var formatInfo = culture.DateTimeFormat;
+        formatInfo.AbbreviatedDayNames = new[] { "ی", "د", "س", "چ", "پ", "ج", "ش" };
+        formatInfo.DayNames = new[] { "یکشنبه", "دوشنبه", "سه شنبه", "چهار شنبه", "پنجشنبه", "جمعه", "شنبه" };
+        var monthNames = new[]
+        {
+            "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن",
+            "اسفند",
+            "",
+    };
+        formatInfo.AbbreviatedMonthNames =
+            formatInfo.MonthNames =
+                formatInfo.MonthGenitiveNames = formatInfo.AbbreviatedMonthGenitiveNames = monthNames;
+        formatInfo.AMDesignator = "ق.ظ";
+        formatInfo.PMDesignator = "ب.ظ";
+        formatInfo.ShortDatePattern = "yyyy/MM/dd";
+        formatInfo.LongDatePattern = "dddd, dd MMMM,yyyy";
+        formatInfo.FirstDayOfWeek = DayOfWeek.Saturday;
+        Calendar cal = new PersianCalendar();
+        var fieldInfo = culture.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
+        if (fieldInfo != null)
+            fieldInfo.SetValue(culture, cal);
+        var info = formatInfo.GetType().GetField("calendar", BindingFlags.NonPublic | BindingFlags.Instance);
+        if (info != null)
+            info.SetValue(formatInfo, cal);
+        culture.NumberFormat.NumberDecimalSeparator = "/";
+        culture.NumberFormat.DigitSubstitution = DigitShapes.NativeNational;
+        culture.NumberFormat.NumberNegativePattern = 0;
+        return culture;
     }
 }

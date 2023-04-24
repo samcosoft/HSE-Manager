@@ -1,32 +1,31 @@
 ﻿@using Samco_HSE.HSEData
 <div>
-    <Alert Color="Color.Primary">نسخه تجویزی</Alert>
+    <MudAlert Severity="Severity.Normal">نسخه تجویزی</MudAlert>
 </div>
 @{
     if (IsEditable)
     {
-        <Card>
-            <BodyTemplate>
-                <Row ItemsPerRow="ItemsPerRow.Four">
-                    <Row ColSpan="3">
-                        <BootstrapInputGroup>
-                            <BootstrapInputGroupLabel DisplayText="دارو / تجهیز" />
-                            <DxComboBox Data="@_medicationList" @bind-Value="@_selUsedMedicine!.MedicName" NullText="الزامی"
-                                        EditFormat="{0} {2} {1}" CssClass="w-50"
-                                        FilteringMode="DataGridFilteringMode.Contains">
-                                <DxListEditorColumn FieldName="@nameof(Medication.Name)" Caption="نام دارو / تجهیز" />
-                                <DxListEditorColumn FieldName="@nameof(Medication.Dose)" Caption="دوز" />
-                                <DxListEditorColumn FieldName="@nameof(Medication.DrugForm)" Caption="فرم دارویی" />
-                            </DxComboBox>
-                            <BootstrapInputGroupLabel DisplayText="تعداد" />
-                            <BootstrapInputNumber @bind-Value="@_selUsedMedicine.MedCount" Min="1" Max="100" SkipValidate="true"/>
-                            <Button Icon="fa-solid fa-check" Color="Color.Primary" OnClick="AddMedicineBtnClick"></Button>
-                        </BootstrapInputGroup>
-                    </Row>
-                    <Button Color="Color.Danger" OnClick="DelMedicineClick">حذف</Button>
-                </Row>
-            </BodyTemplate>
-        </Card>
+        <MudCard>
+            <MudCardContent>
+                <DxFormLayout>
+                    <DxFormLayoutItem Caption="دارو / تجهیز">
+                        <DxComboBox Data="@_medicationList" @bind-Value="@_selUsedMedicine!.MedicName" NullText="الزامی"
+                                    EditFormat="{0} {2} {1}" CssClass="w-50"
+                                    FilteringMode="DataGridFilteringMode.Contains">
+                            <DxListEditorColumn FieldName="@nameof(Medication.Name)" Caption="نام دارو / تجهیز"/>
+                            <DxListEditorColumn FieldName="@nameof(Medication.Dose)" Caption="دوز"/>
+                            <DxListEditorColumn FieldName="@nameof(Medication.DrugForm)" Caption="فرم دارویی"/>
+                        </DxComboBox>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem Caption="تعداد">
+                        <MudNumericField T="short" @bind-Value="@_selUsedMedicine.MedCount" Min="1" Max="100" Step="1"></MudNumericField>
+                    </DxFormLayoutItem>
+                    <DxFormLayoutItem>
+                        <MudButton StartIcon="fa-solid fa-check" Color="Color.Primary" OnClick="AddMedicineBtnClick"/>
+                    </DxFormLayoutItem>
+                </DxFormLayout>
+            </MudCardContent>
+        </MudCard>
     }
 }
 <DxGrid @ref="MedicineGrid" Data="DetailGridData"

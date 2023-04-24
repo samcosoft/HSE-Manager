@@ -3,17 +3,16 @@
 @attribute [Authorize(Roles = "Owner,Admin,Supervisor,Officer")]
 <PageTitle>مدیریت تجهیزات ملکی</PageTitle>
 
-<Card HeaderText="مدیریت تجهیزات ملکی">
-    @*<HeaderTemplate>
+<MudCard>
+    <MudCardHeader>
         <DxMenu Title="مدیریت تجهیزات ملکی" ItemsPosition="ItemPosition.Start" CssClass="card-header">
              <Items>
-            <DxMenuItem Text="تنظیم موجودی" IconCssClass="fas fa-shirt" @onclick="OnSetNumberBtnClick" />
-            <DxMenuItem Text="توزیع تجهیزات" IconCssClass="fas fa-boxes-packing" @onclick="OnDistributeBtnClick" />
+                <DxMenuItem Text="دریافت اطلاعات" IconCssClass="fas fa-paste" @onclick="OnPrintBtnClick" />>
             </Items>
         </DxMenu>
-    </HeaderTemplate>*@
-    <BodyTemplate>
-        <DxGrid Data="@AssetsList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"
+    </MudCardHeader>
+    <MudCardContent>
+        <DxGrid @ref="AssetGrid" Data="@AssetsList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"
                 EditModelSaving="OnEditModelSaving" DataItemDeleting="OnDataItemDeleting"
                 CustomizeEditModel="AssetEditModel" CustomizeElement="AssetGrid_CustomizeElement"
                 ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true" ValidationEnabled="false"
@@ -55,8 +54,7 @@
                         <DxComboBox Data="@_status" @bind-Value="asset.Status" NullText="الزامی" />
                     </DxFormLayoutItem>
                     <DxFormLayoutItem Caption="انقضای گواهی:">
-                        @*<DxDateEdit @bind-Date="@asset.ExpireDate" />*@
-                        <SamcoDateSelector TData="DateTime?" @bind-Date="@asset.ExpireDate" DefaultCalendar="SamcoDateSelector<DateTime?>.CalendarType.Shamsi"/>
+                        <SamcoDateSelector @bind-Date="@asset.ExpireDate" DefaultCalendar="SamcoDateSelector.CalendarType.Shamsi"/>
                     </DxFormLayoutItem>
                     <DxFormLayoutItem Caption="توضیحات:">
                         <DxTextBox @bind-Text="@asset.Comment" />
@@ -64,5 +62,5 @@
                 </DxFormLayout>
             </EditFormTemplate>
         </DxGrid>
-    </BodyTemplate>
-</Card>
+    </MudCardContent>
+</MudCard>

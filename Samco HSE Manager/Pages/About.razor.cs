@@ -1,13 +1,12 @@
-﻿using BootstrapBlazor.Components;
-using Microsoft.AspNetCore.Components;
-using System.Diagnostics.CodeAnalysis;
+﻿using Microsoft.AspNetCore.Components;
 using System.Reflection;
+using MudBlazor;
 
 namespace Samco_HSE_Manager.Pages;
 
 public partial class About
 {
-    [Inject][NotNull] private ToastService? ToastService { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
 
     private string? GetApplicationVersion()
     {
@@ -54,55 +53,38 @@ public partial class About
             _returnMsg = SamcoSoftShared.LicenseStatusMessage(status);
         }
     }
-    private async Task Activate()
+    private void Activate()
     {
         //Validation
         if (string.IsNullOrEmpty(_activationKey))
         {
-            await ToastService.Error("خطا در ثبت مجوز", "لطفاً تمام اطلاعات خواسته شده را وارد کنید.");
+            Snackbar.Add("لطفاً تمام اطلاعات خواسته شده را وارد کنید.", Severity.Error);
             return;
         }
-
-        //await ToastService.Show(new ToastOption()
-        //{
-        //    Animation = true,
-        //    Category = ToastCategory.Information,
-        //    Delay = 3000,
-        //    Title = "دریافت مجوز",
-        //    Content = "در حال دریافت مجوز از سرور. لطفاً شکیبا باشید..."
-        //});
 
         try
         {
             var ret = SamcoSoftShared.ActivateLicense(_activationKey, out _returnMsg);
             if (ret)
             {
-                await ToastService.Success("ثبت مجوز", _returnMsg);
+                Snackbar.Add(_returnMsg, Severity.Success);
             }
             else
             {
-                await ToastService.Error("خطا در ثبت مجوز", "اطلاعات وارد شده صحیح نیست.");
+                Snackbar.Add("اطلاعات وارد شده صحیح نیست.", Severity.Error);
             }
 
         }
         catch (Exception e)
         {
-            await ToastService.Error("خطا در ثبت مجوز", "در سیستم فعالسازی مشکلی رخ داده است. لطفاً بعد از مدتی دوباره تلاش کنید.");
-            await ToastService.Error("کد خطا", e.Message);
+            Snackbar.Add("در سیستم فعالسازی مشکلی رخ داده است. لطفاً بعد از مدتی دوباره تلاش کنید.", Severity.Error);
+            Snackbar.Add(e.Message, Severity.Error);
         }
         LoadLicenseInfo();
     }
     private void Deactivate()
     {
-        ToastService.Show(new ToastOption
-        {
-            Animation = true,
-            Category = ToastCategory.Information,
-            Delay = 3000,
-            Title = "لغو مجوز",
-            Content = "در حال غیر فعالسازی مجوز. لطفاً شکیبا باشید..."
-        });
-
+        Snackbar.Add("در حال غیر فعالسازی مجوز. لطفاً شکیبا باشید...", Severity.Info);
         SamcoSoftShared.Lic.Deactivate();
         LoadLicenseInfo();
     }

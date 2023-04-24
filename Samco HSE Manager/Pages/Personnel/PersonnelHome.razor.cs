@@ -1,10 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using BootstrapBlazor.Components;
-using DevExpress.Blazor;
+﻿using DevExpress.Blazor;
 using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using MudBlazor;
 using Samco_HSE.HSEData;
 
 namespace Samco_HSE_Manager.Pages.Personnel;
@@ -15,9 +14,7 @@ public partial class PersonnelHome : IDisposable
     private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
 
-    [Inject]
-    [NotNull]
-    private ToastService? ToastService { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
 
     private Session Session1 { get; set; } = null!;
     private IEnumerable<StopCard>? StopsList { get; set; }
@@ -30,6 +27,7 @@ public partial class PersonnelHome : IDisposable
         "خیلی کم",  "کم","متوسط","زیاد","خیلی زیاد"
     };
     private DxGrid? StopGrid { get; set; }
+    private bool _isOpen;
     protected override async Task OnInitializedAsync()
     {
         Session1 = new Session(DataLayer);
@@ -104,12 +102,12 @@ public partial class PersonnelHome : IDisposable
         var selCard = StopGrid!.SelectedDataItem;
         if (selCard == null)
         {
-            await ToastService.Warning("خطا در ویرایش", "یک مورد را انتخاب کنید.");
+            Snackbar.Add("یک مورد را انتخاب کنید.", Severity.Warning);
             return;
         }
         if (((StopCard)selCard).IsApproved)
         {
-            await ToastService.Warning("خطا در ویرایش", "امکان ویرایش کارت تأیید شده وجود ندارد.");
+            Snackbar.Add("امکان ویرایش کارت تأیید شده وجود ندارد.", Severity.Warning);
             return;
         }
         SelectedCard = (StopCard)StopGrid!.SelectedDataItem;
@@ -121,7 +119,7 @@ public partial class PersonnelHome : IDisposable
         //Validation
         if (string.IsNullOrEmpty(SelectedCard!.Observation))
         {
-            await ToastService.Error("خطا در ثبت STOP Card", "لطفاً موارد الزامی را تکمیل کنید.");
+            Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
             return;
         }
 
@@ -130,7 +128,7 @@ public partial class PersonnelHome : IDisposable
 
         if (string.IsNullOrEmpty(SelectedCard!.Observation))
         {
-            await ToastService.Error("خطا در ثبت STOP Card", "برای شما هیچ محل کاری تعریف نشده است.");
+            Snackbar.Add("برای شما هیچ محل کاری تعریف نشده است.", Severity.Error);
             return;
         }
 
@@ -139,7 +137,7 @@ public partial class PersonnelHome : IDisposable
 
         if (wellWork == null)
         {
-            await ToastService.Error("خطا در ثبت STOP Card", "محل انتخاب شده در هیچ پروژه‌ای فعال نیست.");
+            Snackbar.Add("محل انتخاب شده در هیچ پروژه‌ای فعال نیست.", Severity.Error);
             return;
         }
         SelectedCard!.WorkID = wellWork;
@@ -155,12 +153,12 @@ public partial class PersonnelHome : IDisposable
         var selCard = StopGrid!.SelectedDataItem;
         if (selCard == null)
         {
-            await ToastService.Warning("خطا در حذف", "یک مورد را انتخاب کنید.");
+            Snackbar.Add("یک مورد را انتخاب کنید.", Severity.Warning);
             return;
         }
         if (((StopCard)selCard).IsApproved)
         {
-            await ToastService.Warning("خطا در حذف", "امکان حذف کارت تأیید شده وجود ندارد.");
+            Snackbar.Add("امکان حذف کارت تأیید شده وجود ندارد.", Severity.Warning);
             return;
         }
 
@@ -172,7 +170,7 @@ public partial class PersonnelHome : IDisposable
     {
         if (string.IsNullOrEmpty(SelectedCard!.Observation))
         {
-            ToastService.Error("خطا در ارسال فایل", "لطفاً ابتدا موارد الزامی را تکمیل کنید.");
+            Snackbar.Add("لطفاً ابتدا موارد الزامی را تکمیل کنید.", Severity.Warning);
             return;
         }
         SelectedCard!.Save();

@@ -39,7 +39,7 @@ public static class SamcoSoftShared
             IsolatedStoragePath = storagePath
         };
     }
-    public static bool CheckLicense(out LicenseStatus status)
+    public static bool CheckLicense(out LicenseStatus status, bool isDevelopment = false)
     {
         Lic.Load();
         if (string.IsNullOrEmpty(Lic.LicenseCode))
@@ -51,6 +51,7 @@ public static class SamcoSoftShared
         try
         {
             status = Lic.Status;
+            if (isDevelopment && status == LicenseStatus.DebuggerDetected) return true;
             return status is LicenseStatus.Valid or LicenseStatus.GenericFailure ;
         }
         catch (Exception)

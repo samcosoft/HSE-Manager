@@ -1,18 +1,19 @@
 ﻿@page "/permit"
 @using Samco_HSE.HSEData
+
 @attribute [Authorize(Roles = "Owner,Admin,Supervisor,Officer")]
 
 <PageTitle>مجوز کار ایمن</PageTitle>
 
-<Card>
-    <HeaderTemplate>
+<MudCard>
+    <MudCardHeader>
         <DxMenu Title="مجوز کار ایمن" ItemsPosition="ItemPosition.Start" CssClass="card-header">
             <Items>
                 <DxMenuItem Text="دریافت اطلاعات" IconCssClass="fas fa-paste" @onclick="OnPrintBtnClick" />
             </Items>
         </DxMenu>
-    </HeaderTemplate>
-    <BodyTemplate>
+    </MudCardHeader>
+    <MudCardContent>
         <DxButton Text="تنظیم ستون‌ها"
                   RenderStyle="ButtonRenderStyle.Secondary"
                   CssClass="column-chooser-button"
@@ -108,7 +109,7 @@
                 }
                 <DxFormLayout>
                     <DxFormLayoutItem Caption="دکل / دفتر:">
-                        <DxComboBox Data="@Rigs" @bind-Value="@_selRig" TextFieldName="@nameof(Rig.Name)" NullText="الزامی" />
+                        <DxComboBox Data="@Rigs" @bind-Value="@_selRig" TextFieldName="@nameof(Rig.Name)" NullText="الزامی" SelectedItemChanged="@((Rig selrig) => RigChanged(selrig))"/>
                     </DxFormLayoutItem>
                     <DxFormLayoutItem Caption="شماره سریال:">
                         <DxTextBox @bind-Text="@permit.ArchiveNo" NullText="الزامی"/>
@@ -158,5 +159,5 @@
                 </DxFormLayout>
             </EditFormTemplate>
         </DxGrid>
-    </BodyTemplate>
-</Card>
+    </MudCardContent>
+</MudCard>

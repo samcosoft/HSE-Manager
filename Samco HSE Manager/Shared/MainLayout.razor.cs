@@ -1,11 +1,10 @@
-﻿using BootstrapBlazor.Components;
-using DevExpress.Data.Filtering;
+﻿using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Routing;
+using MudBlazor;
 using Samco_HSE.HSEData;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace Samco_HSE_Manager.Shared;
@@ -13,13 +12,9 @@ namespace Samco_HSE_Manager.Shared;
 public partial class MainLayout : IDisposable
 {
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
+    [Inject] private IHostEnvironment HostEnvironment { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
-
-    [CascadingParameter]
-    [NotNull]
-    private BootstrapBlazorRoot? Root { get; set; }
-
 
     string? NavMenuCssClass { get; set; }
     bool _isMobileLayout;
@@ -69,19 +64,84 @@ public partial class MainLayout : IDisposable
             {
                 return;
             }
+
+            //Set Theme
+            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+            SetDevexpressTheme();
         }
         catch (Exception)
         {
             //_loggedUser = new User(session1);
         }
-
-        var toastContainer = Root.ToastContainer;
-        toastContainer.SetPlacement(Placement.MiddleCenter);
         NavigationManager.LocationChanged += OnLocationChanged;
 
         //License validation
-        _isValid = SamcoSoftShared.CheckLicense(out _);
+        _isValid = SamcoSoftShared.CheckLicense(out _, HostEnvironment.IsDevelopment());
     }
+
+    #region Theme
+
+    private bool _isDarkMode;
+    private readonly List<string> _devexpressTheme = new();
+    private MudThemeProvider _mudThemeProvider = null!;
+
+    private readonly MudTheme _samcoTheme = new()
+    {
+        Typography = new Typography
+        {
+            Default = new Default { FontFamily = new[] { "IranSansX", "Tahoma", "Arial" } },
+            H1 = new H1 { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = 600 },
+            H2 = new H2 { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = 600 },
+            H3 = new H3 { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = 600 },
+            H4 = new H4 { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = 600 },
+            H5 = new H5 { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = 600 },
+            H6 = new H6 { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = 600 }
+        }
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
+            SetDevexpressTheme();
+            StateHasChanged();
+        }
+    }
+
+    private Task OnSystemPreferenceChanged(bool newValue)
+    {
+        _isDarkMode = newValue;
+        //Set devexpress theme
+        SetDevexpressTheme();
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+    private void SetTheme(bool isDarkMode)
+    {
+        _isDarkMode = isDarkMode;
+        SetDevexpressTheme();
+    }
+
+    private void SetDevexpressTheme()
+    {
+        if (!_isDarkMode)
+        {
+            _devexpressTheme.Add("_content/DevExpress.Blazor.Themes/blazing-berry.bs5.min.css");
+            _devexpressTheme.Add("_content/DevExpress.Blazor.Dashboard/dx.light.css");
+            _devexpressTheme.Add("_content/DevExpress.Blazor.Dashboard/dx-analytics.light.css");
+            _devexpressTheme.Add("_content/DevExpress.Blazor.Dashboard/dx-dashboard.light.min.css");
+        }
+        else
+        {
+            _devexpressTheme.Add("_content/DevExpress.Blazor.Themes/blazing-dark.bs5.min.css");
+            _devexpressTheme.Add("_content/DevExpress.Blazor.Dashboard/dx.dark.css");
+            _devexpressTheme.Add("_content/DevExpress.Blazor.Dashboard/dx-analytics.dark.css");
+            _devexpressTheme.Add("_content/DevExpress.Blazor.Dashboard/dx-dashboard.dark.min.css");
+        }
+    }
+    #endregion
+
 
     private string? GetApplicationVersion()
     {

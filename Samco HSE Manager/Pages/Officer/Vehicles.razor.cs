@@ -1,10 +1,9 @@
-﻿using BootstrapBlazor.Components;
-using DevExpress.Blazor;
+﻿using DevExpress.Blazor;
 using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using Samco_HSE.HSEData;
-using System.Diagnostics.CodeAnalysis;
+using MudBlazor;
 
 namespace Samco_HSE_Manager.Pages.Officer;
 
@@ -12,9 +11,7 @@ public partial class Vehicles : IDisposable
 {
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
-    [Inject]
-    [NotNull]
-    private ToastService? ToastService { get; set; }
+    [Inject]private ISnackbar Snackbar { get; set; } = null!;
 
     private Session Session1 { get; set; } = null!;
     private IEnumerable<Vehicle>? VehiclesList { get; set; }
@@ -88,7 +85,7 @@ public partial class Vehicles : IDisposable
         //Validation
         if (string.IsNullOrEmpty(editModel.Name) || string.IsNullOrEmpty(editModel.PlateNo) || editModel.RigNo == null)
         {
-            await ToastService.Error("خطا در افزودن ماشین", "لطفاً موارد الزامی را تکمیل کنید.");
+            Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
             e.Cancel = true;
             return;
         }
@@ -99,8 +96,7 @@ public partial class Vehicles : IDisposable
             if (selVehicle != null)
             {
                 //Vehicle existed
-                await ToastService.Error("خطا در ثبت اطلاعات",
-                    "ماشین با همین پلاک در سیستم وجود دارد. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.");
+                Snackbar.Add("ماشین با همین پلاک در سیستم وجود دارد. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.", Severity.Error);
                 e.Cancel = true;
                 return;
             }
@@ -110,8 +106,7 @@ public partial class Vehicles : IDisposable
             if (selVehicle != null && selVehicle.Oid != editModel.Oid)
             {
                 //Equipment existed
-                await ToastService.Error("خطا در ثبت اطلاعات",
-                    "ماشین با همین پلاک در سیستم وجود دارد. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.");
+                Snackbar.Add("ماشین با همین پلاک در سیستم وجود دارد. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.", Severity.Error);
                 e.Cancel = true;
                 return;
             }
@@ -130,15 +125,7 @@ public partial class Vehicles : IDisposable
     private async Task OnPrintBtnClick()
     {
         //await ToastService.Information("دریافت گزارش", "سیستم در حال ایجاد فایل است. لطفاً شکیبا باشید...");
-        await ToastService.Show(new ToastOption
-        {
-            Content = "سیستم در حال ایجاد فایل است. لطفاً تا دانلود گزارش شکیبا باشید...",
-            Title = "دریافت گزارش",
-            Category = ToastCategory.Information,
-            Delay = 6000,
-            ForceDelay = true
-        });
-
+        Snackbar.Add("سیستم در حال ایجاد فایل است. لطفاً تا دانلود گزارش شکیبا باشید...", Severity.Info);
         //var getReport = PersonnelGrid?.ExportToXlsxAsync("Personnel", new GridXlExportOptions
         await VehicleGrid?.ExportToXlsxAsync("Vehicles", new GridXlExportOptions
         {
