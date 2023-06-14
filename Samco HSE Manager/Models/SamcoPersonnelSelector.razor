@@ -1,5 +1,107 @@
-﻿<h3>SamcoPersonnelSelector</h3>
+﻿@using Samco_HSE.HSEData
+@using DevExpress.Data.Filtering
+<SfComboBox TValue="string" TItem="ComboPerson" @ref="_personnelBox" Placeholder="الزامی" DataSource="@PersonnelList"
+            @bind-Value="SelPerson" AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains" AllowCustom="false">
+    <ComboBoxFieldSettings Value="Oid" Text="PersonnelName"/>
+    <ComboBoxTemplates TItem="ComboPerson">
+        <HeaderTemplate>
+            <MudGrid Justify="Justify.SpaceEvenly" Class="w-100">
+                <MudItem lg="5" md="5" sm="5">
+                    <MudText Typo="Typo.caption">نام و نام خانوادگی</MudText>
+                </MudItem>
+                <MudItem lg="4" md="4" sm="4">
+                    <MudText Typo="Typo.caption">سمت</MudText>
+                </MudItem>
+                <MudItem lg="3" md="3" sm="3">
+                    <MudText Typo="Typo.caption">دکل / دفتر</MudText>
+                </MudItem>
+            </MudGrid>
+        </HeaderTemplate>
+        <ItemTemplate>
+            <MudGrid Justify="Justify.SpaceEvenly" Class="w-100">
+                <MudItem lg="5" md="5" sm="5">
+                    <MudText Typo="Typo.subtitle2">@(context.PersonnelName)</MudText>
+                </MudItem>
+                <MudItem lg="4" md="4" sm="4">
+                    <MudText Typo="Typo.subtitle2">@(context.Role)</MudText>
+                </MudItem>
+                <MudItem lg="3" md="3" sm="3">
+                    <MudText Typo="Typo.subtitle2">@(context.Rig)</MudText>
+                </MudItem>
+            </MudGrid>
+        </ItemTemplate>
+    </ComboBoxTemplates>
+</SfComboBox>
 
-@code {
-    
+@code{
+
+    [Parameter]
+    public IEnumerable<Personnel>? DataSource { get; set; }
+
+    private IEnumerable<ComboPerson>? PersonnelList { get; set; }
+
+    [Parameter]
+    public Session Session { get; set; } = null!;
+
+    [Parameter]
+    public Personnel? SelectedPersonnel
+    {
+        get => _selPersonOid != null ? Session.GetObjectByKey<Personnel>(int.Parse(_selPersonOid)) : null;
+        set => _selPersonOid = value?.Oid.ToString();
+    }
+
+    [Parameter]
+    public EventCallback<Personnel?> SelectedPersonnelChanged { get; set; }
+
+    private string? _selPersonOid;
+
+    private string? SelPerson
+    {
+        get => _selPersonOid;
+        set
+        {
+            if (_selPersonOid == value) return;
+            _selPersonOid = value;
+            if (value == null)
+            {
+                SelectedPersonnelChanged.InvokeAsync(null);
+                return;
+            }
+            SelectedPersonnelChanged.InvokeAsync(Session.GetObjectByKey<Personnel>(int.Parse(value)));
+        }
+    }
+
+    private SfComboBox<string?,ComboPerson>? _personnelBox;
+    // protected override void OnParametersSet()
+    // {
+    //     if (DataSource == null) return;
+    //     PersonnelList = DataSource?.Select(x => new ComboPerson(x)).ToList();
+    // }
+
+    protected override void OnInitialized()
+    {
+        if (DataSource == null) return;
+        PersonnelList = DataSource?.Select(x => new ComboPerson(x)).ToList();
+    }
+
+    public class ComboPerson
+    {
+        public string? Oid { get; set; }
+        public string? PersonnelName { get; set; }
+        public string? Role { get; set; }
+        public string? Rig { get; set; }
+
+        public ComboPerson()
+        {
+        }
+        public ComboPerson(Personnel? personnel)
+        {
+            if (personnel == null) return;
+            Oid = personnel.Oid.ToString();
+            PersonnelName = personnel.PersonnelName;
+            Role = personnel.CurrentRole;
+            Rig = personnel.ActiveRig.Name;
+        }
+    }
+
 }

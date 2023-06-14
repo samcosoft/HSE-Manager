@@ -1,23 +1,20 @@
 ﻿@page "/personnelHome"
-@attribute [Authorize(Roles = "Owner,Personnel")]
-@inject NavigationManager NavigationManager
+@using Samco_HSE.HSEData
+@using Syncfusion.Blazor.Popups
+@using FilterType = Syncfusion.Blazor.Grids.FilterType
+@attribute [Authorize]
 <PageTitle>گزارش اعمال / شرایط ایمن و نا ایمن</PageTitle>
 <MudCard>
     <MudCardHeader>
-        <DxMenu Title="گزارش اعمال / شرایط ایمن و نا ایمن" ItemsPosition="ItemPosition.Start" CssClass="card-header">
-            <Items>
-                <DxMenuItem>
-                    <Template>
-                        <MudButton Color="Color.Secondary" StartIcon="fas fa-plus" OnClick="OnNewBtnClick">جدید</MudButton>
-                    </Template>
-                </DxMenuItem>
-                <DxMenuItem CssClass="mx-3">
-                    <Template>
+        <MudPaper Elevation="3" Width="100%" Class="pa-3">
+            <MudGrid>
+                <MudItem>
+                    <MudText Typo="Typo.h5">گزارش اعمال / شرایط ایمن و نا ایمن</MudText>
+                </MudItem>
+                <MudItem>
+                    <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
+                        <MudButton Color="Color.Primary" StartIcon="fas fa-plus" OnClick="OnNewBtnClick">جدید</MudButton>
                         <MudButton Color="Color.Warning" StartIcon="fas fa-pencil-alt" OnClick="OnEditBtnClick">ویرایش</MudButton>
-                    </Template>
-                </DxMenuItem>
-                <DxMenuItem>
-                    <Template>
                         <MudButton Color="Color.Error" StartIcon="fas fa-trash-alt" OnClick="() => _isOpen = !_isOpen">حذف</MudButton>
                         <MudPopover Open="@_isOpen" Fixed="true"
                                     OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.BottomCenter"
@@ -27,69 +24,95 @@
                                 <MudButton OnClick="@OnDelBtnClick" Class="ms-auto me-3 mb-1" Color="Color.Error" StartIcon="fas -trash-alt">حذف</MudButton>
                             </div>
                         </MudPopover>
-                    </Template>
-                </DxMenuItem>
-            </Items>
-        </DxMenu>
+                    </MudButtonGroup>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
     </MudCardHeader>
     <MudCardContent>
-        <DxGrid @ref="StopGrid" Data="@StopsList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"
-                UnboundColumnData="StopGridUnbound"
-                CustomizeElement="StopGrid_CustomizeElement"
-                ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true"
-                SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="true"
-                ColumnResizeMode="GridColumnResizeMode.ColumnsContainer"
-                SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center" ValidationEnabled="false">
-            <Columns>
-                <DxGridDataColumn FieldName="ReportDate" Caption="تاریخ گزارش" SortIndex="0" SortOrder="GridColumnSortOrder.Descending" MinWidth="100" />
-                <DxGridDataColumn FieldName="Location" Caption="محل مشاهده" MinWidth="200" />
-                <DxGridDataColumn FieldName="Observation" Caption="مشاهدات" MinWidth="400" />
-                <DxGridDataColumn FieldName="Responsible" Caption="مسئول پیگیری" MinWidth="100" />
-                <DxGridDataColumn FieldName="Risk" Caption="ریسک" MinWidth="70" UnboundType="GridUnboundColumnType.String" />
-                <DxGridDataColumn FieldName="Actions" Caption="اقدامات اصلاحی" MinWidth="400" />
-                <DxGridDataColumn FieldName="Status" Caption="وضعیت" MinWidth="70" />
-                <DxGridDataColumn FieldName="Comments" Caption="توضیحات" MinWidth="300" />
-                <DxGridDataColumn Caption="تأیید شده" FieldName="IsApproved" MinWidth="70">
-                    <CellDisplayTemplate>
-                        <DxCheckBox CssClass="d-inline-block" Checked="@((bool)context.Value)" Enabled="false" />
-                    </CellDisplayTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn FieldName="Score" Caption="امتیاز" MinWidth="150">
-                    <CellDisplayTemplate>
-                        <MudRating SelectedValue="@((int)context.Value)" Disabled="true" MaxValue="5" Class="d-inline-block" />
-                    </CellDisplayTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn FieldName="Agent.PersonnelName" Caption="کارشناس ایمنی" MinWidth="100" />
-            </Columns>
-        </DxGrid>
+        <SfGrid @ref="StopGrid" ID="stopGrid" DataSource="@StopsList" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
+                AllowGrouping="true" Toolbar="@(new[] { "Add", "Edit", "Delete", "Excel Export", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
+                AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
+                AllowExcelExport="true" Width="100%">
+            <GridEvents TValue="StopCard" RowDataBound="Customize_Row"/>
+            <GridFilterSettings Type="FilterType.Excel"/>
+            <GridColumns>
+                <GridColumn HeaderText="ردیف" Field="Oid" IsIdentity="true" IsPrimaryKey="true" Visible="false"/>
+                <GridColumn HeaderText="دکل / دفتر" Field="WorkID.RigNo.Name" AutoFit="true"/>
+                <GridColumn Field="ReportDate" HeaderText="تاریخ گزارش" AutoFit="true" MinWidth="180"/>
+                <GridColumn Field="Location" HeaderText="محل مشاهده" AutoFit="true" MinWidth="200"/>
+                <GridColumn Field="Observation" HeaderText="مشاهدات" AutoFit="true" MinWidth="400"/>
+                <GridColumn Field="Responsible" HeaderText="مسئول پیگیری" AutoFit="true" MinWidth="200"/>
+                <GridColumn HeaderText="ریسک" MinWidth="70" AutoFit="true">
+                    <Template>
+                        @{
+                            var card = context as StopCard;
+                            var sever = _stopRisk.ToList().IndexOf(card.Severity) + 1;
+                            var prob = _stopProb.ToList().IndexOf(card.Probablety) + 1;
+                            var result = (sever * prob) switch
+                            {
+                                >= 16 => "High",
+                                >= 9 => "Medium",
+                                _ => "Low"
+                                };
+                            <MudText Typo="Typo.body1">@result</MudText>
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn Field="Status" HeaderText="وضعیت" AutoFit="true" MinWidth="100"/>
+                <GridColumn Field="Comments" HeaderText="توضیحات" AutoFit="true" MinWidth="300"/>
+                <GridColumn Field="IsApproved" HeaderText="تأیید شده" DisplayAsCheckBox="true" MinWidth="100"/>
+                <GridColumn HeaderText="امتیاز" AutoFit="true" MinWidth="150">
+                    <Template>
+                        <MudRating SelectedValue="@(((StopCard)context).Score)" Disabled="true" MaxValue="5" Class="d-inline-block"/>
+                    </Template>
+                </GridColumn>
+                <GridColumn HeaderText="تصاویر" AllowSorting="false" AutoFit="true" Width="100">
+                    <Template>
+                        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="() => ShowImages(((StopCard)context).Oid)">نمایش</MudButton>
+                    </Template>
+                </GridColumn>
+                <GridColumn Field="Agent.PersonnelName" HeaderText="کارشناس ایمنی" AutoFit="true" MinWidth="100"/>
+            </GridColumns>
+            <GridEditSettings AllowAdding="false" AllowDeleting="false" AllowEditing="false" AllowEditOnDblClick="false"/>
+        </SfGrid>
     </MudCardContent>
 </MudCard>
 
-<DxPopup @ref="@EditPopup" ShowFooter="true" HeaderText="@_cardEditorHeader" CloseOnOutsideClick="false">
-    <BodyTemplate Context="_">
-        <DxFormLayout>
-            <DxFormLayoutItem Caption="مشاهدات:">
-                <DxMemo @bind-Text="@SelectedCard.Observation" NullText="الزامی" Rows="8" />
-            </DxFormLayoutItem>
-            <DxFormLayoutItem Caption="تصاویر:">
-                <p class="alert alert-info my-1">فقط فایل‌های با پسوندهای .jpg و .png قابل انتخاب هستند.</p>
-                <div id="overviewDemoDropZone" class="card custom-drop-zone p-5 bg-light rounded-3 text-center">
-                    <i class="fas fa-file-arrow-up mb-3 mx-auto" role="img" style="font-size: 48px;"></i>
-                    <span>فایل را اینجا کشیده و رها کنید.</span>
-                </div>
-                <DxUpload Name="stopFile" UploadUrl="@(NavigationManager.BaseUri + "api/Upload/UploadSTOPImage/")"
-                          AllowedFileExtensions="@(new List<string> { ".jpg", ".jpeg", ".png" })"
-                          MaxFileSize="5242880" CssClass="ms-auto me-auto" AllowMultiFileUpload="true"
-                          ExternalDropZoneCssSelector="#overviewDemoDropZone"
-                          ExternalDropZoneDragOverCssClass="custom-drag-over border-light text-success"
-                          FileUploadStart="CardUploadStart" SelectButtonText="انتخاب فایل">
-                </DxUpload>
-            </DxFormLayoutItem>
-        </DxFormLayout>
+<SfDialog @ref="@EditPopup" Header="@_cardEditorHeader" CloseOnEscape="true">
+    <DialogTemplates>
+        <Content>
+            <MudGrid>
+                <MudItem lg="8" md="8" sm="12">
+                    <MudTextField T="string" @bind-Value="@SelectedCard.Observation" Label="مشاهدات:" Placeholder="الزامی" Lines="3"/>
+                </MudItem>
+                <MudItem lg="4" md="4" sm="12">
+                    <MudField Label="تصاویر:" DisableUnderLine="true">
+                        <FileUploader DataId="@DataId" SavePath="SamcoSoftShared.UploadFolders.StopCards"
+                                      AllowedExtension="FileUploader.AllowedFileExtensions.ImagesOnly"
+                                      BeforeStart="@CardUploadStart"/>
+                    </MudField>
+                </MudItem>
+            </MudGrid>
+        </Content>
+        <FooterTemplate>
+            <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="@SaveCardInfoClick">ثبت اطلاعات</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="@(() => EditPopup.HideAsync())">انصراف</MudButton>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>
 
-    </BodyTemplate>
-    <FooterContentTemplate>
-        <DxButton CssClass="popup-button" RenderStyle="ButtonRenderStyle.Success" Text="ثبت اطلاعات" Click="@SaveCardInfoClick" />
-        <DxButton CssClass="popup-button me-2" RenderStyle="ButtonRenderStyle.Danger" Text="انصراف" Click="@(() => EditPopup.CloseAsync())" />
-    </FooterContentTemplate>
-</DxPopup>
+<SfDialog @bind-Visible="@_photoShowVisible" Header="تصاویر" Width="500" CloseOnEscape="true">
+    <DialogTemplates>
+        <Content>
+            <MudCarousel ItemsSource="@_photoList" AutoCycle="true" AutoCycleTime="TimeSpan.FromSeconds(10)">
+                <ItemTemplate>
+                    <MudImage Src="@context" Elevation="2"/>
+                </ItemTemplate>
+            </MudCarousel>
+        </Content>
+        <FooterTemplate>
+            <MudButton Color="Color.Error" OnClick="@(() => _photoShowVisible = false)">بستن</MudButton>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>

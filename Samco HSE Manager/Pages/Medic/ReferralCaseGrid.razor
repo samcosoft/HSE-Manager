@@ -1,31 +1,44 @@
-﻿<div>
-    <MudAlert Severity="Severity.Normal">ارجاع بیمار به متخصص</MudAlert>
+﻿@using Samco_HSE.HSEData
+@using HorizontalAlignment = MudBlazor.HorizontalAlignment
+@using FilterType = Syncfusion.Blazor.Grids.FilterType
+@using Syncfusion.Blazor.DropDowns
+
+<div class="my-2">
+    <MudAlert Elevation="3" Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Right" Variant="Variant.Filled">ارجاع بیمار به متخصص</MudAlert>
 </div>
-@{
-    if (IsEditable)
-    {
-        <MudCard>
-            <MudCardContent>
-                <DxFormLayout>
-                    <DxFormLayoutItem Caption="تخصص:">
-                        <DxComboBox Data="@_specialistList" @bind-Value="@_selReferral!.Specialist" NullText="الزامی" InputCssClass="w-50"/>
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="توضیح:">
-                        <DxTextBox @bind-Text="@_selReferral.Comment" NullText="دلیل ارجاع و درمان احتمالی..."/>
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem>
-                        <MudButton StartIcon="fa-solid fa-check" Color="Color.Primary" OnClick="AddReferralBtnClick"/>
-                    </DxFormLayoutItem>
-                </DxFormLayout>
-            </MudCardContent>
-        </MudCard>
-    }
-}
-<DxGrid @ref="ReferralGrid" Data="DetailGridData"
-        PageSize="5" SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="@IsEditable"
-        AutoExpandAllGroupRows="true" SelectedDataItemChanged="ReferralGrid_SelectionChanged">
-    <Columns>
-        <DxGridDataColumn FieldName="Specialist" Caption="نام تخصص" Width="40%" />
-        <DxGridDataColumn FieldName="Comment" Caption="توضیح" />
-    </Columns>
-</DxGrid>
+<SfGrid DataSource="@DetailGridData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
+        AllowGrouping="true" Toolbar="@(new [] {"Add", "Edit","Delete" ,"Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
+        AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
+        Width="100%">
+    <GridEvents TValue="MedicalReferral" OnActionBegin="ReferGrid_Action"/>
+    <GridFilterSettings Type="FilterType.Excel" />
+    <GridColumns>
+        <GridColumn HeaderText="ردیف" Field="Oid" IsIdentity="true" IsPrimaryKey="true" Visible="false" />
+        <GridColumn HeaderText="نام تخصص" Field="Specialist" />
+        <GridColumn HeaderText="توضیحات" Field="Comment" MinWidth="400" />
+    </GridColumns>
+    <GridEditSettings AllowAdding="@CanAdd" AllowDeleting="@CanEdit" AllowEditing="@CanEdit"
+                      AllowEditOnDblClick="true" Mode="EditMode.Normal"
+                      ShowDeleteConfirmDialog="true" Dialog="@SamcoSoftShared.GeneralGridEditOption">
+        <Validator><DataAnnotationsValidator/></Validator>
+        <Template Context="editFormContext">
+            @{
+                var refer = editFormContext as MedicalReferral;
+            }
+            <MudRTLProvider RightToLeft="true">
+                <MudGrid>
+                    <MudItem md="6" sm="12">
+                        <MudField Label="تخصص:" DisableUnderLine="true">
+                            <SfComboBox TValue="string" TItem="string" Placeholder="الزامی" DataSource="@_specialistList" @bind-Value="@refer!.Specialist"
+                                        AllowFiltering="true" CssClass="ltr">
+                            </SfComboBox>
+                        </MudField>
+                    </MudItem>
+                    <MudItem md="6" sm="12">
+                        <MudTextField Label="توضیح:" @bind-Value="refer!.Comment" Placeholder="دلیل ارجاع و درمان احتمالی..."/>
+                    </MudItem>
+                </MudGrid>
+            </MudRTLProvider>
+        </Template>
+    </GridEditSettings>
+</SfGrid>

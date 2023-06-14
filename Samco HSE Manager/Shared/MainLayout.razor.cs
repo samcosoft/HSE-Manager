@@ -16,31 +16,7 @@ public partial class MainLayout : IDisposable
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
 
-    string? NavMenuCssClass { get; set; }
-    bool _isMobileLayout;
-    bool IsMobileLayout
-    {
-        get => _isMobileLayout;
-        set
-        {
-            _isMobileLayout = value;
-            IsSidebarExpanded = !_isMobileLayout;
-        }
-    }
-
-    bool _isSidebarExpanded = true;
-    bool IsSidebarExpanded
-    {
-        get => _isSidebarExpanded;
-        set
-        {
-            if (_isSidebarExpanded != value)
-            {
-                NavMenuCssClass = value ? "expand" : "collapse";
-                _isSidebarExpanded = value;
-            }
-        }
-    }
+    private bool IsSidebarExpanded { get; set; } = true;
 
     private bool _isValid;
     protected override async Task OnInitializedAsync()
@@ -77,6 +53,13 @@ public partial class MainLayout : IDisposable
 
         //License validation
         _isValid = SamcoSoftShared.CheckLicense(out _, HostEnvironment.IsDevelopment());
+
+        //Routing for personnel
+
+        if (SamcoSoftShared.CurrentUserRole == SamcoSoftShared.SiteRoles.Personnel)
+        {
+            NavigationManager.NavigateTo("personnelHome");
+        }
     }
 
     #region Theme
@@ -127,17 +110,17 @@ public partial class MainLayout : IDisposable
     {
         if (!_isDarkMode)
         {
-            _devexpressTheme.Add("_content/DevExpress.Blazor.Themes/blazing-berry.bs5.min.css");
             _devexpressTheme.Add("_content/DevExpress.Blazor.Dashboard/dx.light.css");
             _devexpressTheme.Add("_content/DevExpress.Blazor.Dashboard/dx-analytics.light.css");
             _devexpressTheme.Add("_content/DevExpress.Blazor.Dashboard/dx-dashboard.light.min.css");
+            _devexpressTheme.Add("css/tailwind.css");
         }
         else
         {
-            _devexpressTheme.Add("_content/DevExpress.Blazor.Themes/blazing-dark.bs5.min.css");
             _devexpressTheme.Add("_content/DevExpress.Blazor.Dashboard/dx.dark.css");
             _devexpressTheme.Add("_content/DevExpress.Blazor.Dashboard/dx-analytics.dark.css");
             _devexpressTheme.Add("_content/DevExpress.Blazor.Dashboard/dx-dashboard.dark.min.css");
+            _devexpressTheme.Add("css/tailwind-dark.css");
         }
     }
     #endregion
@@ -149,16 +132,11 @@ public partial class MainLayout : IDisposable
             ?.InformationalVersion;
     }
 
-    async void OnLocationChanged(object? sender, LocationChangedEventArgs args)
+    void OnLocationChanged(object? sender, LocationChangedEventArgs args)
     {
-        if (IsMobileLayout)
-        {
-            IsSidebarExpanded = false;
-            await InvokeAsync(StateHasChanged);
-        }
-
         //TODO: Reroute for activation
         if (_isValid || args.Location.Contains("about") || args.Location.Contains("expired")) return;
+        if (!_isValid && HostEnvironment.IsDevelopment()) return;
         if (SamcoSoftShared.CurrentUser == null) return;
         NavigationManager.NavigateTo(SamcoSoftShared.CurrentUserRole == SamcoSoftShared.SiteRoles.Owner
             ? "about"

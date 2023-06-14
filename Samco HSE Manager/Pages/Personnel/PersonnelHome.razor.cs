@@ -1,10 +1,12 @@
-﻿using DevExpress.Blazor;
-using DevExpress.Data.Filtering;
+﻿using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 using Samco_HSE.HSEData;
+using Syncfusion.Blazor.Grids;
+using Syncfusion.Blazor.Inputs;
+using Syncfusion.Blazor.Popups;
 
 namespace Samco_HSE_Manager.Pages.Personnel;
 
@@ -13,7 +15,8 @@ public partial class PersonnelHome : IDisposable
     [CascadingParameter]
     private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
-
+    [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
 
     private Session Session1 { get; set; } = null!;
@@ -26,7 +29,7 @@ public partial class PersonnelHome : IDisposable
     {
         "خیلی کم",  "کم","متوسط","زیاد","خیلی زیاد"
     };
-    private DxGrid? StopGrid { get; set; }
+    private SfGrid<StopCard>? StopGrid { get; set; }
     private bool _isOpen;
     protected override async Task OnInitializedAsync()
     {
@@ -55,40 +58,29 @@ public partial class PersonnelHome : IDisposable
             //Ignore
         }
     }
-    private void StopGrid_CustomizeElement(GridCustomizeElementEventArgs e)
+    private void Customize_Row(RowDataBoundEventArgs<StopCard> args)
     {
-        if (e.ElementType != GridElementType.DataRow) return;
-        var status = (string?)e.Grid.GetRowValue(e.VisibleIndex, "Status");
+        var status = args.Data.Status;
         if (status != null)
         {
-            e.CssClass = status switch
+            args.Row.AddClass(new[]
             {
-                "باز" => "warning-item",
-                "لغو شده" => "danger-item",
-                "بسته" => "safe-item",
-                _ => ""
-            };
+                status switch
+                {
+                    "باز" => "danger-item",
+                    "بسته" => "safe-item",
+                    _ => ""
+                }
+            });
         }
-    }
-    private void StopGridUnbound(GridUnboundColumnDataEventArgs itm)
-    {
-        if (itm.FieldName != "Risk") return;
-        var card = (StopCard)itm.DataItem;
-        var sever = _stopRisk.ToList().IndexOf(card.Severity) + 1;
-        var prob = _stopProb.ToList().IndexOf(card.Probablety) + 1;
-        var result = (sever * prob) switch
-        {
-            >= 16 => "High",
-            >= 9 => "Medium",
-            _ => "Low"
-        };
-        itm.Value = result;
     }
 
     #region StopCard
     private StopCard? SelectedCard { get; set; }
     private string? _cardEditorHeader;
-    private DxPopup EditPopup { get; set; } = null!;
+    private List<string>? _photoList;
+    private bool _photoShowVisible;
+    private SfDialog EditPopup { get; set; } = null!;
 
     private void OnNewBtnClick()
     {
@@ -99,18 +91,18 @@ public partial class PersonnelHome : IDisposable
 
     private async void OnEditBtnClick()
     {
-        var selCard = StopGrid!.SelectedDataItem;
+        var selCard = StopGrid!.SelectedRecords.FirstOrDefault();
         if (selCard == null)
         {
             Snackbar.Add("یک مورد را انتخاب کنید.", Severity.Warning);
             return;
         }
-        if (((StopCard)selCard).IsApproved)
+        if (selCard.IsApproved)
         {
             Snackbar.Add("امکان ویرایش کارت تأیید شده وجود ندارد.", Severity.Warning);
             return;
         }
-        SelectedCard = (StopCard)StopGrid!.SelectedDataItem;
+        SelectedCard = selCard;
         _cardEditorHeader = $"ویرایش کارت {SelectedCard?.Oid} ({SelectedCard?.ReportDate!.Value.Year})";
         await EditPopup.ShowAsync();
     }
@@ -145,37 +137,58 @@ public partial class PersonnelHome : IDisposable
         SelectedCard!.ReportDate = DateTime.Now;
         SelectedCard!.Save();
         SelectedCard = null;
-        await EditPopup.CloseAsync();
+        await EditPopup.HideAsync();
         await LoadInformation();
     }
     private async Task OnDelBtnClick()
     {
-        var selCard = StopGrid!.SelectedDataItem;
+        var selCard = StopGrid!.SelectedRecords.FirstOrDefault();
         if (selCard == null)
         {
             Snackbar.Add("یک مورد را انتخاب کنید.", Severity.Warning);
             return;
         }
-        if (((StopCard)selCard).IsApproved)
+        if (selCard.IsApproved)
         {
             Snackbar.Add("امکان حذف کارت تأیید شده وجود ندارد.", Severity.Warning);
             return;
         }
 
-        ((StopCard)selCard).Delete();
+        selCard.Delete();
         await LoadInformation();
     }
 
-    private void CardUploadStart(FileUploadStartEventArgs obj)
+    private string? DataId { get; set; }
+    private void CardUploadStart(BeforeUploadEventArgs obj)
     {
         if (string.IsNullOrEmpty(SelectedCard!.Observation))
         {
             Snackbar.Add("لطفاً ابتدا موارد الزامی را تکمیل کنید.", Severity.Warning);
+            obj.Cancel = true;
             return;
         }
         SelectedCard!.Save();
-        obj.RequestData.Add("CardId", SelectedCard!.Oid.ToString());
+        DataId = SelectedCard.Oid.ToString();
+        //obj.RequestData.Add("CardId", SelectedCard!.Oid.ToString());
     }
-
+    private void ShowImages(int oid)
+    {
+        _photoList = null;
+        //Get related photos
+        var path = Path.Combine(HostEnvironment.WebRootPath, "upload", "STOPCards", oid.ToString());
+        if (Directory.Exists(path))
+            _photoList = Directory.GetFiles(path).Select(x =>
+                    Path.Combine(NavigationManager.BaseUri, "upload", "STOPCards", oid.ToString(),
+                        x.Split("\\").Last()))
+                .ToList();
+        if (_photoList != null && _photoList.Any())
+        {
+            _photoShowVisible = true;
+        }
+        else
+        {
+            Snackbar.Add("تصویری وجود ندارد.", Severity.Warning);
+        }
+    }
     #endregion
 }

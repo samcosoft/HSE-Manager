@@ -6,16 +6,16 @@
 <div class="container-fluid">
     <AuthorizeView>
         <Authorized>
-            <div class="card opacity-75 animate__animated animate__fadeIn animate__slow mb-3">
-                <div class="card-body">
-                    <h6 style="color: black">@_loggedUser?.PersonnelName عزیز سلام! به پنل مدیریت HSE خوش آمدید!</h6>
+            <MudCard Class="animate__animated animate__fadeIn animate__slow mb-3">
+                <MudCardContent>
+                    <MudText Typo="Typo.h6">@_loggedUser?.PersonnelName عزیز سلام! به پنل مدیریت HSE خوش آمدید!</MudText>
                     <hr class="my-3">
                     <MudAlert Severity="Severity.Info" Icon="fa fa-info" Elevation="3">
                         با توجه به آزمایشی بودن این نسخه، ممکن است برخی ایرادات در آن وجود داشته باشد که به مرور برطرف می‌گردند. از شکیبایی شما سپاسگزاریم.
                         در صورت داشتن سوال در مورد قابلیت‌های سیستم و یا بروز خطا با ایمیل <a href="mailto:info@samcosoft.ir">SamcoSoft Support</a> ارتباط برقرار کنید.
                     </MudAlert>
-                </div>
-            </div>
+                </MudCardContent>
+            </MudCard>
             <div class="animate__animated animate__fadeInUp">
                 <MudCard>
                     <MudCardHeader>
@@ -27,16 +27,15 @@
                     </MudCardContent>
                 </MudCard>
             </div>
-
         </Authorized>
         <NotAuthorized>
-            <div class="card opacity-75 animate__animated animate__zoomInUp">
-                <div class="card-body">
-                    <h6 style="color: black">همکار عزیز سلام! به پنل مدیریت HSE خوش آمدید!</h6>
+            <MudCard Class="animate__animated animate__zoomInUp">
+                <MudCardContent>
+                    <MudText Typo="Typo.h6">همکار عزیز سلام! به پنل مدیریت HSE خوش آمدید!</MudText>
                     <hr class="my-3">
-                    <p>لطفاً وارد سیستم شوید.</p>
-                </div>
-            </div>
+                    <MudText Typo="Typo.body1">لطفاً وارد سیستم شوید.</MudText>
+                </MudCardContent>
+            </MudCard>
         </NotAuthorized>
     </AuthorizeView>
 </div>

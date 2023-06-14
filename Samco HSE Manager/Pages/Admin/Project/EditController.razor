@@ -13,17 +13,9 @@
             </MudButton>
         </MudItem>
         <MudItem Class="text-center" md="4" sm="4">
-            <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="fas fa-trash-alt" OnClick="() => _isOpen = !_isOpen">
+            <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="fas fa-trash-alt" OnClick="DeleteClick">
                 حذف
             </MudButton>
-            <MudPopover Open="@_isOpen" Fixed="true"
-                        OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.BottomCenter"
-                        TransformOrigin="Origin.TopCenter">
-                <div class="d-flex flex-column">
-                    <MudText>آیا از حذف این مورد مطمئنید؟</MudText>
-                    <MudButton OnClick="@DeleteClick" Class="ms-auto me-3 mb-1" Color="Color.Error" StartIcon="fas -trash-alt">حذف</MudButton>
-                </div>
-            </MudPopover>
         </MudItem>
     </MudGrid>
 </div>

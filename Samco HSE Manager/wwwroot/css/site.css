@@ -2,6 +2,7 @@
 
 :root {
     --primary-color: #8d0f53;
+    --mud-drawer-width-right: 270px !important;
 }
 
 body {
@@ -11,13 +12,12 @@ body {
     margin: 0;
 }
 
-input, textarea, p ,pre {
+input, .e-input, .e-list-item, textarea, p, pre {
     font-family: IRANSansX, serif !important;
 }
 
 h1, h2, h3, h4, h5, h6 {
     font-family: dana, serif !important;
-    /*color: var(--primary-color);*/
     font-weight: bold;
 }
 
@@ -28,6 +28,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .ltr {
     direction: ltr;
+}
+
+.rtl {
+    direction: rtl;
 }
 
 .text-right {
@@ -263,7 +267,6 @@ blockquote {
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
-    box-shadow: 0 -1px 2px #000000;
     box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
     display: none;
     left: 0;
@@ -274,12 +277,12 @@ blockquote {
     font-family: IranSansX, serif;
 }
 
-    #blazor-error-ui .dismiss {
-        cursor: pointer;
-        position: absolute;
-        right: 0.75rem;
-        top: 0.5rem;
-    }
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
 
 .fas, .far, .fad {
     width: 1.5rem;
@@ -295,59 +298,53 @@ blockquote {
     margin-left: auto !important;
     margin-right: unset;
 }
-/* ReSharper disable once CssNotResolved */
 
-.dxbl-checkbox > .dxbl-text:last-child {
-    padding-left: unset;
-    padding-right: var(--dxbl-checkbox-spacing);
-}
-/* ReSharper disable once CssNotResolved */
-
-.dxbl-grid-edit-form-buttons > .dxbl-btn:not(:last-child) {
-    margin-right: unset;
-    margin-left: var(--dxbl-grid-edit-form-buttons-spacing);
+.mud-input-root-text {
+    text-align: center;
 }
 
-.dxbl-modal-root {
-    left: 0;
+.sfMultiBox .e-content .e-ul .e-list-item {
+    padding: 0 !important;
+    margin: 0 0 0 0 !important;
+    min-height: 35px;
+    display: flex;
 }
 
-.dxbl-modal {
-    --dxbl-popup-max-width: 75%;
+.sfMultiOption {
+    height: 35px;
 }
 
-dx-dashboard-ellipsis {
-    font-family: iransansx;
+.sfMultiOption:hover {
+    height: 35px;
+    background-color: #3a0647;
+    color: white;
+}
+.e-grid .e-groupcaption{
+    font-size: 14px;
+    font-weight: 600;
 }
 
-.dxbl-popup.dxbl-popup-adaptivity.dxbl-popup-fixed-width {
-    direction: ltr;
+.e-control, .e-css, .e-label, .e-grid {
+    font-family: IranSansX, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-.dxbl-grid-search-box .dxbl-image {
-    margin-right: 6px;
-    margin-left: unset;
-}
-.dxbl-grid-header-content span {
-    margin-right: auto;
-    margin-left: auto;
+.e-headertext {
+    font-family: Dana, IranSansX, serif;
+    font-size: 14px;
+    font-weight: 600;
 }
 
-.dx-dashboard-typography text {
-    font-family: IranSansX, Dana !important
-}
-
-.dx-toolbar-item {
-    font-family: Dana, IranSansX
+.e-grid.e-rtl .e-groupheadercell, .e-grid.e-rtl .e-groupheadercell:hover {
+    padding-left: 15px;
 }
 
 .form-select, .popover {
-    font-family: IranSansX;
+    font-family: IranSansX, serif;
 }
 
 .main-item {
     background-color: #ffffff;
-    background-color: rgba(255,200,255,0.25);
+    background-color: rgba(255, 200, 255, 0.25);
     color: white;
 }
 
@@ -355,8 +352,10 @@ dx-dashboard-ellipsis {
     flex-wrap: nowrap;
 }
 
-.card-header {
-    overflow-x: auto;
+@media (max-width: 700px) {
+    .title-text {
+        display: none;
+    }
 }
 
 @media (min-width: 1400px) {
@@ -376,20 +375,12 @@ dx-dashboard-ellipsis {
 
 .warning-item {
     background-color: #ff9c00;
-    background-color: rgba(255,180,0,0.5)
+    background-color: rgba(255, 180, 0, 0.5)
 }
 
 .safe-item {
     background-color: darkgreen;
-    background-color: rgba(0,100,0,0.5)
-}
-
-.dxbl-grid-group-row {
-    text-align: initial;
-}
-
-.dxbl-grid-filter-row {
-    background-color: deepskyblue !important;
+    background-color: rgba(0, 100, 0, 0.5)
 }
 
 .custom-drop-zone {
@@ -406,9 +397,7 @@ dx-dashboard-ellipsis {
 .custom-drop-zone.custom-drag-over {
     background-color: #868A8D;
 }
-.dxbl-text-edit input {
-    width: 80%;
-}
+
 .filter-type-container {
     display: flex;
 }
@@ -420,6 +409,7 @@ dx-dashboard-ellipsis {
 .filter-type-button {
     margin-right: 5px;
 }
+
 /*Custom Spinner*/
 .center {
     display: flex;

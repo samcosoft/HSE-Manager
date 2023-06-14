@@ -1,54 +1,33 @@
 ﻿@using Samco_HSE.HSEData
-@using Samco_HSE_Manager.Pages
 @using DevExpress.Data.Filtering
 @inject IDataLayer DataLayer
 
 <CascadingAuthenticationState>
-        <Router AppAssembly="@typeof(App).Assembly">
-            <Found Context="routeData">
-                @*<RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />*@
-                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
-                    <Authorizing>
-                        <div class="card opacity-75">
-                            <div class="card-body text-center">
-                                <h6 style="color: black">در حال بررسی سطح دسترسی...</h6>
-                                <hr class="my-3">
-                                <div class="center">
-                                    <div class="wave"></div>
-                                    <div class="wave"></div>
-                                    <div class="wave"></div>
-                                    <div class="wave"></div>
-                                    <div class="wave"></div>
-                                    <div class="wave"></div>
-                                    <div class="wave"></div>
-                                    <div class="wave"></div>
-                                    <div class="wave"></div>
-                                    <div class="wave"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </Authorizing>
-                    <NotAuthorized>
-                        <div class="card opacity-75">
-                            <div class="card-body text-center">
-                                <h6 class="alert alert-danger">با عرض پوزش، شما اجازه دسترسی به این صفحه را ندارید.</h6>
-                            </div>
-                        </div>
-                        @*<LoginRedirect />*@
-                    </NotAuthorized>
-                </AuthorizeRouteView>
-            </Found>
-            <NotFound>
-                <PageTitle>صفحه پیدا نشد</PageTitle>
-                <LayoutView Layout="@typeof(MainLayout)">
-                    <div class="card opacity-75">
-                        <div class="card-body text-center">
-                            <h6 class="alert alert-danger">با عرض پوزش، این صفحه وجود ندارد.</h6>
-                        </div>
-                    </div>
-                </LayoutView>
-            </NotFound>
-        </Router>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            @*<RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />*@
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <Authorizing>
+                    <MudCard>
+                        <MudCardContent>
+                            <MudText Typo="Typo.body1">در حال بررسی سطح دسترسی...</MudText>
+                            <hr class="my-3">
+                            <MudProgressLinear Color="Color.Primary" Striped="true" Indeterminate="true"/>
+                        </MudCardContent>
+                    </MudCard>
+                </Authorizing>
+                <NotAuthorized>
+                    <MudAlert Variant="Variant.Filled" Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Right">با عرض پوزش، شما اجازه دسترسی به این صفحه را ندارید.</MudAlert>
+                </NotAuthorized>
+            </AuthorizeRouteView>
+        </Found>
+        <NotFound>
+            <PageTitle>صفحه پیدا نشد</PageTitle>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <MudAlert Variant="Variant.Filled" Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Right">با عرض پوزش، این صفحه وجود ندارد.</MudAlert>
+            </LayoutView>
+        </NotFound>
+    </Router>
 </CascadingAuthenticationState>
 
 @{

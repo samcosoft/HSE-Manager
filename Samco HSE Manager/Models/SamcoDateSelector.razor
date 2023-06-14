@@ -1,38 +1,29 @@
 ﻿@using System.Globalization
 @using System.Reflection
-@*@typeparam TData*@
 
 <style>
-    .mud-input-control, .mud-input {
+    .calendarStyle .mud-input-control, .mud-input {
         margin-top: 0;
     }
+
+    .calendarStyle .mud-input > input.mud-input-root-outlined.mud-input-root-adorned-end {
+        padding: 10px 10px;
+    }
 </style>
-<MudContainer>
-    <div class="row align-items-center pb-2">
-        <div class="col">
-            @{
-                if (_shamsiVisible)
-                {
-                    <MudDatePicker @bind-Date="@Date" Label="@DisplayText" DisableToolbar="true" Rounded="true"
-                           Culture="@GetPersianCulture()" IconSize="Size.Small" MinDate="@DateTime.Parse("2000/01/01")" Variant="Variant.Outlined" />
-                }
-                else
-                {
-                    <MudDatePicker @bind-Date="@Date" Label="@DisplayText" DisableToolbar="true"
-                           Rounded="true" IconSize="Size.Small" MinDate="@DateTime.Parse("2000/01/01")" Variant="Variant.Outlined" />
-                }
-            }
+<div class="d-flex gap-1">
+    @{
+        <div class="d-inline-flex w-100">
+            <MudDatePicker @bind-Date="@Date" Label="@DisplayText" DisableToolbar="true" Rounded="true" Class="@(DisplayText == null ? "calendarStyle" : "")"
+                           Culture="@GetPersianCulture()" IconSize="Size.Small" MinDate="@DateTime.Parse("1900/01/01")" Variant="Variant.Outlined"
+                           Clearable="true"/>
         </div>
-        <div class="col-2">
-            <div style="display: @(_shamsiVisible? "none":"block")">
-                <MudButton Color="Color.Primary" Size="Size.Small" StartIcon="fas fa-cross" OnClick="() => _shamsiVisible=!_shamsiVisible" />
-            </div>
-            <div style="display: @(_shamsiVisible? "block":"none")">
-                <MudButton Color="Color.Primary" Size="Size.Small" StartIcon="fas fa-sun" OnClick="() => _shamsiVisible=!_shamsiVisible" />
-            </div>
+        <div class="d-inline-flex @(DisplayText == null ? "" : "pt-2")">
+            <MudTooltip Text="@(_shamsiVisible ? "تقویم شمسی" : "تقویم میلادی")">
+                <MudIconButton Color="Color.Primary" Size="Size.Small" Class="h-100" Icon="@GetIcon()" Variant="Variant.Filled" OnClick="() => _shamsiVisible = !_shamsiVisible"/>
+            </MudTooltip>
         </div>
-    </div>
-</MudContainer>
+    }
+</div>
 
 @code
 {
@@ -44,13 +35,13 @@
         get => _date!;
         set
         {
-            if (value == null || _date == value) return;
+            if (_date == value) return;
             _date = value;
             DateChanged.InvokeAsync(value);
-            DateNotNullChanged.InvokeAsync(value.Value);
+            if (value != null) DateNotNullChanged.InvokeAsync(value.Value);
         }
     }
-    
+
     [Parameter]
     public EventCallback<DateTime?> DateChanged { get; set; }
 
@@ -65,30 +56,43 @@
             DateNotNullChanged.InvokeAsync(value);
         }
     }
+
     [Parameter]
     public EventCallback<DateTime> DateNotNullChanged { get; set; }
 
-    [Parameter] public string? NullText { get; set; }
+    [Parameter]
+    public string? NullText { get; set; }
 
-    [Parameter] public string? DisplayText { get; set; }
-    [Parameter] public CalendarType DefaultCalendar { get; set; }
+    [Parameter]
+    public string? DisplayText { get; set; }
 
-    [Parameter] public Variant CalenderVariant { get; set; }
+    [Parameter]
+    public CalendarType DefaultCalendar { get; set; }
+
+    [Parameter]
+    public Variant CalenderVariant { get; set; }
 
     public enum CalendarType
     {
-        Shamsi, Miladi
+        Persian,
+        Gregorian
     }
 
     private bool _shamsiVisible;
 
     protected override void OnInitialized()
     {
-        _shamsiVisible = DefaultCalendar == CalendarType.Shamsi;
+        _shamsiVisible = DefaultCalendar == CalendarType.Persian;
+    }
+
+    private string GetIcon()
+    {
+        return _shamsiVisible ? "fas fa-sun" : "fas fa-cross";
     }
 
     private CultureInfo GetPersianCulture()
     {
+        if (!_shamsiVisible) return new CultureInfo("en-US");
         var culture = new CultureInfo("fa-IR");
         var formatInfo = culture.DateTimeFormat;
         formatInfo.AbbreviatedDayNames = new[] { "ی", "د", "س", "چ", "پ", "ج", "ش" };
@@ -97,8 +101,8 @@
         {
             "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن",
             "اسفند",
-            "",
-    };
+            ""
+        };
         formatInfo.AbbreviatedMonthNames =
             formatInfo.MonthNames =
                 formatInfo.MonthGenitiveNames = formatInfo.AbbreviatedMonthGenitiveNames = monthNames;

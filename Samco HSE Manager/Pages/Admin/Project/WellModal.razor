@@ -10,7 +10,7 @@
     <DialogContent>
         <div class="d-flex flex-column gap-4">
             <MudTextField Label="نام چاه" Variant="Variant.Outlined" AutoFocus="true" @bind-Value="@(SelWell.Name)" />
-            <MudTextField Label="محل چاه" Variant="Variant.Outlined" AutoFocus="true" @bind-Value="@(SelWell.Location)" />
+            <MudTextField Label="محل چاه" Variant="Variant.Outlined" @bind-Value="@(SelWell.Location)" />
         </div>
     </DialogContent>
     <DialogActions>
@@ -33,6 +33,12 @@
         if (SelWell.Name == null)
         {
             Snackbar.Add("نام چاه الزامی است.", Severity.Error);
+            return;
+        }
+        var prevWell = SelWell.ProjectName.Wells.FirstOrDefault(x => x.Name == SelWell.Name);
+        if (prevWell != null && prevWell.Name == SelWell.Name && prevWell.Oid != SelWell.Oid)
+        {
+            Snackbar.Add("چاه با همین نام وجود دارد.", Severity.Error);
             return;
         }
         SelWell.Save();

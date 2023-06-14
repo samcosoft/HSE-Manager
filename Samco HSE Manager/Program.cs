@@ -1,5 +1,4 @@
 ﻿using Blazored.LocalStorage;
-using DevExpress.Blazor;
 using DevExpress.Blazor.Reporting;
 using DevExpress.DashboardAspNetCore;
 using DevExpress.DashboardWeb;
@@ -11,6 +10,8 @@ using MudBlazor.Services;
 using Samco_HSE_Manager;
 using Samco_HSE_Manager.Authentication;
 using Samco_HSE_Manager.Models;
+using Syncfusion.Blazor;
+using Syncfusion.Blazor.Popups;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +28,7 @@ builder.Services.AddXpoDefaultDataLayer(ServiceLifetime.Singleton, dl => dl
     .UseThreadSafeDataLayer(true)
     .UseAutoCreationOption(AutoCreateOption.DatabaseAndSchema) // Remove this line if the database already exists
     .UseCustomDictionaryFactory(SamcoSoftShared.GetDatabaseAssemblies));
-
+builder.Services.AddXpoDefaultUnitOfWork();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddHttpContextAccessor();
@@ -43,7 +44,6 @@ builder.Services.AddMudServices(config =>
     config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
 });
 builder.Services.AddDevExpressBlazorReporting();
-builder.Services.AddDevExpressBlazor(configure => configure.BootstrapVersion = BootstrapVersion.v5);
 builder.Services.AddScoped(_ =>
 {
     var configurator = new DashboardConfigurator();
@@ -55,13 +55,19 @@ builder.Services.AddScoped(_ =>
     configurator.SetConnectionStringsProvider(new DashboardConnectionStringsProvider(builder.Configuration));
     return configurator;
 });
+builder.Services.AddScoped<SfDialogService>();
+builder.Services.AddSyncfusionBlazor(options =>
+{
+    options.EnableRtl = true;
+    options.Animation = GlobalAnimationMode.Enable;
+    options.EnableRippleEffect = true;
+});
 SamcoSoftShared.Lic = SamcoSoftShared.CreateLicense(Path.Combine(builder.Environment.WebRootPath, "Samco_HSE.lic"));
 builder.Services.AddScoped<ReportStorageWebExtension, CustomReportStorageWebExtension>();
 builder.WebHost.UseWebRoot("wwwroot");
 builder.WebHost.UseStaticWebAssets();
 
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -73,21 +79,20 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
-app.UseDevExpressBlazorReporting();
-
+app.UseRouting();
 app.UseRequestLocalization(new RequestLocalizationOptions()
     .AddSupportedCultures("en-US")
     .AddSupportedUICultures("en-US"));
 
+app.UseDevExpressBlazorReporting();
+app.MapDashboardRoute("api/dashboard", "DefaultDashboard");
 app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 app.UseAuthentication();
 
-app.UseRouting();
-app.MapDashboardRoute("api/dashboard", "DefaultDashboard");
-
 app.UseAuthorization();
 
+app.MapRazorPages();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 app.MapControllers();

@@ -2,99 +2,94 @@
 @attribute [Authorize(Roles = "Owner,Admin,Supervisor,Officer")]
 @using Samco_HSE.HSEData
 @using Microsoft.AspNetCore.Components
+@using FilterType = Syncfusion.Blazor.Grids.FilterType
 
 <PageTitle>مدیریت ماشین آلات</PageTitle>
 
 <MudCard>
     <MudCardHeader>
-        <DxMenu Title="لیست ماشین آلات سبک و سنگین" ItemsPosition="ItemPosition.Start" CssClass="card-header">
-            <Items>
-                <DxMenuItem Text="دریافت اطلاعات" IconCssClass="fas fa-paste" @onclick="OnPrintBtnClick" />
-            </Items>
-        </DxMenu>
+        <MudPaper Elevation="3" Width="100%" Class="pa-3">
+            <MudGrid>
+                <MudItem>
+                    <MudText Typo="Typo.h5">لیست ماشین آلات سبک و سنگین</MudText>
+                </MudItem>
+                @* <MudItem> *@
+                @*     <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled"> *@
+                @*         <MudButton StartIcon="fas fa-hat" IconColor="Color.Warning">تحویل تجهیزات</MudButton> *@
+                @*         <MudButton StartIcon="fas fa-info" IconColor="Color.Error">نمایش جزئیات</MudButton> *@
+                @*     </MudButtonGroup> *@
+                @* </MudItem> *@
+            </MudGrid>
+        </MudPaper>
     </MudCardHeader>
     <MudCardContent>
-        <DxGrid @ref="VehicleGrid" Data="@VehiclesList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm" EditModelSaving="OnEditModelSaving"
-                DataItemDeleting="OnDataItemDeleting" CustomizeEditModel="VehicleEditModel" CustomizeElement="VehicleGrid_CustomizeElement"
-                ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true"
-                SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="true"
-                ColumnResizeMode="GridColumnResizeMode.ColumnsContainer"
-                SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center" ValidationEnabled="false">
-            <Columns>
-                <DxGridCommandColumn MinWidth="100" />
-                <DxGridDataColumn FieldName="RigNo.Name" Caption="دکل / دفتر" MinWidth="100">
-                    <FilterRowCellTemplate>
-                        <TagBoxFilterRow TData="Rig" FilterContext="context" DataSource="Rigs" TextFieldName="Name" />
-                    </FilterRowCellTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn FieldName="Name" Caption="نوع وسیله" MinWidth="400">
-                    <FilterRowCellTemplate>
-                        <TagBoxFilterRow TData="string" FilterContext="context" DataSource="_category" />
-                    </FilterRowCellTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn Caption="شماره پلاک" FieldName="PlateNo" MinWidth="150" />
-                <DxGridDataColumn FieldName="ProdDate" Caption="سال تولید" MinWidth="180" DisplayFormat="d">
-                    <FilterRowCellTemplate>
-                        <OperatorType FilterContext="@context" ShowFilterButton="true">
-                            <DxSpinEdit T="short?" Value="(short?)context.FilterRowValue" MaxValue="3000" MinValue="1350"
-                                        ValueChanged="(short? v) => context.FilterRowValue = v" />
-                        </OperatorType>
-                    </FilterRowCellTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn FieldName="LastCheckDate" Caption="تاریخ اعتبار گواهی فنی" MinWidth="180">
-                    <FilterRowCellTemplate>
-                        <OperatorType FilterContext="@context" ShowFilterButton="true">
-                            <DxDateEdit Date="(DateTime?)context.FilterRowValue"
-                                        DateChanged="(DateTime? v) => context.FilterRowValue = v" />
-                        </OperatorType>
-                    </FilterRowCellTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn FieldName="InsuranceDate" Caption="تاریخ بیمه‌نامه" MinWidth="180">
-                    <FilterRowCellTemplate>
-                        <OperatorType FilterContext="@context" ShowFilterButton="true">
-                            <DxDateEdit Date="(DateTime?)context.FilterRowValue"
-                                        DateChanged="(DateTime? v) => context.FilterRowValue = v" />
-                        </OperatorType>
-                    </FilterRowCellTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn FieldName="Driver.PersonnelName" Caption="نام راننده" MinWidth="100" />
-            </Columns>
-            <EditFormTemplate Context="editFormContext">
-                @{
-                    var vehicle = (Vehicle)editFormContext.EditModel;
-                }
-                <DxFormLayout>
-                    <DxFormLayoutItem Caption="نام دکل / محل فعالیت:">
-                        <DxComboBox Data="@Rigs" TextFieldName="@nameof(Rig.Name)" @bind-Value="@vehicle.RigNo" NullText="الزامی" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="نوع وسیله:">
-                        <DxComboBox Data="@_category" @bind-Value="@vehicle.Name" FilteringMode="DataGridFilteringMode.Contains" NullText="الزامی"/>
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="شماره پلاک:">
-                        @*<DxTextBox @bind-Text="@vehicle.PlateNo" NullText="الزامی" CssClass="ltr"/>*@
-                        <DxMaskedInput T="string" @bind-Value="@vehicle.PlateNo" NullText="الزامی" Mask="00 | 000 L 00" MaskMode="MaskMode.Text">
-                            <DxTextMaskProperties SaveLiteral="true"/>
-                        </DxMaskedInput>
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="سال تولید:">
-                        <DxSpinEdit T="short" @bind-Value="@vehicle.ProdDate" MinValue="1340" Mask="d" MaxValue="3000"/>
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="راننده:">
-                        <DxComboBox Data="@DriverList" @bind-Value="@vehicle.Driver"
-                                    TextFieldName="@nameof(Samco_HSE.HSEData.Personnel.PersonnelName)" FilteringMode="DataGridFilteringMode.Contains">
-                            <DxListEditorColumn FieldName="@nameof(Samco_HSE.HSEData.Personnel.PersonnelName)" Caption="نام و نام خانوادگی"/>
-                            <DxListEditorColumn Caption="اعتبار گواهینامه" FieldName="@nameof(Samco_HSE.HSEData.Personnel.LicenseDate)"/>
-                            <DxListEditorColumn Caption="شماره پرسنلی" FieldName="@nameof(Samco_HSE.HSEData.Personnel.PersonnelNum)"/>
-                        </DxComboBox>
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="تاریخ اعتبار معاینه فنی:">
-                        <SamcoDateSelector @bind-Date="@vehicle.LastCheckDate" DefaultCalendar="SamcoDateSelector.CalendarType.Shamsi" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="تاریخ اعتبار بیمه:">
-                        <SamcoDateSelector @bind-Date="@vehicle.InsuranceDate" DefaultCalendar="SamcoDateSelector.CalendarType.Shamsi" />
-                    </DxFormLayoutItem>
-                </DxFormLayout>
-            </EditFormTemplate>
-        </DxGrid>
+        <SfGrid @ref="VehicleGrid" ID="vehicleGrid" DataSource="@VehiclesList" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
+                AllowGrouping="true" Toolbar="@(new[] { "Add", "Edit", "Delete", "Excel Export", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
+                AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
+                AllowExcelExport="true" Width="100%">
+            <GridEvents TValue="Vehicle" OnActionBegin="VehicleGrid_Action"
+                        OnToolbarClick="VehicleToolbarClickHandler" RowDataBound="Customize_Row"/>
+            <GridFilterSettings Type="FilterType.Excel"/>
+            <GridColumns>
+                <GridColumn HeaderText="ردیف" Field="Oid" IsIdentity="true" IsPrimaryKey="true" Visible="false"/>
+                <GridColumn HeaderText="دکل / دفتر" Field="RigNo.Name" AutoFit="true"/>
+                <GridColumn HeaderText="نوع وسیله" Field="Name" MinWidth="400" AutoFit="true"/>
+                <GridColumn HeaderText="شماره پلاک" Field="PlateNo" MinWidth="150" AutoFit="true"/>
+                <GridColumn Field="ProdDate" HeaderText="سال تولید" MinWidth="180" Format="d" AutoFit="true"/>
+                <GridColumn Field="LastCheckDate" HeaderText="تاریخ اعتبار گواهی فنی" MinWidth="180" AutoFit="true"/>
+                <GridColumn Field="InsuranceDate" HeaderText="تاریخ بیمه‌نامه" MinWidth="180" AutoFit="true"/>
+                <GridColumn Field="Driver.PersonnelName" HeaderText="نام راننده" MinWidth="100" AutoFit="true"/>
+            </GridColumns>
+            <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" AllowEditOnDblClick="true" Mode="EditMode.Dialog"
+                              ShowDeleteConfirmDialog="true" Dialog="@SamcoSoftShared.GeneralGridEditOption">
+                <Validator>
+                    <DataAnnotationsValidator/>
+                </Validator>
+                <Template Context="editFormContext">
+                    @{
+                        var vehicle = (Vehicle)editFormContext;
+                    }
+                    <MudRTLProvider RightToLeft="true">
+                        <MudGrid>
+                            <MudItem md="4" sm="12">
+                                <MudField Label="محل فعالیت:" DisableUnderLine="true">
+                                    <SamcoRigSelector @bind-SelectedRig="@vehicle.RigNo" Session="Session1" DataSource="Rigs"/>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudField Label="نوع وسیله:" DisableUnderLine="true">
+                                    <SfComboBox TItem="string" TValue="string" Placeholder="الزامی" AllowFiltering="true"
+                                                FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                DataSource="@_category" @bind-Value="@vehicle.Name">
+                                    </SfComboBox>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudTextField Label="شماره پلاک:" @bind-Value="@vehicle.PlateNo" Placeholder="الزامی"/>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudNumericField T="short" @bind-Value="@vehicle!.ProdDate" Label="سال تولید:" Adornment="Adornment.Start"
+                                                 Min="1340" Max="2100" Step="1"/>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudField Label="راننده:" DisableUnderLine="true">
+                                    <SamcoPersonnelSelector DataSource="DriverList" @bind-SelectedPersonnel="@vehicle.Driver" Session="Session1"/>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudField Label="تاریخ اعتبار معاینه فنی:" DisableUnderLine="true">
+                                    <SamcoDateSelector @bind-Date="@vehicle.LastCheckDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudField Label="تاریخ اعتبار بیمه:" DisableUnderLine="true">
+                                    <SamcoDateSelector @bind-Date="@vehicle.InsuranceDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
+                                </MudField>
+                            </MudItem>
+                        </MudGrid>
+                    </MudRTLProvider>
+                </Template>
+            </GridEditSettings>
+        </SfGrid>
     </MudCardContent>
 </MudCard>

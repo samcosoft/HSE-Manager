@@ -1,66 +1,89 @@
 ﻿@page "/asset"
 @using Samco_HSE.HSEData
+@using FilterType = Syncfusion.Blazor.Grids.FilterType
+
+
 @attribute [Authorize(Roles = "Owner,Admin,Supervisor,Officer")]
 <PageTitle>مدیریت تجهیزات ملکی</PageTitle>
 
 <MudCard>
     <MudCardHeader>
-        <DxMenu Title="مدیریت تجهیزات ملکی" ItemsPosition="ItemPosition.Start" CssClass="card-header">
-             <Items>
-                <DxMenuItem Text="دریافت اطلاعات" IconCssClass="fas fa-paste" @onclick="OnPrintBtnClick" />>
-            </Items>
-        </DxMenu>
+        <MudPaper Elevation="3" Width="100%" Class="pa-3">
+            <MudText Typo="Typo.h5">مدیریت تجهیزات ملکی</MudText>
+        </MudPaper>
     </MudCardHeader>
     <MudCardContent>
-        <DxGrid @ref="AssetGrid" Data="@AssetsList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"
-                EditModelSaving="OnEditModelSaving" DataItemDeleting="OnDataItemDeleting"
-                CustomizeEditModel="AssetEditModel" CustomizeElement="AssetGrid_CustomizeElement"
-                ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true" ValidationEnabled="false"
-                SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="true"
-                ColumnResizeMode="GridColumnResizeMode.ColumnsContainer"
-                SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center">
-            <Columns>
-                <DxGridCommandColumn MinWidth="100" />
-                <DxGridDataColumn Caption="دکل / دفتر" FieldName="RigNo.Name" MinWidth="200" />
-                <DxGridDataColumn Caption="نام تجهیز" FieldName="Name" MinWidth="200" />
-                <DxGridDataColumn Caption="مالکیت" FieldName="Owner" MinWidth="200" />
-                <DxGridDataColumn Caption="شماره سریال" FieldName="Serial" MinWidth="200" />
-                <DxGridDataColumn Caption="محل نصب یا قرارگیری" FieldName="Position" MinWidth="250" />
-                <DxGridDataColumn Caption="وضعیت" FieldName="Status" MinWidth="150" />
-                <DxGridDataColumn Caption="انقضای گواهی" FieldName="ExpireDate" MinWidth="150" />
-                <DxGridDataColumn Caption="توضیحات" FieldName="Comment" MinWidth="200" />
-            </Columns>
-            <EditFormTemplate Context="editFormContext">
-                @{
-                    var asset = (Asset)editFormContext.EditModel;
-                }
-                <DxFormLayout>
-                    <DxFormLayoutItem Caption="نام تجهیز:">
-                        <DxTextBox @bind-Text="@asset.Name" NullText="الزامی" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="دکل / دفتر:">
-                        <DxComboBox Data="@Rigs" @bind-Value="asset.RigNo" TextFieldName="@nameof(Rig.Name)" NullText="الزامی" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="مالکیت:">
-                        <DxComboBox Data="@_owners" @bind-Value="asset.Owner" NullText="الزامی" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="شماره سریال:">
-                        <DxTextBox @bind-Text="@asset.Serial" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="محل نصب یا قرارگیری:">
-                        <DxTextBox @bind-Text="@asset.Position" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="وضعیت:">
-                        <DxComboBox Data="@_status" @bind-Value="asset.Status" NullText="الزامی" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="انقضای گواهی:">
-                        <SamcoDateSelector @bind-Date="@asset.ExpireDate" DefaultCalendar="SamcoDateSelector.CalendarType.Shamsi"/>
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="توضیحات:">
-                        <DxTextBox @bind-Text="@asset.Comment" />
-                    </DxFormLayoutItem>
-                </DxFormLayout>
-            </EditFormTemplate>
-        </DxGrid>
+        <SfGrid @ref="AssetGrid" ID="assetGrid" DataSource="@AssetsList" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
+                AllowGrouping="true" Toolbar="@(new[] { "Add", "Edit", "Delete", "Excel Export", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
+                AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
+                AllowExcelExport="true" Width="100%">
+            <GridEvents TValue="Asset" OnActionBegin="AssetGrid_Action"
+                        OnToolbarClick="ToolbarClickHandler" RowDataBound="Customize_Row"/>
+            <GridFilterSettings Type="FilterType.Excel"/>
+            <GridColumns>
+                <GridColumn HeaderText="ردیف" Field="Oid" IsIdentity="true" IsPrimaryKey="true" Visible="false"/>
+                <GridColumn HeaderText="دکل / دفتر" Field="RigNo.Name"/>
+                <GridColumn HeaderText="نام تجهیز" Field="Name"/>
+                <GridColumn HeaderText="مالکیت" Field="Owner"/>
+                <GridColumn HeaderText="شماره سریال" Field="Serial"/>
+                <GridColumn HeaderText="محل نصب یا قرارگیری" Field="Position" MinWidth="250"/>
+                <GridColumn HeaderText="وضعیت" Field="Status" MinWidth="150"/>
+                <GridColumn HeaderText="انقضای گواهی" Field="ExpireDate" MinWidth="150"/>
+                <GridColumn HeaderText="توضیحات" Field="Comment" MinWidth="400"/>
+            </GridColumns>
+            <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" AllowEditOnDblClick="true" Mode="EditMode.Dialog"
+                              ShowDeleteConfirmDialog="true" Dialog="@SamcoSoftShared.GeneralGridEditOption">
+                <Validator>
+                    <DataAnnotationsValidator/>
+                </Validator>
+                <Template Context="editFormContext">
+                    @{
+                        var asset = editFormContext as Asset;
+                    }
+
+                    <MudRTLProvider RightToLeft="true">
+                        <MudGrid>
+                            <MudItem md="4" sm="12">
+                                <MudTextField Label="نام تجهیز:" AutoFocus="true" @bind-Value="@(asset.Name)" Placeholder="الزامی"/>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudField Label="نام دکل / پالایشگاه:" DisableUnderLine="true">
+                                    <SamcoRigSelector DataSource="Rigs" @bind-SelectedRig="@asset.RigNo" Session="Session1"/>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudField Label="مالکیت:" DisableUnderLine="true">
+                                    <SfComboBox TItem="string" TValue="string" Placeholder="الزامی"
+                                                DataSource="@_owners" @bind-Value="@asset.Owner">
+                                    </SfComboBox>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudTextField Label="شماره سریال:" @bind-Value="@(asset.Serial)"/>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudTextField Label="محل نصب یا قرارگیری:" @bind-Value="@(asset.Position)"/>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudField Label="وضعیت:" DisableUnderLine="true">
+                                    <SfComboBox TItem="string" TValue="string"
+                                                DataSource="@_status" Placeholder="الزامی"
+                                                @bind-Value="@asset.Status">
+                                    </SfComboBox>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudField Label="انقضای گواهی:" DisableUnderLine="true">
+                                    <SamcoDateSelector @bind-Date="@asset.ExpireDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudTextField Label="توضیحات:" @bind-Value="@(asset.Comment)"/>
+                            </MudItem>
+                        </MudGrid>
+                    </MudRTLProvider>
+                </Template>
+            </GridEditSettings>
+        </SfGrid>
     </MudCardContent>
 </MudCard>

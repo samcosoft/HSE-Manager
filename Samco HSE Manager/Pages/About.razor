@@ -1,12 +1,13 @@
 ﻿@page "/about"
+@using Syncfusion.Blazor.Inputs
 
 @inject IWebHostEnvironment HostEnvironment
 <MudGrid>
-    <MudItem sm="8">
+    <MudItem lg="8" md="8" sm="12">
         <div class="animate__animated animate__fadeInRight">
             <MudCard Elevation="3">
                 <MudCardHeader>
-                    <MudText Typo="Typo.h4">
+                    <MudText Typo="Typo.h6">
                         درباره برنامه
                     </MudText>
                 </MudCardHeader>
@@ -20,12 +21,25 @@
                 </MudCardContent>
             </MudCard>
         </div>
+        <div class="animate__animated animate__fadeInRight mt-2">
+            <MudCard Elevation="3">
+                <MudCardHeader>
+                    <MudText Typo="Typo.h6">
+                        تغییرات نسخه
+                    </MudText>
+                </MudCardHeader>
+                <MudCardContent Style="height: 170px">
+                    <SfTextBox Value="@GetReleaseNote()" Placeholder="No Information" CssClass="w-100 h-100" Multiline="true"
+                               Readonly="true" />
+                </MudCardContent>
+            </MudCard>
+        </div>
     </MudItem>
-    <MudItem sm="4">
+    <MudItem lg="4" md="4" sm="12">
         <div class="d-flex flex-column">
             <div class="card opacity-75 animate__animated animate__fadeInUp h-100">
                 <div class="card-body text-center">
-                    <img alt="logo" src="images/logo.svg" width="150" />
+                    <img alt="logo" src="images/logo.svg" width="150"/>
                     <h4>Samco® HSE Management System</h4>
                     <p>Version: @GetApplicationVersion()</p>
                 </div>
@@ -33,7 +47,7 @@
             <div class="mt-2 animate__animated animate__fadeInUp">
                 <MudCard Elevation="3">
                     <MudCardHeader>
-                        <MudText Typo="Typo.h4">
+                        <MudText Typo="Typo.h6">
                             تماس با ما
                         </MudText>
                     </MudCardHeader>
@@ -47,51 +61,12 @@
         </div>
     </MudItem>
 </MudGrid>
-<MudGrid>
-    <MudItem sm="8">
-        <div class="animate__animated animate__fadeInRight mt-2">
-            <MudCard Elevation="3">
-                <MudCardHeader>
-                    <MudText Typo="Typo.h4">
-                        تغییرات نسخه
-                    </MudText>
-                </MudCardHeader>
-                <MudCardContent>
-                    <textarea placeholder="No Information" class="w-100" style="height: 165px;" readonly>@GetReleaseNote()</textarea>
-                </MudCardContent>
-            </MudCard>
-        </div>
-    </MudItem>
-    <MudItem sm="4">
-        <div class="card opacity-75 animate__animated animate__fadeInUp h-100">
-            <div class="card-body text-center">
-                <img alt="logo" src="images/logo.svg" width="150" />
-                <h4>Samco® HSE Management System</h4>
-                <p>Version: @GetApplicationVersion()</p>
-            </div>
-        </div>
-        <div class="mt-2 animate__animated animate__fadeInUp">
-            <MudCard Elevation="3">
-                <MudCardHeader>
-                    <MudText Typo="Typo.h4">
-                        تماس با ما
-                    </MudText>
-                </MudCardHeader>
-                <MudCardContent>
-                    <p>وب سایت: <a style="display: inline" href="https://samcosoft.ir">https://samcosoft.ir</a></p>
-                    <p>پشتیبانی: <a style="display: inline" href="mailto:support@samcosoft.ir">support@samcosoft.ir</a></p>
-                    <p>تلفن: <a dir="ltr" style="display: inline;" href="tell:+989397532159">+98 939 7532159</a></p>
-                </MudCardContent>
-            </MudCard>
-        </div>
-    </MudItem>
-</MudGrid>
 <AuthorizeView>
-    <Authorized Context="formContext">
+    <Authorized Context="_">
         <div class="mt-3 animate__animated animate__zoomInUp">
             <MudCard Elevation="3">
                 <MudCardHeader>
-                    <MudText Typo="Typo.h4">
+                    <MudText Typo="Typo.h6">
                         اطلاعات مجوز
                     </MudText>
                 </MudCardHeader>
@@ -110,37 +85,42 @@
                             </MudAlert>
                         }
                     }
-                    <DxFormLayout>
+                    <MudGrid>
                         @{
                             if (_isTrial || !_isValid)
                             {
-                                <DxFormLayoutGroup Caption="فعالسازی" ColSpanLg="6" ColSpanMd="12">
-                                    <DxFormLayoutItem Caption="کد فعالسازی:" ColSpanMd="9" ColSpanSm="12">
-                                        <DxMaskedInput @bind-Value="_activationKey" Mask="AAAA-AAAA-AAAA-AAAA-AAAA-AAAA-AAAA-AAAA" MaskMode="MaskMode.Text" CssClass="ltr text-center w-100">
-                                            <DxTextMaskProperties SaveLiteral="true" />
-                                        </DxMaskedInput>
-                                    </DxFormLayoutItem>
-                                    <DxFormLayoutItem ColSpanMd="3" ColSpanSm="12">
-                                        <DxButton RenderStyle="ButtonRenderStyle.Primary" Text="فعالسازی" Click="Activate" />
-                                    </DxFormLayoutItem>
-                                </DxFormLayoutGroup>
-                                <DxFormLayoutGroup Caption="اطلاعات مجوز" ColSpanLg="6" ColSpanMd="12">
-                                    <DxMemo @bind-Text="@_licenseInfo" Rows="3" CssClass="w-100 h-100" InputCssClass="text-center ltr" />
-                                </DxFormLayoutGroup>
+                                <MudItem md="6" sm="12">
+                                    <MudGrid>
+                                        <MudItem md="9" sm="12">
+                                            <MudCard Elevation="3">
+                                                <MudCardHeader>
+                                                    <MudText Typo="Typo.h6">فعالسازی</MudText>
+                                                </MudCardHeader>
+                                                <MudCardContent>
+                                                    <SfMaskedTextBox @bind-Value="_activationKey" Mask="AAAA-AAAA-AAAA-AAAA-AAAA-AAAA-AAAA-AAAA" EnableLiterals="true" CssClass="ltr text-center w-100"/>
+                                                </MudCardContent>
+                                            </MudCard>
+                                        </MudItem>
+                                        <MudItem md="3" sm="12">
+                                            <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Activate">فعالسازی</MudButton>
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudItem>
+                                <MudItem md="6" sm="12">
+                                    <MudTextField T="string" @bind-Value="_licenseInfo" Lines="3" Class="text-center ltr"/>
+                                </MudItem>
                             }
                             else
                             {
-                                <DxFormLayoutGroup Caption="اطلاعات مجوز" ColSpanLg="12" ColSpanMd="12">
-                                    <DxFormLayoutItem ColSpanLg="12" ColSpanMd="12">
-                                        <DxMemo @bind-Text="@_licenseInfo" Rows="3" CssClass="w-100 h-100" InputCssClass="text-center ltr" />
-                                    </DxFormLayoutItem>
-                                    <DxFormLayoutItem ColSpanLg="12" ColSpanMd="12">
-                                        <DxButton RenderStyle="ButtonRenderStyle.Danger" IconCssClass="fas fa-unlock-keyhole" Click="Deactivate" Text="غیرفعالسازی" />
-                                    </DxFormLayoutItem>
-                                </DxFormLayoutGroup>
+                                <MudItem lg="12" md="12">
+                                    <MudTextField T="string" @bind-Value="_licenseInfo" Lines="3" Class="text-center ltr"/>
+                                </MudItem>
+                                <MudItem lg="12" md="12">
+                                    <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="Deactivate" IconClass="fas fa-unlock-keyhole">غیر فعالسازی</MudButton>
+                                </MudItem>
                             }
                         }
-                    </DxFormLayout>
+                    </MudGrid>
                 </MudCardContent>
             </MudCard>
         </div>

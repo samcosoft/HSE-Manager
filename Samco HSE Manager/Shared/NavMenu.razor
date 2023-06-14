@@ -1,170 +1,75 @@
-﻿<div class="sidebar @StateCssClass">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="fas fa-home" aria-hidden="true"></span> داشبورد
-            </NavLink>
-        </div>
-        <AuthorizeView Roles="Admin,Owner">
-            <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link main-item" @onclick="()=>_manageSubMenu = !_manageSubMenu">
-                        <span class="fas fa-gears" aria-hidden="true"></span> مدیریت
-                    </NavLink>
-                    @if (_manageSubMenu)
-                    {
-                        <div class="nav-item px-3">
-                            <NavLink class="nav-link" href="projects">
-                                <span class="fas fa-oil-well" aria-hidden="true"></span> مدیریت پروژه و عملیات
-                            </NavLink>
-                        </div>
-                        <div class="nav-item px-3">
-                            <NavLink class="nav-link" href="users">
-                                <span class="fas fa-user" aria-hidden="true"></span> کاربران
-                            </NavLink>
-                        </div>
-                    }
-                </div>
-            </Authorized>
-        </AuthorizeView>
-        <AuthorizeView Roles="Owner,Admin,Supervisor,Officer">
-            <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link main-item" @onclick="()=>_infoSubMenu = !_infoSubMenu">
-                        <span class="fas fa-info" aria-hidden="true"></span> اطلاعات
-                    </NavLink>
-                    @if (_infoSubMenu)
-                    {
-                        <div class="nav-item px-3">
-                            <NavLink class="nav-link" href="personnel">
-                                <span class="fas fa-people-group" aria-hidden="true"></span> کارکنان
-                            </NavLink>
-                        </div>
-                        <div class="nav-item px-3">
-                            <NavLink class="nav-link" href="equipment">
-                                <span class="fas fa-helmet-safety" aria-hidden="true"></span> تجهیزات حفاظت فردی
-                            </NavLink>
-                        </div>
-                        <div class="nav-item px-3">
-                            <NavLink class="nav-link" href="asset">
-                                <span class="fas fa-truck-ramp-box" aria-hidden="true"></span> تجهیزات ملکی
-                            </NavLink>
-                        </div>
-                        <div class="nav-item px-3">
-                            <NavLink class="nav-link" href="vehicle">
-                                <span class="fas fa-truck-front" aria-hidden="true"></span> ماشین آلات
-                            </NavLink>
-                        </div>
-                    }
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link main-item" @onclick="()=>_reportSubMenu = !_reportSubMenu">
-                        <span class="fas fa-paste" aria-hidden="true"></span> گزارشات
-                    </NavLink>
-                    @if (_reportSubMenu)
-                    {
-                        <div class="nav-item px-3">
-                            <NavLink class="nav-link" href="permit">
-                                <span class="fas fa-hand" aria-hidden="true"></span> مجوز کار ایمن
-                            </NavLink>
-                        </div>
-                        <div class="nav-item px-3">
-                            <NavLink class="nav-link" href="stopcard">
-                                <span class="fas fa-hand" aria-hidden="true"></span> STOP Cards
-                            </NavLink>
-                        </div>
-                    }
-                </div>
-            </Authorized>
-        </AuthorizeView>
-        <AuthorizeView Roles="Medic">
-            <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link main-item" @onclick="()=>_infoSubMenu = !_infoSubMenu">
-                        <span class="fas fa-info" aria-hidden="true"></span> اطلاعات
-                    </NavLink>
-                    @if (_infoSubMenu)
-                    {
-                        <div class="nav-item px-3">
-                            <NavLink class="nav-link" href="personnel">
-                                <span class="fas fa-people-group" aria-hidden="true"></span> کارکنان
-                            </NavLink>
-                        </div>
-                        <div class="nav-item px-3">
-                            <NavLink class="nav-link" href="asset">
-                                <span class="fas fa-truck-ramp-box" aria-hidden="true"></span> تجهیزات ملکی
-                            </NavLink>
-                        </div>
-                    }
-                </div>
-            </Authorized>
-        </AuthorizeView>
-        <AuthorizeView Roles="Owner,Admin,Supervisor,Officer,Medic">
-            <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link main-item" @onclick="()=>_medicSubMenu = !_medicSubMenu">
-                        <span class="fas fa-hospital" aria-hidden="true"></span> درمانگاه
-                    </NavLink>
-                    @if (_medicSubMenu)
-                    {
-                        <div class="nav-item px-3">
-                            <NavLink class="nav-link" href="visit">
-                                <span class="fas fa-prescription" aria-hidden="true"></span> ویزیت بیمار
-                            </NavLink>
-                        </div>
-                        <div class="nav-item px-3">
-                            <NavLink class="nav-link" href="drug">
-                                <span class="fas fa-pills" aria-hidden="true"></span> مدیریت داروها
-                            </NavLink>
-                        </div>
-                    }
-                </div>
-            </Authorized>
-        </AuthorizeView>
-    </nav>
-    @*<DxTreeView AllowSelectNodes="true" CssClass="app-sidebar">
-    <Nodes>
-    <DxTreeViewNode NavigateUrl="./" Text="Overview"></DxTreeViewNode>
-    </Nodes>
-    </DxTreeView>*@
-</div>
+﻿<MudDrawerHeader>
+    @* <MudGrid> *@
+    @*     <MudItem lg="3" md="3" sm="3"> *@
+    @*         <MudAvatar Elevation="2" Rounded="true">@_avatarName</MudAvatar> *@
+    @*     </MudItem> *@
+    @*     <MudItem lg="9" md="9" sm="9"> *@
+    @*         <MudText Typo="Typo.subtitle1">@_userName</MudText> *@
+    @*         <MudText Typo="Typo.subtitle2">@_userRole</MudText> *@
+    @*     </MudItem> *@
+    @* </MudGrid> *@
+    @* <MudDivider Class="my-2" /> *@
+</MudDrawerHeader>
+<MudNavMenu>
+    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">داشبورد</MudNavLink>
+    <AuthorizeView Roles="Admin,Owner">
+        <Authorized>
+            <MudNavGroup Title="مدیریت" Icon="@Icons.Material.Filled.ManageAccounts" Expanded="true">
+                <MudNavLink Href="projects" Icon="fas fa-oil-well">مدیریت پروژه و عملیات</MudNavLink>
+                <MudNavLink Href="users" Icon="fas fa-user">کاربران</MudNavLink>
+            </MudNavGroup>
+        </Authorized>
+    </AuthorizeView>
+    <AuthorizeView Roles="Owner,Admin,Supervisor,Officer">
+        <Authorized>
+            <MudNavGroup Title="اطلاعات" Icon="@Icons.Material.Filled.Info">
+                <MudNavLink Href="personnel" Icon="fas fa-people-group">کارکنان</MudNavLink>
+                <MudNavLink Href="equipment" Icon="fas fa-helmet-safety">تجهیزات حفاظت فردی</MudNavLink>
+                <MudNavLink Href="asset" Icon="fas fa-truck-ramp-box">تجهیزات ملکی</MudNavLink>
+                <MudNavLink Href="vehicle" Icon="fas fa-truck-front">ماشین آلات</MudNavLink>
+            </MudNavGroup>
+            <MudNavGroup Title="گزارشات" Icon="@Icons.Material.Filled.ContentPaste">
+                <MudNavLink Href="permit" Icon="fas fa-hand">مجوز کار ایمن</MudNavLink>
+                <MudNavLink Href="stopcard" Icon="@Icons.Material.Filled.StopCircle">STOP Cards</MudNavLink>
+            </MudNavGroup>
+        </Authorized>
+    </AuthorizeView>
+    <AuthorizeView Roles="Medic">
+        <Authorized>
+            <MudNavGroup Title="اطلاعات" Icon="@Icons.Material.Filled.Info">
+                <MudNavLink Href="personnel" Icon="fas fa-people-group">کارکنان</MudNavLink>
+                <MudNavLink Href="asset" Icon="fas fa-truck-ramp-box">تجهیزات ملکی</MudNavLink>
+            </MudNavGroup>
+        </Authorized>
+    </AuthorizeView>
+    <AuthorizeView Roles="Owner,Admin,Supervisor,Officer,Medic">
+        <Authorized>
+            <MudNavGroup Title="درمانگاه" Icon="@Icons.Material.Filled.Medication">
+                <MudNavLink Href="visit" Icon="fas fa-prescription">ویزیت بیمار</MudNavLink>
+                <MudNavLink Href="drug" Icon="fas fa-pills">مدیریت داروها</MudNavLink>
+            </MudNavGroup>
+        </Authorized>
+    </AuthorizeView>
+</MudNavMenu>
 
-@*<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <img src="images/company.svg" alt="logo" height="40">
-        <a class="navbar-brand" href="">@_companyName</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
-
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-
-</div>*@
 
 @code {
 
     [Inject]
     private IConfiguration Configuration { get; set; } = null!;
 
-    [Parameter] public string? StateCssClass { get; set; }
-
-    private bool _collapseNavMenu = true, _manageSubMenu = true,
-    _infoSubMenu = true, _medicSubMenu = true, _reportSubMenu = true;
-
-    private string? NavMenuCssClass => _collapseNavMenu ? "collapse" : null;
-
+    private string? _avatarName;
+    private string? _userName;
+    private string? _userRole;
     private string? _companyName;
 
     protected override Task OnInitializedAsync()
     {
         _companyName = Configuration["CompanyInfo:Name"];
+        _avatarName = SamcoSoftShared.CurrentUser?.PersonnelName.First().ToString() ?? "A";
+        _userName = SamcoSoftShared.CurrentUser?.PersonnelName ?? "مهمان";
+        _userRole = SamcoSoftShared.CurrentUserRole.ToString();
         return base.OnInitializedAsync();
     }
 
-    private void ToggleNavMenu()
-    {
-        _collapseNavMenu = !_collapseNavMenu;
-    }
 }

@@ -3,25 +3,34 @@
 <MudDialog>
     <TitleContent>
         <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.Work" Class="me-3 mb-1" />
+            <MudIcon Icon="@Icons.Material.Filled.Work" Class="me-3 mb-1"/>
             اطلاعات پروژه
         </MudText>
     </TitleContent>
     <DialogContent>
-        <div class="d-flex flex-column gap-4">
-            <MudTextField Label="نام پروژه" Variant="Variant.Outlined" AutoFocus="true"
-                          @bind-Value="@(SelProject.Name)"></MudTextField>
-            <SamcoDateSelector @bind-Date="SelProject.StartDate" DisplayText="تاریخ شروع (الزامی)" CalenderVariant="Variant.Outlined"/>
-            <SamcoDateSelector @bind-Date="SelProject.EndDate" DisplayText="تاریخ پایان"/>
-        </div>
+        <MudGrid>
+            <MudItem lg="12">
+                <MudTextField Label="نام پروژه" Variant="Variant.Outlined" AutoFocus="true"
+                              @bind-Value="@(SelProject.Name)"/>
+            </MudItem>
+            <MudItem lg="12">
+                <SamcoDateSelector @bind-Date="SelProject.StartDate" DisplayText="تاریخ شروع (الزامی)" CalenderVariant="Variant.Outlined"/>
+            </MudItem>
+            <MudItem lg="12">
+                <SamcoDateSelector @bind-Date="SelProject.EndDate" DisplayText="تاریخ پایان"/>
+            </MudItem>
+        </MudGrid>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">انصراف</MudButton>
         <MudButton Color="Color.Success" Icon="fas fa-check" OnClick="Submit">تأیید</MudButton>
     </DialogActions>
 </MudDialog>
+
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter]
     public Project SelProject { get; set; } = null!;
@@ -31,6 +40,12 @@
         if (SelProject.Name == null)
         {
             Snackbar.Add("نام پروژه الزامی است.", Severity.Error);
+            return;
+        }
+        var prevProj = SelProject.Session.Query<Project>().FirstOrDefault(x => x.Name == SelProject.Name);
+        if (prevProj != null && prevProj.Name == SelProject.Name && prevProj.Oid != SelProject.Oid)
+        {
+            Snackbar.Add("پروژه با همین نام وجود دارد.", Severity.Error);
             return;
         }
         if (SelProject.StartDate == null)

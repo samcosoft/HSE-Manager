@@ -2,120 +2,172 @@
 @attribute [Authorize(Roles = "Owner,Admin,Supervisor,Officer")]
 @using Samco_HSE.HSEData
 @using Microsoft.AspNetCore.Components
+@using Syncfusion.Blazor.Popups
+@using FilterType = Syncfusion.Blazor.Grids.FilterType
+@using HorizontalAlignment = MudBlazor.HorizontalAlignment
 
 <PageTitle>مدیریت تجهیزات حفاظت فردی</PageTitle>
 
 <MudCard>
     <MudCardHeader>
-        <DxMenu Title="مدیریت تجهیزات حفاظت فردی" ItemsPosition="ItemPosition.Start" CssClass="card-header">
-            <Items>
-                <DxMenuItem Text="تنظیم موجودی" IconCssClass="fas fa-shirt" @onclick="OnSetNumberBtnClick" />
-                <DxMenuItem Text="توزیع تجهیزات" IconCssClass="fas fa-boxes-packing" @onclick="OnDistributeBtnClick"/>
-            </Items>
-        </DxMenu>
+        <MudPaper Elevation="3" Width="100%" Class="pa-3">
+            <MudGrid>
+                <MudItem>
+                    <MudText Typo="Typo.h5">مدیریت تجهیزات حفاظت فردی</MudText>
+                </MudItem>
+                <MudItem>
+                    <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
+                        <MudButton StartIcon="fas fa-input-numeric" IconColor="Color.Error" OnClick="OnSetNumberBtnClick">تنظیم موجودی</MudButton>
+                        <MudButton StartIcon="fas fa-hand-holding-box" IconColor="Color.Warning" OnClick="OnDistributeBtnClick">توزیع تجهیزات</MudButton>
+                    </MudButtonGroup>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
     </MudCardHeader>
     <MudCardContent>
-        <DxButton Text="تنظیم ستون‌ها"
-                  RenderStyle="ButtonRenderStyle.Secondary"
-                  CssClass="column-chooser-button"
-                  Click="ColumnChooserOnClick" />
-        <p />
-        <DxGrid @ref="EquipmentGrid" Data="@EquipmentsList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm" EditModelSaving="OnEditModelSaving"
-                DataItemDeleting="OnDataItemDeleting" EditStart="EquipmentGrid_EditStart" CustomizeEditModel="EquipmentEditModel" UnboundColumnData="EquipmentGridUnbound"
-                ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true"
-                SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="true"
-                ColumnResizeMode="GridColumnResizeMode.ColumnsContainer"
-                SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center" ValidationEnabled="false">
-            <Columns>
-                <DxGridCommandColumn MinWidth="100"/>
-                <DxGridDataColumn Caption="نام تجهیز" FieldName="Name" MinWidth="200"/>
-                <DxGridDataColumn Caption="واحد شمارش" FieldName="CountUnit" MinWidth="150"/>
-                <DxGridDataColumn Caption="مدل" FieldName="Model" MinWidth="150"/>
-                @BuildColumnsGrid()
-            </Columns>
-            <EditFormTemplate Context="editFormContext">
+        <SfGrid @ref="EquipmentGrid" ID="equipGrid" DataSource="@EquipmentsList" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
+                AllowGrouping="true" Toolbar="@(new[] { "Add", "Edit", "Delete", "Excel Export", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
+                AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
+                AllowExcelExport="true" Width="100%">
+            <GridEvents TValue="Equipment" OnActionBegin="EquipGrid_Action"
+                        OnToolbarClick="EquipToolbarClickHandler"/>
+            <GridFilterSettings Type="FilterType.Excel"/>
+            <GridColumns>
+                <GridColumn HeaderText="ردیف" Field="Oid" IsPrimaryKey="true" Visible="false"/>
+                <GridColumn HeaderText="نام تجهیز" Field="Name" AutoFit="true"/>
+                <GridColumn HeaderText="واحد شمارش" Field="CountUnit" AutoFit="true"/>
+                <GridColumn HeaderText="مدل" Field="Model" AutoFit="true"/>
+                <GridColumn HeaderText="نوع تجهیز" Field="@nameof(Equipment.EquipType)" AutoFit="true"/>
                 @{
-                    var equipment = (Equipment)editFormContext.EditModel;
+                    if (Rigs != null)
+                    {
+                        foreach (var rig in Rigs)
+                        {
+                            <GridColumn HeaderText="@($"تعداد در {rig.Name}")" AutoFit="true">
+                                <Template>
+                                    @{
+                                        var itm = context as Equipment;
+                                        @EquipmentGridUnbound(rig.Oid, itm)
+                                    }
+                                </Template>
+                            </GridColumn>
+                        }
+                    }
                 }
-                <DxFormLayout>
-                    <DxFormLayoutItem Caption="نام تجهیز:">
-                        <DxTextBox @bind-Text="@equipment.Name" NullText="الزامی"/>
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="مدل:">
-                        <DxTextBox @bind-Text="@equipment.Model"/>
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="واحد شمارش:">
-                        <DxTextBox @bind-Text="@equipment.CountUnit"/>
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="نوع:">
-                        <DxComboBox Data="@_ppeKind" @bind-Value="@equipment.EquipType" NullText="الزامی"/>
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="استفاده کنندگان:">
-                        <Row ItemsPerRow="ItemsPerRow.Four">
-                            <Row ColSpan="3">
-                                <DxTagBox Data="@RigRoles" @bind-Values="@Consumers" NullText="الزامی" ClearButtonDisplayMode="DataEditorClearButtonDisplayMode.Auto"
-                                          FilteringMode="DataGridFilteringMode.StartsWith"/>
-                            </Row>
-                            <DxButton Text="انتخاب همه" RenderStyle="ButtonRenderStyle.Primary" Click="SelAllClick"/>
-                        </Row>
-                    </DxFormLayoutItem>
-                </DxFormLayout>
-            </EditFormTemplate>
-        </DxGrid>
+            </GridColumns>
+            <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" AllowEditOnDblClick="true" Mode="EditMode.Dialog"
+                              ShowDeleteConfirmDialog="true" Dialog="@SamcoSoftShared.GeneralGridEditOption">
+                <Validator>
+                    <DataAnnotationsValidator/>
+                </Validator>
+                <Template Context="editFormContext">
+                    @{
+                        var equipment = (Equipment)editFormContext;
+                    }
+                    <MudRTLProvider RightToLeft="true">
+                        <MudGrid>
+                            <MudItem md="6" sm="12">
+                                <MudTextField Label="نام تجهیز:" @bind-Value="@equipment.Name" Placeholder="الزامی"
+                                              Adornment="Adornment.Start" AutoFocus="true"/>
+                            </MudItem>
+                            <MudItem md="6" sm="12">
+                                <MudTextField Label="مدل:" @bind-Value="@equipment.Model"
+                                              Adornment="Adornment.Start"/>
+                            </MudItem>
+                            <MudItem md="6" sm="12">
+                                <MudTextField Label="واحد شمارش:" @bind-Value="@equipment.CountUnit"
+                                              Adornment="Adornment.Start"/>
+                            </MudItem>
+                            <MudItem md="6" sm="12">
+                                <MudField Label="نوع تجهیز:" DisableUnderLine="true">
+                                    <SfComboBox TValue="string" TItem="string" DataSource="@_ppeKind" Placeholder="الزامی"
+                                                @bind-Value="@equipment.EquipType" AllowFiltering="true">
+                                    </SfComboBox>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="6" sm="12">
+                                <MudField Label="استفاده کنندگان:" DisableUnderLine="true">
+                                    <SfMultiSelect TItem="string" TValue="string[]" DataSource="@RigRoles"
+                                                   @bind-Value="@Consumers" Placeholder="الزامی" Mode="VisualMode.CheckBox"
+                                                   AllowFiltering="true" FilterBarPlaceholder="برای جستجو تایپ کنید..." FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                   ShowClearButton="true" SelectAllText="انتخاب همه" ShowSelectAll="true"
+                                                   UnSelectAllText="حذف همه"/>
+                                </MudField>
+                            </MudItem>
+                        </MudGrid>
+                    </MudRTLProvider>
+                </Template>
+            </GridEditSettings>
+        </SfGrid>
     </MudCardContent>
 </MudCard>
 
-<DxPopup @ref="SetNumberModal" HeaderText="تنظیم تعداد تجهیز" ShowFooter="true" CloseOnOutsideClick="false" CloseOnEscape="false">
-    <BodyContentTemplate Context="_">
-        <DxFormLayout>
-            <DxFormLayoutItem Caption="نام تجهیز:" ColSpanMd="4" ColSpanSm="12">
-                <DxTextBox @bind-Text="@_selEquipmentStock!.EquipmentName.Name" ReadOnly="true" />
-            </DxFormLayoutItem>
-            <DxFormLayoutItem Caption="نام دکل / دفتر:" ColSpanMd="4" ColSpanSm="12">
-                <DxComboBox TValue="Rig" TData="Rig" @ref="RigBx" Data="@Rigs" TextFieldName="@nameof(Rig.Name)" NullText="الزامی" ValueChanged="RigSelectionChanged" />
-            </DxFormLayoutItem>
-            <DxFormLayoutItem Caption="تعداد:" ColSpanMd="4" ColSpanSm="12">
-                <DxSpinEdit @bind-Value="@_selEquipmentStock!.Counts" MinValue="0" MaxValue="1000000" />
-            </DxFormLayoutItem>
-        </DxFormLayout>
-    </BodyContentTemplate>
-    <FooterContentTemplate>
-        <MudButton Color="Color.Success" Icon="fas fa-check" OnClick="SetCountOkBtnClick">تأیید</MudButton>
-    </FooterContentTemplate>
-</DxPopup>
+<SfDialog @ref="SetNumberModal" Header="تنظیم تعداد تجهیز" AllowDragging="true" Visible="false" IsModal="true" Width="600px" ShowCloseIcon="true"
+          CloseOnEscape="true">
+    <DialogTemplates>
+        <Content>
+            <MudGrid>
+                <MudItem md="4" sm="12">
+                    <MudTextField Label="نام تجهیز:" @bind-Value="@_selEquipmentStock!.EquipmentName.Name" ReadOnly="true"/>
+                </MudItem>
+                <MudItem md="4" sm="12">
+                    <MudField Label="نام دکل / دفتر:" DisableUnderLine="true">
+                        <SamcoRigSelector DataSource="Rigs" SelectedRig="_selRig" SelectedRigChanged="RigSelectionChanged"
+                                          Session="Session1"/>
+                    </MudField>
+                </MudItem>
+                <MudItem md="4" sm="12">
+                    <MudNumericField T="int" @bind-Value="@_selEquipmentStock!.Counts" Label="تعداد:" Adornment="Adornment.Start"
+                                     Min="1" Max="365" Step="1"/>
+                </MudItem>
+            </MudGrid>
+        </Content>
+        <FooterTemplate>
+            <MudButton Color="Color.Success" Icon="fas fa-check" OnClick="SetCountOkBtnClick">تأیید</MudButton>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>
 
-<DxPopup @ref="DistModal" HeaderText="توزیع تجهیز" ShowFooter="true" CloseOnOutsideClick="false" CloseOnEscape="false">
-    <BodyContentTemplate Context="_">
-        <p>از این قسمت می‌توانید یک تجهیز را به تعداد زیادی از کارکنان توزیع کنید.</p>
-        <DxFormLayout>
-            <DxFormLayoutItem ColSpanMd="12" ColSpanSm="12">
-                <DxGrid @ref="PersonnelGrid" Data="@Personnel" KeyFieldName="Oid"
-                        ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true"
-                        SelectionMode="GridSelectionMode.Multiple" AllowSelectRowByClick="true"
-                        ColumnResizeMode="GridColumnResizeMode.ColumnsContainer" SelectedDataItemsChanged="PersonnelGrid_SelectionChanged"
-                        SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center" ValidationEnabled="false">
-                    <Columns>
-                        <DxGridSelectionColumn MinWidth="50" />
-                        <DxGridDataColumn Caption="نام دکل / دفتر" FieldName="ActiveRig.Name" MinWidth="50" />
-                        <DxGridDataColumn Caption="نام و نام خانوادگی" FieldName="PersonnelName" MinWidth="150" />
-                        <DxGridDataColumn Caption="شماره پرسنلی" FieldName="PersonnelNum" MinWidth="100" />
-                        <DxGridDataColumn Caption="سمت فعلی" FieldName="CurrentRole" MinWidth="100" />
-                        <DxGridDataColumn Caption="سایز کفش" FieldName="ShoeSize" MinWidth="100" />
-                        <DxGridDataColumn Caption="سایز لباس" FieldName="ClothSize" MinWidth="100" />
-                        <DxGridDataColumn Caption="وضعیت" FieldName="Status" MinWidth="100" />
-                    </Columns>
-                </DxGrid>
-            </DxFormLayoutItem>
-            <DxFormLayoutItem ColSpanMd="12" ColSpanSm="12">
-                <div style="display: @(_alertVisible? "block":"none")">
-                    <MudAlert Severity="Severity.Warning" Elevation="3">
-                        @_alertMessage
-                    </MudAlert>
-                </div>
-            </DxFormLayoutItem>
-        </DxFormLayout>
-    </BodyContentTemplate>
-    <FooterContentTemplate>
-        <MudButton Color="Color.Success" StartIcon="fas fa-check" OnClick="DistributeOkBtnClick">تأیید</MudButton>
-    </FooterContentTemplate>
-</DxPopup>
+<SfDialog @ref="DistModal" Header="توزیع تجهیز" AllowDragging="true" Visible="false" IsModal="true" Width="600px" ShowCloseIcon="true"
+          CloseOnEscape="true">
+    <DialogTemplates>
+        <Content>
+            <MudAlert Severity="Severity.Info" Elevation="3" Variant="Variant.Filled"
+                      ContentAlignment="HorizontalAlignment.Right">از این قسمت می‌توانید یک تجهیز را بین تعداد زیادی از کارکنان توزیع کنید.</MudAlert>
+            <MudGrid>
+                <MudItem lg="12">
+                    <SfGrid @ref="PersonnelGrid" DataSource="@Personnel" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
+                            AllowGrouping="true" Toolbar="@(new[] { "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
+                            AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
+                            Width="100%" AllowSelection="true">
+                        <GridFilterSettings Type="FilterType.Excel"/>
+                        <GridSelectionSettings Type="SelectionType.Multiple" EnableToggle="true" AllowDragSelection="true"/>
+                        <GridEvents TValue="Samco_HSE.HSEData.Personnel" RowSelected="PersonnelGrid_SelectionChanged"/>
+                        <GridColumns>
+                            <GridColumn Type="ColumnType.CheckBox" Width="50"/>
+                            <GridColumn HeaderText="ردیف" Field="Oid" IsPrimaryKey="true" Visible="false"/>
+                            <GridColumn HeaderText="نام دکل / دفتر" Field="ActiveRig.Name" AutoFit="true"/>
+                            <GridColumn HeaderText="نام و نام خانوادگی" Field="PersonnelName" AutoFit="true"/>
+                            <GridColumn HeaderText="کد ملی" Field="NationalID" AutoFit="true"/>
+                            <GridColumn HeaderText="شماره پرسنلی" Field="PersonnelNum" AutoFit="true"/>
+                            <GridColumn HeaderText="سمت فعلی" Field="CurrentRole" AutoFit="true"/>
+                            <GridColumn HeaderText="سایز کفش" Field="ShoeSize" AutoFit="true"/>
+                            <GridColumn HeaderText="سایز لباس" Field="ClothSize" AutoFit="true"/>
+                            <GridColumn HeaderText="وضعیت" Field="Status" AutoFit="true"/>
+                        </GridColumns>
+                    </SfGrid>
+                </MudItem>
+                <MudItem lg="12">
+                    <div style="display: @(_alertVisible ? "block" : "none")">
+                        <MudAlert Severity="Severity.Warning" Elevation="3">
+                            @_alertMessage
+                        </MudAlert>
+                    </div>
+                </MudItem>
+            </MudGrid>
+        </Content>
+        <FooterTemplate>
+            <MudButton Color="Color.Success" StartIcon="fas fa-check" OnClick="DistributeOkBtnClick">تأیید</MudButton>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>

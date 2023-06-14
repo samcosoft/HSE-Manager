@@ -3,14 +3,12 @@
 <MudDialog>
     <TitleContent>
         <MudText Typo="Typo.h6">
-            <MudIcon Icon="fas fa-oil-well" Class="me-3 mb-1" />
+            <MudIcon Icon="fas fa-oil-well" Class="me-3 mb-1"/>
             اطلاعات دکل / دفتر
         </MudText>
     </TitleContent>
     <DialogContent>
-        <div class="d-flex flex-column gap-4">
-            <MudTextField Label="نام دکل / دفتر" Variant="Variant.Outlined" AutoFocus="true" @bind-Value="@(SelRig.Name)" />
-        </div>
+        <MudTextField Label="نام دکل / دفتر" Variant="Variant.Outlined" AutoFocus="true" @bind-Value="@(SelRig.Name)"/>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">انصراف</MudButton>
@@ -19,7 +17,9 @@
 </MudDialog>
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter]
     public Rig SelRig { get; set; } = null!;
@@ -29,6 +29,12 @@
         if (SelRig.Name == null)
         {
             Snackbar.Add("نام مکان الزامی است.", Severity.Error);
+            return;
+        }
+        var prevRig = SelRig.Session.Query<Rig>().FirstOrDefault(x => x.Name == SelRig.Name);
+        if (prevRig != null && prevRig.Name == SelRig.Name && prevRig.Oid != SelRig.Oid)
+        {
+            Snackbar.Add("مکانی با همین نام وجود دارد.", Severity.Error);
             return;
         }
         SelRig.Save();

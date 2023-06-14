@@ -78,7 +78,7 @@ namespace Samco_HSE.HSEData
         [Association(@"StopCardsReferencesUser")]
         public XPCollection<StopCard> StopCardsCollection { get { return GetCollection<StopCard>(nameof(StopCardsCollection)); } }
         [Association(@"PermitReferencesUser")]
-        public XPCollection<Permit> Permits3 { get { return GetCollection<Permit>(nameof(Permits3)); } }
+        public XPCollection<Permit> Permits { get { return GetCollection<Permit>(nameof(Permits)); } }
     }
 
 }

@@ -1,20 +1,19 @@
-﻿using DevExpress.Blazor;
-using DevExpress.Data.Filtering;
+﻿using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
 using Samco_HSE.HSEData;
 using MudBlazor;
+using Syncfusion.Blazor.Grids;
+using Syncfusion.Blazor.Popups;
+using Action = Syncfusion.Blazor.Grids.Action;
 
 namespace Samco_HSE_Manager.Pages.Medic;
 
 public partial class Drugs
 {
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
-    [Inject]
-    private IConfiguration Configuration { get; set; } = null!;
-    [Inject]
-    private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private IConfiguration Configuration { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
 
     private Session Session1 { get; set; } = null!;
@@ -23,20 +22,22 @@ public partial class Drugs
     private IEnumerable<Medication>? MedicineList { get; set; }
 
     private readonly IEnumerable<string> _category = new List<string>
-        {
-            "دارو","تجهیز"
-        };
+    {
+        "دارو", "تجهیز"
+    };
+
     private readonly IEnumerable<string> _drugFormList = new List<string>
     {
-        "Ampule","Syrup","Tablet","Otic Drop","Ophthalmic Ointment",
-        "Ophthalmic Drop","Bottle","Suppository","Vial","Spray","Nasal Spray",
-        "Inhaler","Topical Gel","Suspension","Sub-lingual Tablet","Cream",
-        "Ointment","Oral Drop","Pearl","Sachet","Ophthalmic Solution","IV Fluid",
+        "Ampule", "Syrup", "Tablet", "Otic Drop", "Ophthalmic Ointment",
+        "Ophthalmic Drop", "Bottle", "Suppository", "Vial", "Spray", "Nasal Spray",
+        "Inhaler", "Topical Gel", "Suspension", "Sub-lingual Tablet", "Cream",
+        "Ointment", "Oral Drop", "Pearl", "Sachet", "Ophthalmic Solution", "IV Fluid",
         "Effervescent Tablet",
-        "Pack","Pads","Support","Splint","Roll","Tools","Bandage","Tube","Plaster",
-        "Catheter","Airway","Syringe","Suture","Gauze","Dressing"
+        "Pack", "Pads", "Support", "Splint", "Roll", "Tools", "Bandage", "Tube", "Plaster",
+        "Catheter", "Airway", "Syringe", "Suture", "Gauze", "Dressing"
     };
-    private DxGrid? MedicineGrid { get; set; }
+
+    private SfGrid<Medication>? MedicineGrid { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -52,153 +53,126 @@ public partial class Drugs
             //Owner
             Rigs = Session1.Query<Rig>().ToList();
         }
+
         MedicineList = await Session1.Query<Medication>().ToListAsync();
     }
 
     #region MedicationGrid
 
-    private RenderFragment BuildColumnsGrid()
-    {
-        using var tempSession = new Session(DataLayer);
-        IEnumerable<Rig> rigs;
-        if (SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Owner)
-        {
-            var loggedUser =
-                tempSession.FindObject<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
-            rigs = loggedUser.Rigs.ToList();
-        }
-        else
-        {
-            //Owner
-            rigs = tempSession.Query<Rig>().ToList();
-        }
-
-        void NewColumns(RenderTreeBuilder b)
-        {
-            foreach (var rig in rigs)
-            {
-                b.OpenComponent(0, typeof(DxGridDataColumn));
-                b.AddAttribute(0, "FieldName", rig.Oid.ToString());
-                b.AddAttribute(0, "Caption", $"تعداد در {rig.Name}");
-                b.AddAttribute(0, "MinWidth", 100);
-                b.AddAttribute(0, "UnboundType", GridUnboundColumnType.Integer);
-                b.CloseComponent();
-            }
-        }
-
-        return NewColumns;
-    }
-    private void MedicationGridUnbound(GridUnboundColumnDataEventArgs e)
+    private string MedicGridUnbound(int rigOid, Medication medic)
     {
         using var tempSession = new Session(DataLayer);
         var currentMedication =
-            tempSession.FindObject<Medication>(new BinaryOperator("Oid", ((Medication)e.DataItem).Oid));
-        var medStock = tempSession.Query<MedicationStock>().FirstOrDefault(itm => itm.RigNo.Oid == int.Parse(e.FieldName) && itm.MedicName.Oid == currentMedication.Oid);
-        e.Value = medStock?.AvailCount ?? 0;
+            tempSession.FindObject<Medication>(new BinaryOperator("Oid", medic.Oid));
+        var medStock = tempSession.Query<MedicationStock>()
+            .FirstOrDefault(itm => itm.RigNo.Oid == rigOid && itm.MedicName.Oid == currentMedication.Oid);
+        return medStock?.AvailCount.ToString() ?? "0";
     }
 
-    private void MedicineEditStart(GridEditStartEventArgs e)
+    private async Task MedicGrid_Action(ActionEventArgs<Medication> e)
     {
-        if (SamcoSoftShared.CurrentUserRole <= SamcoSoftShared.SiteRoles.Supervisor) return;
-        Snackbar.Add("شما اجازه ویرایش دارو و تجهیزات را ندارید.", Severity.Warning);
-        e.Cancel = true;
-    }
-    private void MedicineEditModel(GridCustomizeEditModelEventArgs e)
-    {
-        var dataItem = (Medication?)e.DataItem ?? new Medication(Session1);
-        e.EditModel = dataItem;
-    }
-
-    private async Task OnEditModelSaving(GridEditModelSavingEventArgs e)
-    {
-        var editModel = (Medication)e.EditModel;
-        //Validation
-        if (string.IsNullOrEmpty(editModel.Name) || string.IsNullOrEmpty(editModel.Dose) ||
-            string.IsNullOrEmpty(editModel.DrugForm) || string.IsNullOrEmpty(editModel.Category))
+        switch (e.RequestType)
         {
-            Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
-            e.Cancel = true;
-            return;
+            case Action.Add:
+                if (SamcoSoftShared.CurrentUserRole > SamcoSoftShared.SiteRoles.Supervisor)
+                {
+                    Snackbar.Add("شما اجازه ویرایش دارو و تجهیزات را ندارید.", Severity.Warning);
+                    e.Cancel = true;
+                }
+
+                e.Data ??= new Medication(Session1);
+                break;
+            case Action.BeginEdit:
+                if (SamcoSoftShared.CurrentUserRole > SamcoSoftShared.SiteRoles.Supervisor)
+                {
+                    Snackbar.Add("شما اجازه ویرایش دارو و تجهیزات را ندارید.", Severity.Warning);
+                    e.Cancel = true;
+                }
+
+                e.Data = await Session1.GetObjectByKeyAsync<Medication>(e.RowData.Oid);
+                break;
+            case Action.Save:
+                var editModel = e.Data;
+                //Validation
+                if (string.IsNullOrEmpty(editModel.Name) || string.IsNullOrEmpty(editModel.Dose) ||
+                    string.IsNullOrEmpty(editModel.DrugForm) || string.IsNullOrEmpty(editModel.Category))
+                {
+                    Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
+                    e.Cancel = true;
+                    return;
+                }
+
+                //Check drug not existed before
+                var selMedication = await Session1.Query<Medication>().FirstOrDefaultAsync(x =>
+                    x.Name == editModel.Name &&
+                    x.Dose == editModel.Dose &&
+                    x.DrugForm == editModel.DrugForm);
+
+                if (selMedication != null && selMedication.Oid != editModel.Oid)
+                {
+                    //Medication existed
+                    Snackbar.Add(
+                        "دارو / تجهیز با همین مشخصات در سیستم موجود است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.",
+                        Severity.Error);
+                    e.Cancel = true;
+                    return;
+                }
+
+                editModel.Save();
+                break;
+            case Action.Delete:
+                if (SamcoSoftShared.CurrentUserRole > SamcoSoftShared.SiteRoles.Supervisor)
+                {
+                    Snackbar.Add("شما اجازه ویرایش دارو و تجهیزات را ندارید.", Severity.Warning);
+                    e.Cancel = true;
+                    return;
+                }
+
+                e.RowData.Delete();
+                break;
         }
+    }
 
-        //Check drug not existed before
-        var selMedication = await Session1.Query<Medication>().FirstOrDefaultAsync(x => x.Name == editModel.Name &&
-            x.Dose == editModel.Dose &&
-            x.DrugForm == editModel.DrugForm);
-        if (e.IsNew)
+    private async Task MedicToolbarClickHandler(Syncfusion.Blazor.Navigations.ClickEventArgs args)
+    {
+        if (args.Item.Id == "medicGrid_Excel Export")
         {
-            if (selMedication != null)
+            Snackbar.Add("سیستم در حال ایجاد فایل است. لطفاً تا دانلود گزارش شکیبا باشید...", Severity.Info);
+            var exportProperties = new ExcelExportProperties
             {
-                //drug existed
-                Snackbar.Add("دارو / تجهیز با همین مشخصات در سیستم موجود است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.", Severity.Error);
-                e.Cancel = true;
-                return;
-            }
-        }
-        else
-        {
-            if (selMedication != null && selMedication.Oid != editModel.Oid)
-            {
-                //User existed
-                Snackbar.Add("دارو / تجهیز با همین مشخصات در سیستم موجود است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.", Severity.Error);
-                e.Cancel = true;
-                return;
-            }
-        }
-
-        editModel.Save();
-        MedicineList = await Session1.Query<Medication>().ToListAsync();
-    }
-
-    private async Task OnDataItemDeleting(GridDataItemDeletingEventArgs e)
-    {
-        //prevent owner editing
-        if (SamcoSoftShared.CurrentUserRole > SamcoSoftShared.SiteRoles.Supervisor)
-        {
-            Snackbar.Add("شما اجازه ویرایش دارو و تجهیزات را ندارید.", Severity.Warning);
-            e.Cancel = true;
-            return;
-        }
-
-        var dataItem =
-            await Session1.FindObjectAsync<Medication>(new BinaryOperator("Oid", (e.DataItem as Medication)!.Oid));
-        if (dataItem != null)
-        {
-            dataItem.Delete();
-            MedicineList = await Session1.Query<Medication>().ToListAsync();
+                FileName = "MedicationList.xlsx"
+            };
+            await MedicineGrid!.ExportToExcelAsync(exportProperties);
         }
     }
-
     #endregion
 
     #region MedicationCount
 
-    private DxPopup? SetNumberModal { get; set; }
-    private DxComboBox<Rig, Rig>? RigBx { get; set; }
+    private SfDialog? SetNumberModal { get; set; }
     private MedicationStock? _selMedicationStock;
+
     private async Task OnSetNumberBtnClick()
     {
-        if (MedicineGrid!.SelectedDataItems.Any() == false)
+        if (MedicineGrid!.SelectedRecords.Any() == false)
         {
             Snackbar.Add("لطفاً یک دارو / تجهیز را از لیست زیر انتخاب کنید.", Severity.Warning);
             return;
         }
 
-        _selMedicationStock = new MedicationStock(Session1) { MedicName = (Medication)MedicineGrid!.SelectedDataItem };
+        _selMedicationStock = new MedicationStock(Session1) { MedicName = MedicineGrid!.SelectedRecords.First() };
         //auto select rig
         await SetNumberModal!.ShowAsync();
-#pragma warning disable BL0005
-        if (Rigs.Count() == 1) RigBx!.Text = Rigs.First().Name;
-#pragma warning restore BL0005
     }
 
-    private void RigSelectionChanged(object itm)
+    private void RigSelectionChanged(Rig itm)
     {
         //Change data source if needed
-        var selMedication = (Medication)MedicineGrid!.SelectedDataItem;
+        var selMedication = MedicineGrid!.SelectedRecords.FirstOrDefault();
+        if (selMedication == null) return;
         //Get stock items
-        var stockItm = Session1.Query<MedicationStock>().Where(x => x.RigNo.Oid == ((Rig)itm).Oid &&
-                                                                   x.MedicName.Oid == selMedication.Oid);
+        var stockItm = Session1.Query<MedicationStock>().Where(x => x.RigNo.Oid == (itm).Oid &&
+                                                                    x.MedicName.Oid == selMedication.Oid);
         if (stockItm.Any())
         {
             _selMedicationStock = stockItm.First();
@@ -207,11 +181,12 @@ public partial class Drugs
         {
             _selMedicationStock = new MedicationStock(Session1)
             {
-                MedicName = (Medication)MedicineGrid!.SelectedDataItem,
-                RigNo = (Rig)itm
+                MedicName = MedicineGrid!.SelectedRecords.First(),
+                RigNo = itm
             };
         }
     }
+
     private async Task SetCountOkBtnClick()
     {
         //Validation
@@ -220,19 +195,19 @@ public partial class Drugs
             Snackbar.Add("لطفاً یک دکل را انتخاب کنید.", Severity.Error);
             return;
         }
+
         _selMedicationStock?.Save();
         Snackbar.Add("اطلاعات با موفقیت ثبت شد.", Severity.Success);
-        MedicineGrid!.Reload();
-        await SetNumberModal!.CloseAsync();
+        await MedicineGrid!.Refresh();
+        await SetNumberModal!.HideAsync();
     }
+
     #endregion
 
     #region DrugRequest
-
-
-    #endregion
-    private DxPopup? DrugRequestModal { get; set; }
+    private SfDialog? DrugRequestModal { get; set; }
     private Rig? _selRig;
+
     private async Task OnDrugRequestBtnClick()
     {
         await DrugRequestModal!.ShowAsync();
@@ -246,7 +221,10 @@ public partial class Drugs
             return;
         }
 
-        var parameter = $"ReportName=MedicineRequest&Parameters=RigId--{_selRig.Oid}|Title--شرکت {Configuration["CompanyInfo:Name"]} - دکل {_selRig.Name}";
+        var parameter =
+            $"ReportName=MedicineRequest&Parameters=RigId--{_selRig.Oid}|Title--شرکت {Configuration["CompanyInfo:Name"]} - دکل {_selRig.Name}";
         NavigationManager.NavigateTo("report?" + parameter);
+        DrugRequestModal?.HideAsync();
     }
+    #endregion
 }

@@ -1,9 +1,10 @@
-﻿using DevExpress.Blazor;
-using DevExpress.Data.Filtering;
+﻿using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using Samco_HSE.HSEData;
 using MudBlazor;
+using Syncfusion.Blazor.Grids;
+using Action = Syncfusion.Blazor.Grids.Action;
 
 namespace Samco_HSE_Manager.Pages.Officer;
 
@@ -22,15 +23,17 @@ public partial class StopCards : IDisposable
 
     private readonly IEnumerable<string> _stopRisk = new List<string>
     {
-        "ایمن","کم","متوسط","زیاد","خیلی زیاد"
+        "ایمن", "کم", "متوسط", "زیاد", "خیلی زیاد"
     };
+
     private readonly IEnumerable<string> _stopProb = new List<string>
     {
-       "خیلی کم","کم","متوسط","زیاد","خیلی زیاد"
+        "خیلی کم", "کم", "متوسط", "زیاد", "خیلی زیاد"
     };
+
     private readonly IEnumerable<string> _status = new List<string>
     {
-        "باز","بسته","لغو شده"
+        "باز", "بسته", "لغو شده"
     };
 
     private IEnumerable<string> _category = null!;
@@ -38,14 +41,16 @@ public partial class StopCards : IDisposable
     private Rig? _selRig;
     private IEnumerable<Rig>? Rigs { get; set; }
 
-    private DxGrid? StopGrid { get; set; }
+    private SfGrid<StopCard>? StopGrid { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Session1 = new Session(DataLayer);
         RigRoles = await File.ReadAllLinesAsync(Path.Combine(HostEnvironment.WebRootPath, "content", "RigRoles.txt"));
-        _category = await File.ReadAllLinesAsync(Path.Combine(HostEnvironment.WebRootPath, "content", "STOPCardCategory.txt"));
-        _location = await File.ReadAllLinesAsync(Path.Combine(HostEnvironment.WebRootPath, "content", "RigLocation.txt"));
+        _category = await File.ReadAllLinesAsync(Path.Combine(HostEnvironment.WebRootPath, "content",
+            "STOPCardCategory.txt"));
+        _location = await File.ReadAllLinesAsync(
+            Path.Combine(HostEnvironment.WebRootPath, "content", "RigLocation.txt"));
         await LoadInformation();
     }
 
@@ -62,7 +67,8 @@ public partial class StopCards : IDisposable
                 await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
 
             StopsList = Session1.Query<StopCard>().Where(x => loggedUser.Rigs.Contains(x.WorkID.RigNo));
-            PersonnelList = await Session1.Query<Samco_HSE.HSEData.Personnel>().Where(x => loggedUser.Rigs.Contains(x.ActiveRig)).ToListAsync();
+            PersonnelList = await Session1.Query<Samco_HSE.HSEData.Personnel>()
+                .Where(x => loggedUser.Rigs.Contains(x.ActiveRig)).ToListAsync();
             Rigs = loggedUser.Rigs;
         }
         else
@@ -73,61 +79,119 @@ public partial class StopCards : IDisposable
             Rigs = await Session1.Query<Rig>().ToListAsync();
         }
     }
-    private void StopGrid_CustomizeElement(GridCustomizeElementEventArgs e)
+
+    private void Customize_Row(RowDataBoundEventArgs<StopCard> args)
     {
-        if (e.ElementType == GridElementType.DataRow)
+        var status = args.Data.Status;
+        if (status != null)
         {
-            var status = (string?)e.Grid.GetRowValue(e.VisibleIndex, "Status");
-            if (status != null)
+            args.Row.AddClass(new[]
             {
-                e.CssClass = status switch
+                status switch
                 {
                     "باز" => "danger-item",
                     "بسته" => "safe-item",
                     _ => ""
-                };
-            }
-
+                }
+            });
         }
-    }
-    private void StopGridUnbound(GridUnboundColumnDataEventArgs itm)
-    {
-        if (itm.FieldName != "Risk") return;
-        var card = (StopCard)itm.DataItem;
-        var sever = _stopRisk.ToList().IndexOf(card.Severity) + 1;
-        var prob = _stopProb.ToList().IndexOf(card.Probablety) + 1;
-        var result = (sever * prob) switch
-        {
-            >= 16 => "High",
-            >= 9 => "Medium",
-            _ => "Low"
-        };
-        itm.Value = result;
     }
 
     #region StopGrid
 
     private List<string>? _photoList;
     private bool _photoShowVisible;
-    private void StopEditModel(GridCustomizeEditModelEventArgs e)
+
+    private void StopGrid_Action(ActionEventArgs<StopCard> e)
     {
-        var dataItem = (StopCard?)e.DataItem ?? new StopCard(Session1);
-        if (dataItem.WorkID != null) _selRig = dataItem.WorkID.RigNo;
-        //Get related photos
-        _photoList = null;
-        var path = Path.Combine(HostEnvironment.WebRootPath, "upload", "STOPCards", dataItem.Oid.ToString());
-        if (Directory.Exists(path))
-            _photoList = Directory.GetFiles(path).Select(x => Path.Combine(NavigationManager.BaseUri, "upload", "STOPCards", dataItem.Oid.ToString(), x.Split("\\").Last())).ToList();
-        e.EditModel = dataItem;
+        switch (e.RequestType)
+        {
+            case Action.Add:
+                e.Data ??= new StopCard(Session1);
+                break;
+            case Action.BeginEdit:
+                var dataItem = e.RowData;
+                if (dataItem.WorkID != null) _selRig = dataItem.WorkID.RigNo;
+                //Get related photos
+                _photoList = null;
+                var path = Path.Combine(HostEnvironment.WebRootPath, "upload", "STOPCards", dataItem.Oid.ToString());
+                if (Directory.Exists(path))
+                    _photoList = Directory.GetFiles(path).Select(x => Path.Combine(NavigationManager.BaseUri, "upload",
+                        "STOPCards", dataItem.Oid.ToString(), x.Split("\\").Last())).ToList();
+                e.Data = Session1.GetObjectByKey<StopCard>(e.RowData.Oid);
+                break;
+            case Action.Save:
+                var editModel = e.Data;
+                var loggedUser =
+                    Session1.FindObject<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
+                //Validation
+                if (_selRig == null || editModel.Reporter == null || editModel.ReportDate == null ||
+                    string.IsNullOrEmpty(editModel.Location) || string.IsNullOrEmpty(editModel.Category) ||
+                    string.IsNullOrEmpty(editModel.Observation))
+                {
+                    Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
+                    e.Cancel = true;
+                    return;
+                }
+
+                var wellWork = Session1.Query<WellWork>().FirstOrDefault(x => x.RigNo.Oid == _selRig.Oid &&
+                    x.IsActive);
+
+                if (wellWork == null)
+                {
+                    Snackbar.Add("دکل انتخاب شده در هیچ پروژه‌ای فعال نیست.", Severity.Error);
+                    e.Cancel = true;
+                    return;
+                }
+
+                //Check date
+                if (editModel.ReportDate < wellWork.StartDate)
+                {
+                    Snackbar.Add("تاریخ انتخاب شده با تاریخ شروع پروژه مطابقت ندارد.", Severity.Error);
+                    e.Cancel = true;
+                    return;
+                }
+
+                editModel.WorkID = wellWork;
+                editModel.Agent ??= loggedUser;
+                editModel.Save();
+                break;
+            case Action.Delete:
+                if (SamcoSoftShared.CurrentUserRole > SamcoSoftShared.SiteRoles.Supervisor)
+                {
+                    Snackbar.Add("شما اجازه ویرایش تجهیزات را ندارید.", Severity.Warning);
+                    e.Cancel = true;
+                    return;
+                }
+
+                e.RowData.Delete();
+                break;
+        }
     }
 
+    private async Task StopToolbarClickHandler(Syncfusion.Blazor.Navigations.ClickEventArgs args)
+    {
+        if (args.Item.Id == "stopGrid_Excel Export")
+        {
+            Snackbar.Add("سیستم در حال ایجاد فایل است. لطفاً تا دانلود گزارش شکیبا باشید...", Severity.Info);
+            var exportProperties = new ExcelExportProperties
+            {
+                FileName = "StopCardList.xlsx"
+            };
+            await StopGrid!.ExportToExcelAsync(exportProperties);
+        }
+    }
+    
     private void ShowImages(int oid)
     {
         _photoList = null;
         //Get related photos
         var path = Path.Combine(HostEnvironment.WebRootPath, "upload", "STOPCards", oid.ToString());
         if (Directory.Exists(path))
-            _photoList = Directory.GetFiles(path).Select(x => Path.Combine(NavigationManager.BaseUri, "upload", "STOPCards", oid.ToString(), x.Split("\\").Last())).ToList();
+            _photoList = Directory.GetFiles(path).Select(x =>
+                    Path.Combine(NavigationManager.BaseUri, "upload", "STOPCards", oid.ToString(),
+                        x.Split("\\").Last()))
+                .ToList();
         if (_photoList != null && _photoList.Any())
         {
             _photoShowVisible = true;
@@ -136,74 +200,12 @@ public partial class StopCards : IDisposable
         {
             Snackbar.Add("تصویری وجود ندارد.", Severity.Warning);
         }
-
     }
+
     private async Task RigChanged(Rig obj)
     {
-        PersonnelList = await Session1.Query<Samco_HSE.HSEData.Personnel>().Where(x => x.ActiveRig.Oid == obj.Oid).ToListAsync();
+        PersonnelList = await Session1.Query<Samco_HSE.HSEData.Personnel>().Where(x => x.ActiveRig.Oid == obj.Oid)
+            .ToListAsync();
     }
-    private async Task OnEditModelSaving(GridEditModelSavingEventArgs e)
-    {
-        var editModel = (StopCard)e.EditModel;
-        var loggedUser =
-            await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
-        //Validation
-        if (_selRig == null || editModel.Reporter == null || editModel.ReportDate == null ||
-            string.IsNullOrEmpty(editModel.Location) || string.IsNullOrEmpty(editModel.Category) ||
-            string.IsNullOrEmpty(editModel.Observation))
-        {
-            Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
-            e.Cancel = true;
-            return;
-        }
-
-        var wellWork = await Session1.Query<WellWork>().FirstOrDefaultAsync(x => x.RigNo.Oid == _selRig.Oid &&
-            x.IsActive);
-
-        if (wellWork == null)
-        {
-            Snackbar.Add("دکل انتخاب شده در هیچ پروژه‌ای فعال نیست.", Severity.Error);
-            e.Cancel = true;
-            return;
-        }
-
-        //Check date
-        if (editModel.ReportDate < wellWork.StartDate)
-        {
-            Snackbar.Add("تاریخ انتخاب شده با تاریخ شروع پروژه مطابقت ندارد.", Severity.Error);
-            e.Cancel = true;
-            return;
-        }
-        editModel.WorkID = wellWork;
-        editModel.Agent ??= loggedUser;
-        editModel.Save();
-
-        await LoadInformation();
-    }
-    private async Task OnDataItemDeleting(GridDataItemDeletingEventArgs e)
-    {
-        var dataItem =
-            await Session1.FindObjectAsync<StopCard>(new BinaryOperator("Oid", (e.DataItem as StopCard)!.Oid));
-        dataItem?.Delete();
-        await LoadInformation();
-    }
-
-    private async Task OnPrintBtnClick()
-    {
-        Snackbar.Add("سیستم در حال ایجاد فایل است. لطفاً تا دانلود گزارش شکیبا باشید...", Severity.Info);
-
-        //var getReport = PersonnelGrid?.ExportToXlsxAsync("Personnel", new GridXlExportOptions
-        await StopGrid?.ExportToXlsxAsync("StopCards", new GridXlExportOptions
-        {
-            CustomizeSheet = SamcoSoftShared.CustomizeSheet,
-            CustomizeCell = SamcoSoftShared.CustomizeCell,
-            CustomizeSheetFooter = SamcoSoftShared.CustomizeFooter
-        })!;
-    }
-    private void ColumnChooserOnClick()
-    {
-        StopGrid?.ShowColumnChooser(".column-chooser-button");
-    }
-
     #endregion
 }

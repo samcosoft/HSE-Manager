@@ -1,1 +1,31 @@
-﻿@page "/filemanager"
+﻿@using Syncfusion.Blazor.FileManager
+<SfFileManager TValue="FileManagerDirectoryContent" EnableRtl="false">
+    <FileManagerEvents TValue="FileManagerDirectoryContent" OnSend="Send"></FileManagerEvents>
+    <FileManagerAjaxSettings Url="/api/FileManager/FileOperations"
+                             DownloadUrl="/api/FileManager/Download"
+                             UploadUrl="/api/FileManager/Upload"
+                             GetImageUrl="/api/FileManager/GetImage">
+    </FileManagerAjaxSettings>
+</SfFileManager>
+
+@code
+{
+    [Parameter]
+    public SamcoSoftShared.UploadFolders StartPath { get; set; }
+
+    [Parameter]
+    public string? DataId { get; set; }
+
+    private void Send(BeforeSendEventArgs args)
+    {
+        var directoryPath = StartPath switch
+        {
+            SamcoSoftShared.UploadFolders.StopCards => "STOPCards",
+            SamcoSoftShared.UploadFolders.Medical => "Medical",
+            _ => throw new ArgumentOutOfRangeException()
+            };
+        directoryPath = Path.Combine(directoryPath, DataId!);
+        var data = new Dictionary<string, object> { { "startPath", directoryPath } };
+        args.CustomData = data;
+    }
+}

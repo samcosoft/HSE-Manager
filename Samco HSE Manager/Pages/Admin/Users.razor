@@ -1,195 +1,252 @@
 ﻿@page "/users"
 @attribute [Authorize(Roles = "Owner,Admin")]
 @using Samco_HSE.HSEData
+@using Syncfusion.Blazor.Popups
 @using Microsoft.AspNetCore.Components
+@using FilterType = Syncfusion.Blazor.Grids.FilterType
 
 <PageTitle>مدیریت کاربران</PageTitle>
 
 <MudCard>
     <MudCardHeader>
-        <DxMenu Title="مدیریت کاربران" ItemsPosition="ItemPosition.Start" CssClass="card-header">
-            <Items>
-                <DxMenuItem Text="تنظیم کلمه عبور" IconCssClass="fas fa-key" @onclick="OnNewPassBtnClick" />
-                <DxMenuItem Text="تنظیم دسترسی اطلاعات" IconCssClass="fas fa-unlock" @onclick="OnPermitBtnClick" />
-                <DxMenuItem Text="دسترسی پرسنل" IconCssClass="fas fa-user" @onclick="OnUpgradeBtnClick" />
-            </Items>
-        </DxMenu>
+        <MudPaper Elevation="3" Width="100%" Class="pa-3">
+            <MudGrid>
+                <MudItem>
+                    <MudText Typo="Typo.h5">مدیریت کاربران</MudText>
+                </MudItem>
+                <MudItem>
+                    <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
+                        <MudButton StartIcon="fas fa-key" IconColor="Color.Error" OnClick="OnNewPassBtnClick">تنظیم کلمه عبور</MudButton>
+                        <MudButton StartIcon="fas fa-unlock" IconColor="Color.Warning" OnClick="OnPermitBtnClick">تنظیم دسترسی اطلاعات</MudButton>
+                        <MudButton StartIcon="fas fa-user" IconColor="Color.Tertiary" OnClick="OnUpgradeBtnClick">دسترسی پرسنل</MudButton>
+                    </MudButtonGroup>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
     </MudCardHeader>
     <MudCardContent>
-        <DxGrid @ref="UserGrid" Data="@SystemUsers" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"
-                EditModelSaving="OnEditModelSaving" DataItemDeleting="OnDataItemDeleting" CustomizeEditModel="UserEditModel"
-                UnboundColumnData="UserGridUnbound" EditStart="UserGrid_EditStart" ShowSearchBox="true" ShowFilterRow="true" SelectionMode="GridSelectionMode.Single"
-                AllowSelectRowByClick="true" ColumnResizeMode="GridColumnResizeMode.ColumnsContainer" AllowGroup="true"
-                SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center" ValidationEnabled="false">
-            <Columns>
-                <DxGridCommandColumn MinWidth="100" />
-                <DxGridDataColumn Caption="نام دکل" FieldName="ActiveRig.Name" MinWidth="50" />
-                <DxGridDataColumn Caption="نام کاربری" FieldName="Username" MinWidth="100" />
-                <DxGridDataColumn Caption="نقش" FieldName="SiteRole" MinWidth="100" />
-                <DxGridDataColumn Caption="نام و نام خانوادگی" FieldName="PersonnelName" MinWidth="150" />
-                <DxGridDataColumn Caption="کد ملی" FieldName="NationalID" MinWidth="100" />
-                <DxGridDataColumn Caption="تاریخ تولد" FieldName="BirthDate" MinWidth="100" />
-                <DxGridDataColumn Caption="متأهل" FieldName="Marriage" MinWidth="70">
-                    <CellDisplayTemplate>
-                        <DxCheckBox CssClass="d-inline-block" Checked="@((bool)context.Value)" Enabled="false" />
-                    </CellDisplayTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn Caption="شماره پرسنلی" FieldName="PersonnelNum" MinWidth="100" />
-                <DxGridDataColumn Caption="سمت فعلی" FieldName="CurrentRole" MinWidth="100" />
-                <DxGridDataColumn Caption="تاریخ استخدام" FieldName="EmpDate" MinWidth="100" />
-                <DxGridDataColumn Caption="تلفن همراه" FieldName="MobileNum" MinWidth="100" />
-                <DxGridDataColumn Caption="ایمیل" FieldName="BusinessEmail" MinWidth="150" />
-                <DxGridDataColumn Caption="وضعیت" FieldName="Status" MinWidth="100" />
-                <DxGridDataColumn Caption="تاریخ آخرین ورود به سیستم" FieldName="LastLogin" MinWidth="100" />
-            </Columns>
-            <EditFormTemplate Context="editFormContext">
-                @{
-                    var user = (User)editFormContext.EditModel;
-                }
-                <DxFormLayout>
-                    <DxFormLayoutGroup AnimationType="LayoutAnimationType.Slide" Caption="اطلاعات ورود به سیستم">
-                        <DxFormLayoutItem Caption="نام کاربری:" ColSpanMd="4" ColSpanSm="12">
-                            <DxTextBox @bind-Text="@user.Username" NullText="الزامی" CssClass="ltr" />
-                        </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="نقش:" ColSpanMd="4" ColSpanSm="12">
-                            <DxComboBox Data="_roles" TextFieldName="Value" ValueFieldName="Key" NullText="الزامی"
-                                        @bind-Value="@user.SiteRole">
-                            </DxComboBox>
-                        </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="داشبورد:" ColSpanMd="4" ColSpanSm="12">
-                            <DxComboBox Data="Dashboards" @bind-Value="@user.DashboardId">
-                            </DxComboBox>
-                        </DxFormLayoutItem>
-                    </DxFormLayoutGroup>
-                    <DxFormLayoutGroup AnimationType="LayoutAnimationType.Slide" Caption="اطلاعات شخصی" ExpandButtonDisplayMode="GroupExpandButtonDisplayMode.Start" CssClass="front-form">
-                        @* <DxFormLayoutItem Caption="نام دکل / محل فعالیت:">
-                        <DxComboBox Data="@Rigs" TextFieldName="@nameof(Rig.Name)" @bind-Value="@user.ActiveRig" NullText="الزامی" />
-                        </DxFormLayoutItem>*@
-                        <DxFormLayoutItem Caption="نام و نام خانوادگی:">
-                            <DxTextBox @bind-Text="@user.PersonnelName" NullText="الزامی" />
-                        </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="نام و نام خانوادگی (انگلیسی):">
-                            <DxTextBox @bind-Text="@user.EnglishName" CssClass="ltr" />
-                        </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="کد ملی:">
-                            <DxMaskedInput @bind-Value="@user.NationalID" MaskMode="MaskMode.Text" Mask="0000000000" InputCssClass="ltr" CssClass="text-center">
-                                <DxTextMaskProperties SaveLiteral="false" />
-                            </DxMaskedInput>
-                        </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="تاریخ تولد:" ColSpanLg="6">
-                            <SamcoDateSelector @bind-Date="@user.BirthDate" DefaultCalendar="SamcoDateSelector.CalendarType.Shamsi" />
-                        </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="وضعیت تأهل:">
-                            <DxCheckBox @bind-Checked="@user.Marriage">متأهل</DxCheckBox>
-                        </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="تلفن همراه:">
-                            <DxMaskedInput @bind-Value="@user.MobileNum" MaskMode="MaskMode.Text" Mask="\0\9000000000" InputCssClass="ltr" CssClass="text-center" />
-                        </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="تلفن منزل:">
-                            <DxMaskedInput @bind-Value="@user.HomeNum" MaskMode="MaskMode.Text" Mask="\00000000000" InputCssClass="ltr" CssClass="text-center" />
-                        </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="شماره بیمه:">
-                            <DxTextBox @bind-Text="@user.InsuranceNum" CssClass="ltr" />
-                        </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="اعتبار گواهینامه:" ColSpanLg="6">
-                            <SamcoDateSelector @bind-Date="@user.LicenseDate" DefaultCalendar="SamcoDateSelector.CalendarType.Shamsi" />
-                        </DxFormLayoutItem>
-                    </DxFormLayoutGroup>
-                    <DxFormLayoutGroup AnimationType="LayoutAnimationType.Slide" Caption="اطلاعات شغلی" ExpandButtonDisplayMode="GroupExpandButtonDisplayMode.Start">
-                        <DxFormLayoutItem Caption="نام دکل / محل فعالیت:">
-                            <DxComboBox Data="@Rigs" TextFieldName="@nameof(Rig.Name)" @bind-Value="@user.ActiveRig" NullText="الزامی" />
-                        </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="تاریخ استخدام:" ColSpanLg="6">
-                            <SamcoDateSelector @bind-Date="@user.EmpDate" DefaultCalendar="SamcoDateSelector.CalendarType.Shamsi" />
-                        </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="سمت فعلی:">
-                            <DxComboBox Data="@RigRoles" @bind-Value="@user.CurrentRole" NullText="الزامی" FilteringMode="DataGridFilteringMode.Contains" />
-                        </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="شماره پرسنلی:">
-                            <DxTextBox @bind-Text="@user.PersonnelNum" />
-                        </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="وضعیت:">
-                            <DxComboBox Data="@_status" @bind-Value="@user.Status" NullText="الزامی" />
-                        </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="ایمیل سازمانی:">
-                            @{
-                                const string regexMask = @"(\w|[.-])+@(\w|-)+\.(\w|-){2,4}";
-                            }
-                            <DxMaskedInput @bind-Value="@user.BusinessEmail" MaskMode="MaskMode.RegEx" Mask="@regexMask" InputCssClass="ltr" CssClass="text-center" />
-                        </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="سمت قبلی:">
-                            <DxComboBox Data="@RigRoles" @bind-Value="@user.PreviousRole" />
-                        </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="تاریخ آخرین ارتقا:" ColSpanLg="6">
-                            <SamcoDateSelector @bind-Date="@user.LastUpgradeDate" DefaultCalendar="SamcoDateSelector.CalendarType.Shamsi" />
-                        </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="سایز لباس:">
-                            <DxMaskedInput @bind-Value="@user.ClothSize" MaskMode="MaskMode.Numeric" Mask="d" InputCssClass="ltr" CssClass="text-center" />
-                        </DxFormLayoutItem>
-                        <DxFormLayoutItem Caption="سایز کفش:">
-                            <DxMaskedInput @bind-Value="@user.ShoeSize" MaskMode="MaskMode.Numeric" Mask="d" InputCssClass="ltr" CssClass="text-center" />
-                        </DxFormLayoutItem>
-                    </DxFormLayoutGroup>
-                </DxFormLayout>
-            </EditFormTemplate>
-        </DxGrid>
+        <SfGrid @ref="UserGrid" ID="userGrid" DataSource="@SystemUsers" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
+                AllowGrouping="true" Toolbar="@(new[] { "Add", "Edit", "Delete", "Excel Export", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
+                AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
+                AllowExcelExport="true" Width="100%">
+            <GridEvents TValue="User" OnActionBegin="UserGrid_Action"
+                        OnToolbarClick="UserToolbarClickHandler"/>
+            <GridFilterSettings Type="FilterType.Excel"/>
+            <GridColumns>
+                <GridColumn HeaderText="ردیف" Field="Oid" IsPrimaryKey="true" Visible="false"/>
+                <GridColumn HeaderText="دکل / دفتر" Field="ActiveRig.Name" AutoFit="true"/>
+                <GridColumn HeaderText="نام کاربری" Field="Username" AutoFit="true"/>
+                <GridColumn HeaderText="نقش" Field="SiteRole" AutoFit="true"/>
+                <GridColumn HeaderText="نام و نام خانوادگی" Field="PersonnelName" AutoFit="true"/>
+                <GridColumn HeaderText="کد ملی" Field="NationalID" AutoFit="true"/>
+                <GridColumn HeaderText="تاریخ تولد" Field="BirthDate" AutoFit="true"/>
+                <GridColumn HeaderText="متأهل" Field="Marriage" AutoFit="true" DisplayAsCheckBox="true"/>
+                <GridColumn HeaderText="شماره پرسنلی" Field="PersonnelNum" AutoFit="true"/>
+                <GridColumn HeaderText="سمت فعلی" Field="CurrentRole" AutoFit="true"/>
+                <GridColumn HeaderText="تاریخ استخدام" Field="EmpDate" AutoFit="true"/>
+                <GridColumn HeaderText="تلفن همراه" Field="MobileNum" AutoFit="true"/>
+                <GridColumn HeaderText="ایمیل" Field="BusinessEmail" AutoFit="true"/>
+                <GridColumn HeaderText="وضعیت" Field="Status" AutoFit="true"/>
+                <GridColumn HeaderText="تاریخ آخرین ورود به سیستم" Field="LastLogin" AutoFit="true"/>
+            </GridColumns>
+            <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" AllowEditOnDblClick="true" Mode="EditMode.Dialog"
+                              ShowDeleteConfirmDialog="true" Dialog="@SamcoSoftShared.GeneralGridEditOption">
+                <Validator>
+                    <DataAnnotationsValidator/>
+                </Validator>
+                <Template Context="editFormContext">
+                    @{
+                        var user = editFormContext as User;
+                    }
+                    <MudRTLProvider RightToLeft="true">
+                        <MudExpansionPanels MultiExpansion="true">
+                            <MudExpansionPanel Text="اطلاعات ورود به سیستم" IsInitiallyExpanded="true">
+                                <MudGrid>
+                                    <MudItem md="4" sm="12">
+                                        <MudTextField Label=":نام کاربری" @bind-Value="@user.Username" Variant="Variant.Text" Placeholder="الزامی" Class="ltr"/>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="نقش:" DisableUnderLine="true">
+                                            <SfComboBox TItem="KeyValuePair<string, string>" TValue="string" DataSource="@_roles" Placeholder="الزامی"
+                                                        @bind-Value="@user.SiteRole">
+                                                <ComboBoxFieldSettings Text="Value" Value="Key"/>
+                                            </SfComboBox>
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="داشبورد:" DisableUnderLine="true">
+                                            <SfComboBox TItem="string" TValue="string" DataSource="@Dashboards" Placeholder="الزامی"
+                                                        @bind-Value="@user.DashboardId">
+                                            </SfComboBox>
+                                        </MudField>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudExpansionPanel>
+                            <MudExpansionPanel Text="اطلاعات شخصی" IsInitiallyExpanded="true">
+                                <MudGrid>
+                                    <MudItem md="4" sm="12">
+                                        <MudTextField @bind-Value="@user.PersonnelName" Label="نام و نام خانوادگی:" Variant="Variant.Text" Placeholder="الزامی"/>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudTextField @bind-Value="@user.EnglishName" Label=":نام و نام خانوادگی (انگلیسی)" Variant="Variant.Text" Adornment="Adornment.Start" Class="ltr"/>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudTextField @bind-Value="@user.NationalID" Label=":کد ملی" Variant="Variant.Text" Mask="@(new PatternMask("0000000000"))" Placeholder="الزامی" Class="ltr"/>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="تاریخ تولد:" DisableUnderLine="true">
+                                            <SamcoDateSelector @bind-Date="@user.BirthDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="وضعیت تأهل:" DisableUnderLine="true">
+                                            <MudCheckBox @bind-Checked="@user.Marriage" Label="متأهل"/>
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudTextField @bind-Value="@user.MobileNum" Label=":تلفن همراه" Variant="Variant.Text" Mask="@(new PatternMask("00000000000"))" Adornment="Adornment.Start" Class="ltr"/>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudTextField @bind-Value="@user.HomeNum" Label=":تلفن منزل" Variant="Variant.Text" Mask="@(new PatternMask("00000000000"))" Adornment="Adornment.Start" Class="ltr"/>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudTextField @bind-Value="@user.InsuranceNum" Label=":شماره بیمه" Variant="Variant.Text" Adornment="Adornment.Start" Class="ltr"/>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="تاریخ انقضا گواهینامه:" DisableUnderLine="true">
+                                            <SamcoDateSelector @bind-Date="@user.LicenseDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
+                                        </MudField>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudExpansionPanel>
+                            <MudExpansionPanel Text="اطلاعات شغلی" IsInitiallyExpanded="true">
+                                <MudGrid>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="نام دکل / محل فعالیت:" DisableUnderLine="true">
+                                            <SamcoRigSelector @bind-SelectedRig="@user.ActiveRig" DataSource="Rigs" Session="Session1"/>
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="تاریخ استخدام:" DisableUnderLine="true">
+                                            <SamcoDateSelector @bind-Date="@user.EmpDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="سمت فعلی:" DisableUnderLine="true">
+                                            <SfComboBox TItem="string" TValue="string" DataSource="@RigRoles" Placeholder="الزامی"
+                                                        @bind-Value="@user.CurrentRole">
+                                            </SfComboBox>
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudTextField Label=":شماره پرسنلی" @bind-Value="@user.PersonnelNum" Variant="Variant.Text" Placeholder="الزامی" Class="ltr"/>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="وضعیت:" DisableUnderLine="true">
+                                            <SfComboBox TItem="string" TValue="string" DataSource="@_status" Placeholder="الزامی"
+                                                        @bind-Value="@user.Status">
+                                            </SfComboBox>
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudTextField @bind-Value="@user.BusinessEmail" Variant="Variant.Text" Label="ایمیل سازمانی:"
+                                                      Mask="@(RegexMask.Email())" Class="ltr" InputMode="InputMode.email" Adornment="Adornment.Start"/>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="سمت قبلی:" DisableUnderLine="true">
+                                            <SfComboBox TItem="string" TValue="string" DataSource="@RigRoles"
+                                                        @bind-Value="@user.PreviousRole">
+                                            </SfComboBox>
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="تاریخ آخرین ارتقا:" DisableUnderLine="true">
+                                            <SamcoDateSelector @bind-Date="@user.LastUpgradeDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudNumericField Label="سایز لباس:" Min="35" Max="50" @bind-Text="@user.ClothSize" Adornment="Adornment.Start"/>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudNumericField Label="سایز کفش:" Min="35" Max="50" @bind-Text="@user.ShoeSize" Adornment="Adornment.Start"/>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudExpansionPanel>
+                        </MudExpansionPanels>
+                    </MudRTLProvider>
+                </Template>
+            </GridEditSettings>
+        </SfGrid>
     </MudCardContent>
 </MudCard>
 
-<DxPopup @ref="PassModal" HeaderText="اطلاعات دکل" ShowFooter="true" CloseOnOutsideClick="false" CloseOnEscape="false">
-    <BodyContentTemplate Context="_">
-        <DxFormLayout>
-            <DxFormLayoutItem Caption="کلمه عبور:" ColSpanMd="12">
-                <DxTextBox @bind-Text="@_newPass" Password="true" />
-            </DxFormLayoutItem>
-            <DxFormLayoutItem Caption="تکرار کلمه عبور:" ColSpanMd="12">
-                <DxTextBox @bind-Text="@_confPass" Password="true" />
-            </DxFormLayoutItem>
-        </DxFormLayout>
-    </BodyContentTemplate>
-    <FooterContentTemplate>
-        <MudButton Color="Color.Success" StartIcon="fas fa-check" OnClick="PassOkBtnClick">تأیید</MudButton>
-    </FooterContentTemplate>
-</DxPopup>
+<SfDialog @ref="PassModal" AllowDragging="true" Visible="false" IsModal="true" Width="600px" ShowCloseIcon="true"
+          Header="تنظیم کلمه عبور کاربر" CloseOnEscape="true">
+    <DialogTemplates>
+        <Content>
+            <MudGrid>
+                <MudItem>
+                    <MudTextField Label="کلمه عبور:" @bind-Value="@_newPass" InputType="InputType.Password"/>
+                </MudItem>
+                <MudItem>
+                    <MudTextField Label="تکرار کلمه عبور:" @bind-Value="@_confPass" InputType="InputType.Password"/>
+                </MudItem>
+            </MudGrid>
+        </Content>
+        <FooterTemplate>
+            <MudButton Color="Color.Success" StartIcon="fas fa-check" Variant="Variant.Filled" OnClick="PassOkBtnClick">تأیید</MudButton>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogPositionData Y="top"/>
+    <DialogAnimationSettings Effect="DialogEffect.FadeZoom"/>
+</SfDialog>
 
-<DxPopup @ref="PermitModal" HeaderText="سطح دسترسی" ShowFooter="true" CloseOnOutsideClick="false" CloseOnEscape="false">
-    <BodyContentTemplate Context="_">
-        <p>فقط در صورتی که می‌خواهید به یک کاربر اجازه دسترسی به اطلاعات چند دکل را بدهید از این قسمت استفاده کنید. دقت کنید که کاربر همواره به اطلاعات دکل فعال خود دسترسی دارد.</p>
-        <DxFormLayout>
-            <DxFormLayoutItem Caption="انتخاب دکل:" ColSpanMd="12">
-                <DxListBox Data="@Rigs" TData="Rig" TValue="Rig" TextFieldName="@nameof(Rig.Name)" @bind-Values="@PermitRigList"
-                           SelectionMode="ListBoxSelectionMode.Multiple" ShowCheckboxes="true" />
-            </DxFormLayoutItem>
-        </DxFormLayout>
-    </BodyContentTemplate>
-    <FooterContentTemplate>
-        <MudButton Color="Color.Success" StartIcon="fas fa-check" OnClick="PermitOkBtnClick">تأیید</MudButton>
-    </FooterContentTemplate>
-</DxPopup>
+<SfDialog @ref="PermitModal" AllowDragging="true" Visible="false" IsModal="true" Width="600px" ShowCloseIcon="true"
+          Header="سطح دسترسی" CloseOnEscape="true">
+    <DialogTemplates>
+        <Content>
+            <MudAlert Variant="Variant.Filled" Severity="Severity.Info">فقط در صورتی که می‌خواهید به یک کاربر اجازه دسترسی به اطلاعات چند دکل را بدهید از این قسمت استفاده کنید. دقت کنید که کاربر همواره به اطلاعات دکل فعال خود دسترسی دارد.</MudAlert>
+            <SamcoRigSelector @bind-SelectedRigs="PermitRigList" IsMultiselect="true" DataSource="Rigs" Session="Session1"/>
+        </Content>
+        <FooterTemplate>
+            <MudButton Color="Color.Success" StartIcon="fas fa-check" Variant="Variant.Filled" OnClick="PermitOkBtnClick">تأیید</MudButton>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogPositionData Y="top"/>
+    <DialogAnimationSettings Effect="DialogEffect.FadeZoom"/>
+</SfDialog>
 
-<DxPopup @ref="UpgradeModal" HeaderText="به روز رسانی پرسنل" ShowFooter="true" CloseOnOutsideClick="false" CloseOnEscape="false">
-    <BodyContentTemplate Context="_">
-        <p>در صورتی که می‌خواهید به پرسنل شرکت که قبلاً در سیستم ثبت کرده‌اید، دسترسی به سیستم دهید از این قسمت استفاده کنید.</p>
-        <DxFormLayout>
-            <DxFormLayoutItem Caption="نام پرسنل:" ColSpanMd="4" ColSpanSm="12">
-                <DxComboBox Data="@PersonnelList" @bind-Value="@_selPersonnel" NullText="الزامی"
-                            TextFieldName="@nameof(Personnel.PersonnelName)" FilteringMode="DataGridFilteringMode.Contains">
-                    <DxListEditorColumn FieldName="@nameof(Personnel.PersonnelName)" Caption="نام و نام خانوادگی" />
-                    <DxListEditorColumn FieldName="@nameof(Personnel.CurrentRole)" Caption="سمت" />
-                    <DxListEditorColumn FieldName="@nameof(Personnel.ActiveRig.Name)" Caption="دکل / دفتر" />
-                </DxComboBox>
-            </DxFormLayoutItem>
-            <DxFormLayoutItem Caption="نام کاربری:" ColSpanMd="4" ColSpanSm="12">
-                <DxTextBox @bind-Text="@_personnelUsername" NullText="الزامی" CssClass="ltr" />
-            </DxFormLayoutItem>
-            <DxFormLayoutItem Caption="نقش:" ColSpanMd="4" ColSpanSm="12">
-                <DxComboBox Data="_roles" TextFieldName="Value" ValueFieldName="Key" NullText="الزامی"
-                            @bind-Value="@_personnelRole">
-                </DxComboBox>
-            </DxFormLayoutItem>
-        </DxFormLayout>
-    </BodyContentTemplate>
-    <FooterContentTemplate>
-        <MudButton Color="Color.Success" StartIcon="fas fa-check" OnClick="UpgradeOkBtnClick">تأیید</MudButton>
-    </FooterContentTemplate>
-</DxPopup>
+<SfDialog @ref="UpgradeModal" AllowDragging="true" Visible="false" IsModal="true" Width="600px" ShowCloseIcon="true"
+          Header="به روز رسانی پرسنل" CloseOnEscape="true">
+    <DialogTemplates>
+        <Content>
+            <MudAlert Variant="Variant.Filled" Severity="Severity.Info">در صورتی که می‌خواهید به پرسنل شرکت که قبلاً در سیستم ثبت کرده‌اید، دسترسی به سیستم دهید از این قسمت استفاده کنید.</MudAlert>
+            <MudRTLProvider RightToLeft="true">
+                <MudGrid>
+                    <MudItem md="12">
+                        <MudField Label="نام پرسنل:" DisableUnderLine="true">
+                            <SamcoPersonnelSelector @bind-SelectedPersonnel="_selPersonnel" DataSource="PersonnelList" Session="Session1"/>
+                        </MudField>
+                    </MudItem>
+                    <MudItem md="6" sm="12">
+                        <MudTextField Label=":نام کاربری" @bind-Value="@_personnelUsername" Variant="Variant.Text"
+                                      Placeholder="الزامی" Class="ltr"/>
+                    </MudItem>
+                    <MudItem md="6" sm="12">
+                        <MudField Label="نقش:" DisableUnderLine="true">
+                            <SfComboBox TItem="KeyValuePair<string, string>" TValue="string" DataSource="@_roles" Placeholder="الزامی"
+                                        @bind-Value="@_personnelRole">
+                                <ComboBoxFieldSettings Text="Value" Value="Key"/>
+                            </SfComboBox>
+                        </MudField>
+                    </MudItem>
+                </MudGrid>
+            </MudRTLProvider>
+        </Content>
+        <FooterTemplate>
+            <MudButton Color="Color.Success" StartIcon="fas fa-check" Variant="Variant.Filled" OnClick="UpgradeOkBtnClick">تأیید</MudButton>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogPositionData Y="top"/>
+    <DialogAnimationSettings Effect="DialogEffect.FadeZoom"/>
+</SfDialog>

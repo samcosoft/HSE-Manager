@@ -37,11 +37,11 @@ namespace Samco_HSE.HSEData
             get { return fStatus; }
             set { SetPropertyValue<string>(nameof(Status), ref fStatus, value); }
         }
-        DateTime fReturnDate;
-        public DateTime ReturnDate
+        DateTime? fReturnDate;
+        public DateTime? ReturnDate
         {
             get { return fReturnDate; }
-            set { SetPropertyValue<DateTime>(nameof(ReturnDate), ref fReturnDate, value); }
+            set { SetPropertyValue<DateTime?>(nameof(ReturnDate), ref fReturnDate, value); }
         }
         string fComment;
         [Size(SizeAttribute.Unlimited)]

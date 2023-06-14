@@ -14,84 +14,59 @@
 
 <PageTitle>ورود به ناحیه کاربری</PageTitle>
 
-<div class="container-fluid w-50 animate__animated animate__headShake">
-    <div class="card">
-        <div class="card-header">
-            <div class="mx-auto text-center">
-                <img src="images/logo.svg" alt="Samco HSE" style="width: 50%" />
-            </div>
-        </div>
-        <DxTabs>
-            <DxTabPage Text="ورود کارمندان">
-                <EditForm Model="_loginData" OnValidSubmit="@ValidateUser">
-                    <div>
-                        <DataAnnotationsValidator />
-                        <ValidationSummary />
+<MudGrid>
+    <MudItem md="3" sm="1"/>
+    <MudItem md="6" sm="10">
+        <EditForm Model="_loginData" OnValidSubmit="@LoginUser">
+            <MudCard Class="animate__animated animate__headShake" Outlined="true">
+                <MudCardHeader Style="@($"background-color:{Colors.BlueGrey.Lighten5};")">
+                    <img src="images/logo.svg" alt="Samco HSE" class="mx-auto" style="width: 30%"/>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudTabs @bind-ActivePanelIndex="@_activePanel">
+                        <MudTabPanel Text="ورود کارمندان">
+                            <div>
+                                <DataAnnotationsValidator/>
+                                <ValidationSummary/>
+                            </div>
+                            <MudTextField @bind-Value="_loginData.Username" Label="نام کاربری" Class="mt-6"/>
+                            <MudTextField @bind-Value="_loginData.Password" Label="کلمه عبور" InputType="InputType.Password"/>
+                            @{
+                                if (Configuration["IsDemo"] == "true")
+                                {
+                                    <MudAlert Severity="Severity.Info" Elevation="4" Icon="fas fa-info">
+                                        <p>در حالت آزمایشی نام کاربری و کلمه عبور مدیر سیستم admin است.</p>
+                                    </MudAlert>
+                                }
+                            }
+                        </MudTabPanel>
+                        <MudTabPanel Text="ورود کارکنان">
+                            <div>
+                                <DataAnnotationsValidator/>
+                                <ValidationSummary/>
+                            </div>
+                            <MudTextField @bind-Value="_loginData.Username" Label="کد ملی" Class="mt-6"/>
+                            <MudTextField @bind-Value="_loginData.Password" Label="شماره پرسنلی" InputType="InputType.Password"/>
+                        </MudTabPanel>
+                    </MudTabs>
+                </MudCardContent>
+                <MudCardActions>
+                    <div class="col-12 row animate__animated animate__headShake" style="text-align: center; font-weight: bold">
+                        <span class="col-12">@LoginMessage</span>
                     </div>
-                    <div class="container p-5">
-                        <div class="row">
-                            <label>نام کاربری:</label>
-                            <input class="form-control col-12" @bind="_loginData.Username" placeholder="نام کاربری" />
-                        </div>
-                        <br />
-                        <div class="row">
-                            <label>کلمه عبور:</label>
-                            <input type="password" class="form-control col-12" @bind="_loginData.Password" placeholder="کلمه عبور" />
-                        </div>
-                        <br />
-                        <div class="row">
-                            <button type="submit" class="form-control col-6 btn btn-primary">ورود به سیستم</button>
-                        </div>
-                        <br />
-                        <div class="col-12 row animate__animated animate__headShake" style="text-align: center; font-weight: bold">
-                            <span class="col-12">@LoginMessage</span>
-                        </div>
-                    </div>
-                    @{
-                        if (Configuration["IsDemo"] == "true")
-                        {
-                            <MudAlert Severity="Severity.Info" Elevation="4" Icon="fas fa-info">
-                                <p>در حالت آزمایشی نام کاربری و کلمه عبور مدیر سیستم admin است.</p>
-                            </MudAlert>
-                        }
-                    }
-                </EditForm>
-            </DxTabPage>
-            <DxTabPage Text="ورود کارکنان">
-                <EditForm Model="_loginData" OnValidSubmit="@ValidatePersonnel">
-                    <div>
-                        <DataAnnotationsValidator />
-                        <ValidationSummary />
-                    </div>
-                    <div class="container p-5">
-                        <div class="row">
-                            <label>کد ملی:</label>
-                            <input class="form-control col-12" @bind="_loginData.Username" placeholder="کد ملی" />
-                        </div>
-                        <br />
-                        <div class="row">
-                            <label>شماره پرسنلی:</label>
-                            <input type="password" class="form-control col-12" @bind="_loginData.Password" placeholder="شماره پرسنلی" />
-                        </div>
-                        <br />
-                        <div class="row">
-                            <button type="submit" class="form-control col-6 btn btn-primary">ورود به سیستم</button>
-                        </div>
-                        <br />
-                        <div class="col-12 row animate__animated animate__headShake" style="text-align: center; font-weight: bold">
-                            <span class="col-12">@LoginMessage</span>
-                        </div>
-                    </div>
-                </EditForm>
-            </DxTabPage>
-        </DxTabs>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="mx-auto">ورود به سیستم</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </EditForm>
+    </MudItem>
+    <MudItem md="3" sm="1"/>
+</MudGrid>
 
-    </div>
-</div>
 
 @code {
     private readonly LoginModel _loginData = new();
     private string? LoginMessage { get; set; }
+    private int _activePanel;
 
     ClaimsPrincipal? _claimsPrincipal;
 
@@ -105,6 +80,18 @@
         if (_claimsPrincipal.Identity is { IsAuthenticated: true })
         {
             NavigationManager.NavigateTo("");
+        }
+    }
+
+    private void LoginUser()
+    {
+        if (_activePanel == 0)
+        {
+            ValidateUser();
+        }
+        else
+        {
+            ValidatePersonnel();
         }
     }
 
@@ -139,6 +126,7 @@
             LoginMessage = errorMessage;
         }
     }
+
     private async void ValidatePersonnel()
     {
         using var session1 = new Session(DataLayer);
@@ -147,7 +135,7 @@
         {
             if (selUser != null && _loginData.Password == selUser.PersonnelNum)
             {
-                //Login user
+    //Login user
                 TokenManager.Authenticate(selUser, DataLayer, out var token, out _, out _);
                 await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsAuthenticated(token);
                 SamcoSoftShared.CurrentUserId = selUser.Oid;
@@ -161,7 +149,7 @@
         }
         catch (Exception)
         {
-            //_loggedUser = new User(session1);
+    //_loggedUser = new User(session1);
             return;
         }
 
@@ -176,4 +164,5 @@
         [Required(ErrorMessage = "کلمه عبور الزامی است.")]
         public string? Password { get; set; }
     }
+
 }

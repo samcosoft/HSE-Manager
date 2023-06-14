@@ -1,9 +1,10 @@
-﻿using DevExpress.Blazor;
-using DevExpress.Data.Filtering;
+﻿using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Samco_HSE.HSEData;
+using Syncfusion.Blazor.Grids;
+using Action = Syncfusion.Blazor.Grids.Action;
 
 namespace Samco_HSE_Manager.Pages.Officer;
 
@@ -21,11 +22,11 @@ public partial class Personnel : IDisposable
 
     private readonly IEnumerable<string> _status = new List<string>
     {
-        "فعال","خاتمه همکاری","انتقال به سایر شرکت‌ها"
+        "فعال", "خاتمه همکاری", "انتقال به سایر شرکت‌ها"
     };
-    private IEnumerable<Rig>? Rigs { get; set; }
 
-    private DxGrid? PersonnelGrid { get; set; }
+    private IEnumerable<Rig>? Rigs { get; set; }
+    private SfGrid<Samco_HSE.HSEData.Personnel>? PersonnelGrid { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -40,7 +41,8 @@ public partial class Personnel : IDisposable
         {
             var loggedUser =
                 await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
-            Personnels = await Session1.Query<Samco_HSE.HSEData.Personnel>().Where(x => loggedUser.Rigs.Contains(x.ActiveRig)).ToListAsync();
+            Personnels = await Session1.Query<Samco_HSE.HSEData.Personnel>()
+                .Where(x => loggedUser.Rigs.Contains(x.ActiveRig)).ToListAsync();
             Rigs = loggedUser.Rigs;
         }
         else
@@ -51,127 +53,96 @@ public partial class Personnel : IDisposable
         }
     }
 
-    private void PersonnelGridUnbound(GridUnboundColumnDataEventArgs e)
+    private async Task PersonnelGrid_Action(ActionEventArgs<Samco_HSE.HSEData.Personnel> e)
     {
-        using var tempSession = new Session(DataLayer);
-        var currentUser = tempSession.FindObject<Samco_HSE.HSEData.Personnel>(new BinaryOperator("Oid", ((Samco_HSE.HSEData.Personnel)e.DataItem).Oid));
-        //if (currentWork == null) { return; }
+        switch (e.RequestType)
+        {
+            case Action.Add:
+                e.Data ??= new Samco_HSE.HSEData.Personnel(Session1);
+                break;
+            case Action.BeginEdit:
+                var existUser = await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", e.RowData.Oid));
+                if (existUser != null && existUser.Oid != SamcoSoftShared.CurrentUserId)
+                {
+                    Snackbar.Add("شما اجازه تغییر اطلاعات کاربران سیستم را ندارید.", Severity.Error);
+                    e.Cancel = true;
+                }
 
-        e.Value = e.FieldName switch
-        {
-            "PPECounts" => currentUser.PPEs.Count,
-            "WarningsCount" => currentUser.Warnings.Count,
-            "IncentivesCount" => currentUser.Incentives.Count,
-            "AccidentsCount" => currentUser.Accidents.Count,
-            "PracticeCount" => currentUser.Practices.Count,
-            "TrainingCount" => currentUser.Trainings.Count,
-            "StopReportCount" => currentUser.StopCardsReports.Count(x => x.IsApproved),
-            "MedicalVisitsCount" => currentUser.MedicalVisits.Count,
-            _ => e.Value
-        };
-    }
-
-    private void PersonnelGrid_EditStart(GridEditStartEventArgs e)
-    {
-        var dataItem = (Samco_HSE.HSEData.Personnel)e.DataItem;
-        //prevent owner editing
-        if (e.IsNew == false && dataItem.GetType() == typeof(User) && ((User)dataItem).SiteRole == "Owner")
-        {
-            Snackbar.Add("شما اجازه تغییر اطلاعات مدیر سیستم را ندارید.", Severity.Error);
-            e.Cancel = true;
-        }
-        if (e.IsNew == false && dataItem.GetType() == typeof(User) && dataItem.Oid != SamcoSoftShared.CurrentUserId)
-        {
-            Snackbar.Add("شما اجازه تغییر اطلاعات کاربران سیستم را ندارید.", Severity.Error);
-            e.Cancel = true;
-        }
-    }
-
-    private void PersonnelEditModel(GridCustomizeEditModelEventArgs e)
-    {
-        var dataItem = (Samco_HSE.HSEData.Personnel?)e.DataItem ?? new Samco_HSE.HSEData.Personnel(Session1);
-        e.EditModel = dataItem;
-    }
-
-    private async Task OnEditModelSaving(GridEditModelSavingEventArgs e)
-    {
-        var editModel = (Samco_HSE.HSEData.Personnel)e.EditModel;
-        //Validation
-        if (editModel.ActiveRig == null || string.IsNullOrEmpty(editModel.PersonnelName) ||
-            string.IsNullOrEmpty(editModel.CurrentRole) || string.IsNullOrEmpty(editModel.Status))
-        {
-            Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
-            e.Cancel = true;
-            return;
-        }
-
-        if (string.IsNullOrEmpty(editModel.NationalID) == false && editModel.NationalID.Length < 10)
-        {
-            Snackbar.Add("کد ملی باید حداقل 10 رقم باشد.", Severity.Error);
-            e.Cancel = true;
-            return;
-        }
-        //Check user not existed before
-        var selPerson = Session1.FindObject<Samco_HSE.HSEData.Personnel>(new BinaryOperator(nameof(Samco_HSE.HSEData.Personnel.NationalID), editModel.NationalID));
-        if (e.IsNew)
-        {
-            if (selPerson != null)
+                e.Data = await Session1.GetObjectByKeyAsync<Samco_HSE.HSEData.Personnel>(e.RowData.Oid);
+                break;
+            case Action.Save:
             {
-                //User existed
-                Snackbar.Add($"پرسنل با نام {selPerson.PersonnelName} با همین کد ملی در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.", Severity.Error);
-                e.Cancel = true;
-                return;
+                var editModel = e.Data;
+                //Validation
+                if (editModel.ActiveRig == null || string.IsNullOrEmpty(editModel.PersonnelName) ||
+                    string.IsNullOrEmpty(editModel.CurrentRole) || string.IsNullOrEmpty(editModel.Status))
+                {
+                    Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
+                    e.Cancel = true;
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(editModel.NationalID) == false && editModel.NationalID.Length < 10)
+                {
+                    Snackbar.Add("کد ملی باید حداقل 10 رقم باشد.", Severity.Error);
+                    e.Cancel = true;
+                    return;
+                }
+
+                //Check user not existed before
+                var selPerson = Session1.FindObject<Samco_HSE.HSEData.Personnel>(
+                    new BinaryOperator(nameof(Samco_HSE.HSEData.Personnel.NationalID), editModel.NationalID));
+                if (selPerson != null && selPerson.Oid != editModel.Oid)
+                {
+                    //User existed
+                    Snackbar.Add(
+                        $"پرسنل با نام {selPerson.PersonnelName} با همین کد ملی در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.",
+                        Severity.Error);
+                    e.Cancel = true;
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(editModel.NationalID) == false && editModel.NationalID.Length < 10)
+                {
+                    Snackbar.Add("کد ملی باید حداقل 10 رقم باشد.", Severity.Error);
+                    e.Cancel = true;
+                    return;
+                }
+
+                editModel.Save();
+                break;
+            }
+            case Action.Delete:
+            {
+                var systemUser = await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", e.RowData.Oid));
+                if (systemUser != null && systemUser.GetType() == typeof(User))
+                {
+                    Snackbar.Add("شما اجازه حذف اطلاعات کاربران سیستم را ندارید.", Severity.Error);
+                    e.Cancel = true;
+                }
+
+                var dataItem = e.RowData;
+                dataItem.Delete();
+                break;
             }
         }
-        else
+    }
+
+    private async Task PersonnelToolbarClickHandler(Syncfusion.Blazor.Navigations.ClickEventArgs args)
+    {
+        if (args.Item.Id == "personnelGrid_Excel Export")
         {
-            if (selPerson != null && selPerson.Oid != editModel.Oid)
+            Snackbar.Add("سیستم در حال ایجاد فایل است. لطفاً تا دانلود گزارش شکیبا باشید...", Severity.Info);
+            var exportProperties = new ExcelExportProperties
             {
-                //User existed
-                Snackbar.Add($"پرسنل با نام {selPerson.PersonnelName} با همین کد ملی در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.", Severity.Error);
-                e.Cancel = true;
-                return;
-            }
+                FileName = "PersonnelList.xlsx"
+            };
+            await PersonnelGrid!.ExportToExcelAsync(exportProperties);
         }
-        editModel.Save();
-        await LoadInformation();
-    }
-
-    private async Task OnDataItemDeleting(GridDataItemDeletingEventArgs e)
-    {
-        var dataItem =
-            await Session1.FindObjectAsync<Samco_HSE.HSEData.Personnel>(new BinaryOperator("Oid", (e.DataItem as Samco_HSE.HSEData.Personnel)!.Oid));
-        if (dataItem != null && dataItem.GetType() == typeof(User))
-        {
-            //prevent delete users
-            Snackbar.Add("شما اجازه‌ی حذف اطلاعات کاربران سیستم را ندارید.", Severity.Error);
-            e.Cancel = true;
-            return;
-        }
-        dataItem?.Delete();
-        await LoadInformation();
-    }
-
-    private void ColumnChooserOnClick()
-    {
-        PersonnelGrid?.ShowColumnChooser(".column-chooser-button");
     }
 
     public void Dispose()
     {
         Session1.Dispose();
-    }
-
-    private async Task OnPrintBtnClick()
-    {
-        //await ToastService.Information("دریافت گزارش", "سیستم در حال ایجاد فایل است. لطفاً شکیبا باشید...");
-        Snackbar.Add("سیستم در حال ایجاد فایل است. لطفاً تا دانلود گزارش شکیبا باشید...", Severity.Info);
-
-        await PersonnelGrid?.ExportToXlsxAsync("StopCards", new GridXlExportOptions
-        {
-            CustomizeSheet = SamcoSoftShared.CustomizeSheet,
-            CustomizeCell = SamcoSoftShared.CustomizeCell,
-            CustomizeSheetFooter = SamcoSoftShared.CustomizeFooter
-        })!;
     }
 }

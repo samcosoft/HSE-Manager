@@ -1,11 +1,13 @@
-﻿using DevExpress.Blazor;
-using DevExpress.Data.Filtering;
+﻿using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using Samco_HSE.HSEData;
 using System.Text.RegularExpressions;
 using DevExpress.DashboardWeb;
 using MudBlazor;
+using Syncfusion.Blazor.Grids;
+using Syncfusion.Blazor.Popups;
+using Action = Syncfusion.Blazor.Grids.Action;
 
 namespace Samco_HSE_Manager.Pages.Admin;
 
@@ -31,24 +33,20 @@ public partial class Users : IDisposable
         { "Teacher", "مدرس ایمنی" },
         { "Disabled", "غیر فعال" },
     };
+
     private readonly IEnumerable<string> _status = new List<string>
     {
-        "فعال","خاتمه همکاری","انتقال به سایر شرکت‌ها"
+        "فعال", "خاتمه همکاری", "انتقال به سایر شرکت‌ها"
     };
-    private IEnumerable<Rig>? Rigs { get; set; }
 
-    private DxGrid? UserGrid { get; set; }
+    private IEnumerable<Rig>? Rigs { get; set; }
+    private SfGrid<User>? UserGrid { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Session1 = new Session(DataLayer);
         RigRoles = await File.ReadAllLinesAsync(Path.Combine(HostEnvironment.WebRootPath, "content", "RigRoles.txt"));
         Dashboards = DashboardConfigurator.DashboardStorage.GetAvailableDashboardsInfo().Select(x => x.ID).ToList();
-        await LoadInformation();
-    }
-
-    private async Task LoadInformation()
-    {
         if (SamcoSoftShared.CurrentUserRole == SamcoSoftShared.SiteRoles.Admin)
         {
             //Admin
@@ -66,153 +64,150 @@ public partial class Users : IDisposable
         }
     }
 
-    private void UserGridUnbound(GridUnboundColumnDataEventArgs e)
+    private async Task UserGrid_Action(ActionEventArgs<User> e)
     {
-        using var tempSession = new Session(DataLayer);
-        var currentUser = tempSession.FindObject<User>(new BinaryOperator("Oid", ((User)e.DataItem).Oid));
-        //if (currentWork == null) { return; }
+        switch (e.RequestType)
+        {
+            case Action.Add:
+                e.Data ??= new User(Session1);
+                break;
+            case Action.BeginEdit:
+                //prevent owner editing
+                if (e.RowData.SiteRole == "Owner")
+                {
+                    Snackbar.Add("شما اجازه تغییر اطلاعات مدیر سیستم را ندارید.", Severity.Error);
+                    e.Cancel = true;
+                    return;
+                }
 
-        e.Value = e.FieldName switch
-        {
-            "EquipmentsCount" => (from itm in currentUser.MaterialRequests
-                                  select itm.MaterialLists
-                into grp
-                                  from listItm in grp
-                                  select listItm).Sum(x => x.Counts),
-            "WarningsCount" => currentUser.Warnings.Count,
-            "AccidentsCount" => currentUser.AccidentReports.Count,
-            "PracticeCount" => currentUser.Practices.Count,
-            "TrainingCount" => currentUser.Trainings.Count,
-            _ => e.Value
-        };
-    }
-
-    private void UserGrid_EditStart(GridEditStartEventArgs e)
-    {
-        //prevent owner editing
-        var dataItem = (User?)e.DataItem ?? new User(Session1);
-        if (e.IsNew == false && dataItem.SiteRole == "Owner")
-        {
-            Snackbar.Add("شما اجازه تغییر اطلاعات مدیر سیستم را ندارید.", Severity.Error);
-            e.Cancel = true;
-        }
-    }
-    private void UserEditModel(GridCustomizeEditModelEventArgs e)
-    {
-        var dataItem = (User?)e.DataItem ?? new User(Session1);
-        e.EditModel = dataItem;
-    }
-
-    private async Task OnEditModelSaving(GridEditModelSavingEventArgs e)
-    {
-        var editModel = (User)e.EditModel;
-        //Validation
-        if (string.IsNullOrEmpty(editModel.Username) || string.IsNullOrEmpty(editModel.SiteRole) || editModel.ActiveRig == null ||
-            string.IsNullOrEmpty(editModel.PersonnelName) || string.IsNullOrEmpty(editModel.CurrentRole) || string.IsNullOrEmpty(editModel.Status))
-        {
-            Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
-            e.Cancel = true;
-            return;
-        }
-
-        if (Regex.IsMatch(editModel.Username, "[^a-z0-9.]+"))
-        {
-            Snackbar.Add("نام کاربری فقط می‌تواند به زبان انگلیسی شامل حروف کوچک، عدد و نقطه (.) باشد.", Severity.Error);
-            e.Cancel = true;
-            return;
-        }
-
-        if (string.IsNullOrEmpty(editModel.NationalID) == false && editModel.NationalID.Length < 10)
-        {
-            Snackbar.Add("کد ملی باید حداقل 10 رقم باشد.", Severity.Error);
-            e.Cancel = true;
-            return;
-        }
-        //Check user not existed before
-        var selPersonnel =
-            Session1.FindObject<Samco_HSE.HSEData.Personnel>(new BinaryOperator(nameof(Samco_HSE.HSEData.Personnel.NationalID), editModel.NationalID));
-        if (e.IsNew)
-        {
-            if (selPersonnel != null)
+                e.Data = await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", e.RowData.Oid));
+                break;
+            case Action.Save:
             {
-                //User existed
-                Snackbar.Add($"پرسنل با نام {selPersonnel.PersonnelName} با همین کد ملی در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.", Severity.Error);
-                e.Cancel = true;
-                return;
+                var editModel = e.Data;
+                //Validation
+                if (string.IsNullOrEmpty(editModel.Username) || string.IsNullOrEmpty(editModel.SiteRole) ||
+                    editModel.ActiveRig == null ||
+                    string.IsNullOrEmpty(editModel.PersonnelName) || string.IsNullOrEmpty(editModel.CurrentRole) ||
+                    string.IsNullOrEmpty(editModel.Status) || string.IsNullOrEmpty(editModel.PersonnelNum))
+                {
+                    Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
+                    e.Cancel = true;
+                    return;
+                }
+
+                if (Regex.IsMatch(editModel.Username, "[^a-z0-9.]+"))
+                {
+                    Snackbar.Add("نام کاربری فقط می‌تواند به زبان انگلیسی شامل حروف کوچک، عدد و نقطه (.) باشد.",
+                        Severity.Error);
+                    e.Cancel = true;
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(editModel.NationalID) == false && editModel.NationalID.Length < 10)
+                {
+                    Snackbar.Add("کد ملی باید حداقل 10 رقم باشد.", Severity.Error);
+                    e.Cancel = true;
+                    return;
+                }
+
+                //Check user not existed before
+                var selPersonnel =
+                    Session1.FindObject<Samco_HSE.HSEData.Personnel>(
+                        new BinaryOperator(nameof(Samco_HSE.HSEData.Personnel.NationalID), editModel.NationalID));
+                if (editModel.Oid < 0)
+                {
+                    if (selPersonnel != null)
+                    {
+                        //User existed
+                        Snackbar.Add(
+                            $"پرسنل با نام {selPersonnel.PersonnelName} با همین کد ملی در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.",
+                            Severity.Error);
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+                else
+                {
+                    if (selPersonnel != null && selPersonnel.Oid != editModel.Oid)
+                    {
+                        //User existed
+                        Snackbar.Add(
+                            $"پرسنل با نام {selPersonnel.PersonnelName} با همین کد ملی در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.",
+                            Severity.Error);
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+
+                //check username
+                var selPerson =
+                    Session1.FindObject<User>(new BinaryOperator(nameof(User.Username), editModel.Username));
+
+                if (selPerson != null && selPerson.Oid != editModel.Oid)
+                {
+                    //Duplicate username
+                    Snackbar.Add("کاربر دیگری با همین نام کاربری وجود دارد. لطفاً نام کاربری دیگری را برگزینید.",
+                        Severity.Error);
+                    e.Cancel = true;
+                    return;
+                }
+
+                while (editModel.Rigs.Any())
+                {
+                    editModel.Rigs.Remove(editModel.Rigs[0]);
+                }
+
+                if (!editModel.Rigs.Contains(editModel.ActiveRig)) editModel.Rigs.Add(editModel.ActiveRig);
+                editModel.Save();
+                break;
+            }
+            case Action.Delete:
+            {
+                var dataItem = e.RowData;
+                if (dataItem is { SiteRole: "Owner" })
+                    //prevent delete Owner
+                {
+                    Snackbar.Add("شما اجازه حذف مدیر سیستم را ندارید.", Severity.Error);
+                    e.Cancel = true;
+                    return;
+                }
+
+                //prevent delete  current user
+                if (dataItem!.Oid == SamcoSoftShared.CurrentUser?.Oid)
+                {
+                    Snackbar.Add("شما اجازه‌ی حذف اطلاعات کاربری خود را ندارید.", Severity.Error);
+                    e.Cancel = true;
+                    return;
+                }
+
+                dataItem.Delete();
+                break;
             }
         }
-        else
-        {
-            if (selPersonnel != null && selPersonnel.Oid != editModel.Oid)
-            {
-                //User existed
-                Snackbar.Add($"پرسنل با نام {selPersonnel.PersonnelName} با همین کد ملی در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.", Severity.Error);
-                e.Cancel = true;
-                return;
-            }
-        }
-
-        //check username
-        var selPerson =
-            Session1.FindObject<User>(new BinaryOperator(nameof(User.Username), editModel.Username));
-
-        if (selPerson != null && e.IsNew)
-        {
-            //Duplicate username
-            Snackbar.Add("کاربر دیگری با همین نام کاربری وجود دارد. لطفاً نام کاربری دیگری را برگزینید.", Severity.Error);
-            e.Cancel = true;
-            return;
-        }
-
-        if (selPerson != null && selPerson.Oid != editModel.Oid)
-        {
-            //Duplicate username
-            Snackbar.Add("کاربر دیگری با همین نام کاربری وجود دارد. لطفاً نام کاربری دیگری را برگزینید.", Severity.Error);
-            e.Cancel = true;
-            return;
-        }
-        while (editModel.Rigs.Any())
-        {
-            editModel.Rigs.Remove(editModel.Rigs[0]);
-        }
-        editModel.Rigs.Add(editModel.ActiveRig);
-        editModel.Save();
-        await LoadInformation();
     }
 
-    private async Task OnDataItemDeleting(GridDataItemDeletingEventArgs e)
+    private async Task UserToolbarClickHandler(Syncfusion.Blazor.Navigations.ClickEventArgs args)
     {
-        var dataItem =
-            await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", (e.DataItem as User)!.Oid));
-        if (dataItem != null)
+        if (args.Item.Id == "userGrid_Excel Export")
         {
-            //prevent delete Owner
-            if (dataItem.SiteRole == "Owner")
+            Snackbar.Add("سیستم در حال ایجاد فایل است. لطفاً تا دانلود گزارش شکیبا باشید...", Severity.Info);
+            var exportProperties = new ExcelExportProperties
             {
-                Snackbar.Add("شما اجازه حذف مدیر سیستم را ندارید.", Severity.Error);
-                e.Cancel = true;
-                return;
-            }
-
-            //prevent delete  current user
-            if (dataItem.Oid == SamcoSoftShared.CurrentUser?.Oid)
-            {
-                Snackbar.Add("شما اجازه‌ی حذف اطلاعات کاربری خود را ندارید.", Severity.Error);
-                e.Cancel = true;
-                return;
-            }
-            dataItem.Delete();
-            await LoadInformation();
+                FileName = "UserList.xlsx"
+            };
+            await UserGrid!.ExportToExcelAsync(exportProperties);
         }
     }
 
     #region ChangePassword
 
-    private DxPopup? PassModal { get; set; }
+    private SfDialog? PassModal { get; set; }
     private string? _newPass, _confPass;
+
     private async Task OnNewPassBtnClick()
     {
-        if (UserGrid?.SelectedDataItems.Any() == false)
+        if (UserGrid?.SelectedRecords.Any() == false)
         {
             Snackbar.Add("لطفاً یک کاربر را از لیست زیر انتخاب کنید.", Severity.Warning);
             return;
@@ -242,40 +237,43 @@ public partial class Users : IDisposable
             return;
         }
 
-        var selUser = (User)UserGrid!.SelectedDataItem;
+        var selUser = UserGrid!.SelectedRecords.First();
         selUser.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(_newPass);
         selUser.Save();
         Snackbar.Add($"کلمه عبور برای کاربر {selUser.Username} با موفقیت تغییر یافت.", Severity.Success);
         _newPass = string.Empty;
         _confPass = string.Empty;
-        await PassModal!.CloseAsync();
+        await PassModal!.HideAsync();
     }
 
     #endregion
 
     #region Permission
 
-    private DxPopup? PermitModal { get; set; }
+    private SfDialog? PermitModal { get; set; }
     private IEnumerable<Rig>? PermitRigList { get; set; }
 
     private async Task OnPermitBtnClick()
     {
-        if (UserGrid!.SelectedDataItems.Any() == false)
+        if (UserGrid!.SelectedRecords.Any() == false)
         {
             Snackbar.Add("لطفاً یک کاربر را از لیست زیر انتخاب کنید.", Severity.Warning);
             return;
         }
-        var selUser = (User)UserGrid.SelectedDataItem;
+
+        var selUser = UserGrid.SelectedRecords.First();
         if (selUser.SiteRole == "Owner")
         {
             Snackbar.Add("مدیر سیستم همواره به همه اطلاعات دسترسی دارد.", Severity.Warning);
             return;
         }
+
         if (selUser.Oid == SamcoSoftShared.CurrentUser?.Oid)
         {
             Snackbar.Add("شما نمی‌توانید سطح دسترسی خود را تغییر دهید.", Severity.Warning);
             return;
         }
+
         PermitRigList = selUser.Rigs.ToList();
         await PermitModal!.ShowAsync();
     }
@@ -288,35 +286,37 @@ public partial class Users : IDisposable
             return;
         }
 
-        var selUser = (User)UserGrid!.SelectedDataItem;
+        var selUser = UserGrid!.SelectedRecords.First();
         while (selUser.Rigs.Any())
         {
             selUser.Rigs.Remove(selUser.Rigs[0]);
         }
+
         selUser.Rigs.AddRange(PermitRigList);
-        selUser.Rigs.Add(selUser.ActiveRig);
+        if (!selUser.Rigs.Contains(selUser.ActiveRig)) selUser.Rigs.Add(selUser.ActiveRig);
         selUser.Save();
         Snackbar.Add("دسترسی‌ها با موفقیت ثبت شدند.", Severity.Success);
-        await PermitModal!.CloseAsync();
+        await PermitModal!.HideAsync();
     }
 
     #endregion
 
     #region UpgradePersonnel
 
-    private DxPopup? UpgradeModal { get; set; }
+    private SfDialog? UpgradeModal { get; set; }
     private IEnumerable<Samco_HSE.HSEData.Personnel> PersonnelList { get; set; } = null!;
     private Samco_HSE.HSEData.Personnel? _selPersonnel;
     private string? _personnelUsername, _personnelRole;
+
     private async Task OnUpgradeBtnClick()
     {
-        PersonnelList = Session1.Query<Samco_HSE.HSEData.Personnel>().AsEnumerable().Where(x => x.GetType() != typeof(User));
+        PersonnelList = Session1.Query<Samco_HSE.HSEData.Personnel>().AsEnumerable()
+            .Where(x => x.GetType() != typeof(User)).ToList();
         _selPersonnel = null;
         _personnelUsername = string.Empty;
         _personnelRole = string.Empty;
         await UpgradeModal!.ShowAsync();
     }
-    #endregion
 
     private async Task UpgradeOkBtnClick()
     {
@@ -329,7 +329,8 @@ public partial class Users : IDisposable
 
         if (Regex.IsMatch(_personnelUsername, "[^a-z0-9.]+"))
         {
-            Snackbar.Add("نام کاربری فقط می‌تواند به زبان انگلیسی شامل حروف کوچک، عدد و نقطه (.) باشد.", Severity.Error);
+            Snackbar.Add("نام کاربری فقط می‌تواند به زبان انگلیسی شامل حروف کوچک، عدد و نقطه (.) باشد.",
+                Severity.Error);
             return;
         }
 
@@ -340,7 +341,8 @@ public partial class Users : IDisposable
         if (selPerson != null)
         {
             //Duplicate username
-            Snackbar.Add("کاربر دیگری با همین نام کاربری وجود دارد. لطفاً نام کاربری دیگری را برگزینید.", Severity.Error);
+            Snackbar.Add("کاربر دیگری با همین نام کاربری وجود دارد. لطفاً نام کاربری دیگری را برگزینید.",
+                Severity.Error);
             return;
         }
 
@@ -374,10 +376,12 @@ public partial class Users : IDisposable
 
         selUser.Rigs.Add(selUser.ActiveRig);
         selUser.Save();
-        Snackbar.Add($"دسترسی برای {selUser.PersonnelName} ایجاد شد. لطفاً کلمه عبور ایشان را نیز تعیین کنید.", Severity.Success);
-        await UpgradeModal!.CloseAsync();
-        await LoadInformation();
+        Snackbar.Add($"دسترسی برای {selUser.PersonnelName} ایجاد شد. لطفاً کلمه عبور ایشان را نیز تعیین کنید.",
+            Severity.Success);
+        await UpgradeModal!.HideAsync();
     }
+
+    #endregion
 
     public void Dispose()
     {

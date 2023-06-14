@@ -3,15 +3,16 @@
 
 <MudCard>
     <MudCardHeader>
-        <DxMenu Title="مدیریت داشبوردها" ItemsPosition="ItemPosition.Start" CssClass="card-header">
-            <Items>
-                <DxMenuItem>
-                    <Template>
-                        <DxComboBox Data="Dashboards" @bind-Value="_selDash"  />
-                    </Template>
-                </DxMenuItem>
-            </Items>
-        </DxMenu>
+        <MudPaper Elevation="3" Width="100%" Class="pa-3">
+            <MudGrid>
+                <MudItem>
+                    <MudText Typo="Typo.h5">مدیریت داشبوردها</MudText>
+                </MudItem>
+                <MudItem>
+                    <SfComboBox TItem="string" TValue="string" DataSource="Dashboards"  @bind-Value="_selDash"/>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
     </MudCardHeader>
     <MudCardContent>
         <div dir="ltr">

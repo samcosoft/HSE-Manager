@@ -1,5 +1,137 @@
-﻿<h3>SamcoRigSelector</h3>
+﻿@using Samco_HSE.HSEData
+@using DevExpress.Data.Filtering
+@{
+    if (IsMultiselect)
+    {
+        <SfListBox TItem="ComboRig" TValue="string[]" DataSource="@_rigList" @bind-Value="@SelRigs">
+            <ListBoxSelectionSettings ShowCheckbox="true"/>
+            <ListBoxFieldSettings Text="Name" Value="Oid"/>
+        </SfListBox>
+    }
+    else
+    {
+        <SfComboBox TItem="ComboRig" TValue="string"
+                    DataSource="@_rigList" Placeholder="الزامی"
+                    @bind-Value="@SelRig">
+            <ComboBoxFieldSettings Text="Name" Value="Oid"/>
+        </SfComboBox>
+    }
+}
 
-@code {
-    
+@code{
+
+    [Parameter]
+    public IEnumerable<Rig> DataSource { get; set; } = null!;
+
+    private IEnumerable<ComboRig>? _rigList;
+
+    [Parameter]
+    public Session Session { get; set; } = null!;
+
+    [Parameter]
+    public Rig? SelectedRig
+    {
+        get => _rigList?.FirstOrDefault(x => x.Oid == _selectedRig)?.GetRig(Session);
+        set
+        {
+            if (value == null || _selectedRig == value.Oid.ToString()) return;
+            if (_rigList != null && _rigList.Select(x => x.Oid).Contains(value.Oid.ToString())) _selectedRig = value.Oid.ToString();
+        }
+    }
+
+    private string? _selectedRig;
+
+    private string? SelRig
+    {
+        get => _selectedRig;
+        set
+        {
+            if (_selectedRig == value) return;
+            _selectedRig = value;
+            SelectedRigChanged.InvokeAsync(GetRig(value!));
+        }
+    }
+
+    [Parameter]
+    public EventCallback<Rig> SelectedRigChanged { get; set; }
+
+    [Parameter]
+    public bool IsMultiselect { get; set; }
+
+    private int _rigItemCount;
+
+    [Parameter]
+    public IEnumerable<Rig?>? SelectedRigs
+    {
+        get => _selectedRigs?.Select(GetRig).ToList();
+        set
+        {
+            if (value == null || value.Count() == _rigItemCount) return;
+            _selectedRigs = value.Select(x => x?.Oid.ToString()).ToArray()!;
+            _rigItemCount = value.Count();
+        }
+    }
+
+    private string[]? _selectedRigs;
+
+    private string[]? SelRigs
+    {
+        get => _selectedRigs;
+        set
+        {
+            if (_selectedRigs == value) return;
+            _selectedRigs = value;
+            SelectedRigsChanged.InvokeAsync(value?.Select(x => GetComboRig(x)?.GetRig(Session)).ToList()!);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<IEnumerable<Rig>> SelectedRigsChanged { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _rigList = DataSource.Select(x => new ComboRig(x));
+    }
+
+    private ComboRig? GetComboRig(string? oid)
+    {
+        return _rigList?.First(x => x.Oid == oid);
+    }
+
+    private Rig? GetRig(string oid)
+    {
+        return Session.GetObjectByKey<Rig>(int.Parse(oid));
+    }
+
+    public class ComboRig
+    {
+        public string? Oid { get; set; }
+        public string? Name { get; set; }
+
+        public ComboRig()
+        {
+        }
+        
+        public ComboRig(Rig rig)
+        {
+            Oid = rig.Oid.ToString();
+            Name = rig.Name;
+        }
+
+        public static ComboRig? GetComboRig(IEnumerable<ComboRig>? rigList, Rig? selRig)
+        {
+            return selRig == null ? null : rigList?.FirstOrDefault(x => x.Oid == selRig.Oid.ToString());
+        }
+
+        public static Rig? GetRig(Session session1, string selRigOid)
+        {
+            return session1.FindObject<Rig>(new BinaryOperator(nameof(Oid), selRigOid));
+        }
+
+        public Rig GetRig(Session session1)
+        {
+            return session1.FindObject<Rig>(new BinaryOperator(nameof(Oid), Oid));
+        }
+    }
+
 }

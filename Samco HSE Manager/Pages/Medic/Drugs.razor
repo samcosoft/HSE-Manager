@@ -2,120 +2,142 @@
 @attribute [Authorize(Roles = "Owner,Admin,Supervisor,Officer,Medic")]
 @using Samco_HSE.HSEData
 @using Microsoft.AspNetCore.Components
+@using Syncfusion.Blazor.Popups
+@using FilterType = Syncfusion.Blazor.Grids.FilterType
 
 <PageTitle>داروها و تجهیزات پزشکی</PageTitle>
 <MudCard>
     <MudCardHeader>
-        <DxMenu Title="داروها و تجهیزات پزشکی" ItemsPosition="ItemPosition.Start" CssClass="card-header">
-            <Items>
-                <DxMenuItem Text="تنظیم موجودی" IconCssClass="fas fa-suitcase-medical" @onclick="OnSetNumberBtnClick" />
-                <DxMenuItem Text="درخواست دارو / تجهیزات" IconCssClass="fas fa-truck-medical" @onclick="OnDrugRequestBtnClick" />
-            </Items>
-        </DxMenu>
+        <MudPaper Elevation="3" Width="100%" Class="pa-3">
+            <MudGrid>
+                <MudItem>
+                    <MudText Typo="Typo.h5">داروها و تجهیزات پزشکی</MudText>
+                </MudItem>
+                <MudItem>
+                    <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
+                        <MudButton StartIcon="fas fa-suitcase-medical" IconColor="Color.Error" OnClick="OnSetNumberBtnClick">تنظیم موجودی</MudButton>
+                        <MudButton StartIcon="fas fa-truck-medical" IconColor="Color.Warning" OnClick="OnDrugRequestBtnClick">درخواست دارو / تجهیزات</MudButton>
+                    </MudButtonGroup>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
     </MudCardHeader>
     <MudCardContent>
-        <DxGrid @ref="MedicineGrid" Data="@MedicineList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"
-                EditModelSaving="OnEditModelSaving" DataItemDeleting="OnDataItemDeleting" UnboundColumnData="MedicationGridUnbound"
-                CustomizeEditModel="MedicineEditModel" EditStart="MedicineEditStart"
-                ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true" ValidationEnabled="false"
-                SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="true"
-                ColumnResizeMode="GridColumnResizeMode.ColumnsContainer"
-                SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center">
-            <Columns>
-                <DxGridCommandColumn/>
-                <DxGridDataColumn FieldName="@nameof(Medication.Name)" Caption="نام دارو / تجهیز" Width="15%"/>
-                <DxGridDataColumn FieldName="@nameof(Medication.Dose)" Caption="دوز" MinWidth="100"/>
-                <DxGridDataColumn FieldName="@nameof(Medication.DrugForm)" Caption="فرم دارویی" MinWidth="100">
-                    <FilterRowCellTemplate>
-                        <TagBoxFilterRow TData="string" FilterContext="context" DataSource="_drugFormList" />
-                    </FilterRowCellTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn FieldName="@nameof(Medication.Category)" Caption="دسته بندی" MinWidth="100">
-                    <FilterRowCellTemplate>
-                        <OperatorType FilterContext="@context">
-                            <DxComboBox Data="_category"
-                                        Value="(string?)context.FilterRowValue" AllowUserInput="true"
-                                        ValueChanged="(string? v) => context.FilterRowValue = v" />
-                        </OperatorType>
-                    </FilterRowCellTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn Caption="قابل درخواست" FieldName="@nameof(Medication.AvailForOrder)" MinWidth="70">
-                    <CellDisplayTemplate>
-                        <DxCheckBox CssClass="d-inline-block" Checked="@((bool)context.Value)" Enabled="false"/>
-                    </CellDisplayTemplate>
-                    <FilterRowCellTemplate>
-                        <OperatorType FilterContext="@context">
-                            <DxComboBox Data="SamcoSoftShared.ComboboxBoolean" TextFieldName="Key" ValueFieldName="Value"
-                                        Value="(bool?)context.FilterRowValue" AllowUserInput="true"
-                                        ValueChanged="(bool? v) => context.FilterRowValue = v" />
-                        </OperatorType>
-                    </FilterRowCellTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn FieldName="@nameof(Medication.MinCount)" Caption="حداقل تعداد"/>
-                <DxGridDataColumn FieldName="@nameof(Medication.Discription)" Caption="توضیحات" MinWidth="100"/>
-                @BuildColumnsGrid()
-            </Columns>
-            <EditFormTemplate Context="editFormContext">
+        <SfGrid @ref="MedicineGrid" ID="medicGrid" DataSource="@MedicineList" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
+                AllowGrouping="true" Toolbar="@(new[] { "Add", "Edit", "Delete", "Excel Export", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
+                AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
+                AllowExcelExport="true" Width="100%">
+            <GridEvents TValue="Medication" OnActionBegin="MedicGrid_Action"
+                        OnToolbarClick="MedicToolbarClickHandler"/>
+            <GridFilterSettings Type="FilterType.Excel"/>
+            <GridColumns>
+                <GridColumn HeaderText="ردیف" Field="Oid" IsPrimaryKey="true" Visible="false"/>
+                <GridColumn Field="@nameof(Medication.Name)" HeaderText="نام دارو / تجهیز" Width="15%" AutoFit="true"/>
+                <GridColumn Field="@nameof(Medication.Dose)" HeaderText="دوز" MinWidth="100" AutoFit="true"/>
+                <GridColumn Field="@nameof(Medication.DrugForm)" HeaderText="فرم دارویی" MinWidth="100" AutoFit="true"/>
+                <GridColumn Field="@nameof(Medication.Category)" HeaderText="دسته بندی" MinWidth="100" AutoFit="true"/>
+                <GridColumn Field="@nameof(Medication.AvailForOrder)" HeaderText="قابل درخواست" MinWidth="70" AutoFit="true"
+                            DisplayAsCheckBox="true"/>
+                <GridColumn Field="@nameof(Medication.MinCount)" HeaderText="حداقل تعداد" AutoFit="true"/>
+                <GridColumn Field="@nameof(Medication.Discription)" HeaderText="توضیحات" MinWidth="100"/>
                 @{
-                    var drug = (Medication)editFormContext.EditModel;
+                    if (Rigs != null)
+                    {
+                        foreach (var rig in Rigs)
+                        {
+                            <GridColumn HeaderText="@($"موجودی {rig.Name}")" AutoFit="true">
+                                <Template>
+                                    @{
+                                        var itm = context as Medication;
+                                        @MedicGridUnbound(rig.Oid, itm)
+                                    }
+                                </Template>
+                            </GridColumn>
+                        }
+                    }
                 }
-                <DxFormLayout>
-                    <DxFormLayoutItem Caption="نام دارو / تجهیز:">
-                        <DxTextBox @bind-Text="@drug.Name" NullText="الزامی" InputCssClass="ltr" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="دوز / اندازه:">
-                        <DxTextBox @bind-Text="@drug.Dose" NullText="الزامی - مثال: 100mg یا 5% ..." InputCssClass="ltr" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="فرم دارویی:">
-                        <DxComboBox Data="@_drugFormList" @bind-Value="@drug.DrugForm" NullText="الزامی" FilteringMode="DataGridFilteringMode.Contains" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="دسته بندی:">
-                        <DxComboBox Data="@_category" @bind-Value="@drug.Category" NullText="الزامی" FilteringMode="DataGridFilteringMode.Contains" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="حداقل تعداد:">
-                        <DxSpinEdit @bind-Value="drug.MinCount" MinValue="1" MaxValue="1000" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="قابل درخواست:">
-                        <DxCheckBox @bind-Checked="@drug.AvailForOrder" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="توضیحات:">
-                        <DxTextBox @bind-Text="@drug.Discription" />
-                    </DxFormLayoutItem>
-                </DxFormLayout>
-            </EditFormTemplate>
-        </DxGrid>
+            </GridColumns>
+            <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" AllowEditOnDblClick="true" Mode="EditMode.Dialog"
+                              ShowDeleteConfirmDialog="true" Dialog="@SamcoSoftShared.GeneralGridEditOption">
+                <Validator>
+                    <DataAnnotationsValidator/>
+                </Validator>
+                <Template Context="editFormContext">
+                    @{
+                        var drug = (Medication)editFormContext;
+                    }
+                    <MudRTLProvider RightToLeft="true">
+                        <MudGrid>
+                            <MudItem md="6" sm="12">
+                                <MudTextField Label="نام دارو / تجهیز:" @bind-Value="@drug.Name" Placeholder="الزامی"
+                                              Class="ltr" Adornment="Adornment.Start" AutoFocus="true"/>
+                            </MudItem>
+                            <MudItem md="6" sm="12">
+                                <MudTextField Label="مدل:" @bind-Value="@drug.Dose"
+                                              Adornment="Adornment.Start" Placeholder="الزامی - مثال: 100mg یا 5% ..." Class="ltr"/>
+                            </MudItem>
+                            <MudItem md="6" sm="12">
+                                <MudField Label="فرم دارویی:" DisableUnderLine="true">
+                                    <SfComboBox TItem="string" TValue="string" DataSource="@_drugFormList" @bind-Value="@drug.DrugForm" Placeholder="الزامی" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains" AllowFiltering="true"/>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="6" sm="12">
+                                <MudField Label="دسته بندی:" DisableUnderLine="true">
+                                    <SfComboBox TItem="string" TValue="string" DataSource="@_category" @bind-Value="@drug.Category" Placeholder="الزامی" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains" AllowFiltering="true"/>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="6" sm="12">
+                                <MudNumericField T="int" @bind-Value="@drug!.MinCount" Label="حداقل تعداد:" Adornment="Adornment.Start"
+                                                 Min="1" Max="5000" Step="1"/>
+                            </MudItem>
+                            <MudItem md="6" sm="12">
+                                <MudCheckBox @bind-Checked="@drug.AvailForOrder" Label="قابل درخواست"/>
+                            </MudItem>
+                            <MudItem md="6" sm="12">
+                                <MudTextField Label="توضیحات:" @bind-Value="@drug.Discription" Adornment="Adornment.Start"/>
+                            </MudItem>
+                        </MudGrid>
+                    </MudRTLProvider>
+                </Template>
+            </GridEditSettings>
+        </SfGrid>
     </MudCardContent>
 </MudCard>
 
-<DxPopup @ref="SetNumberModal" HeaderText="تنظیم تعداد تجهیز" ShowFooter="true" CloseOnOutsideClick="false" CloseOnEscape="false">
-    <BodyContentTemplate Context="_">
-        <DxFormLayout>
-            <DxFormLayoutItem Caption="نام تجهیز:" ColSpanMd="4" ColSpanSm="12">
-                <DxTextBox @bind-Text="@_selMedicationStock!.MedicName.Name" ReadOnly="true" />
-            </DxFormLayoutItem>
-            <DxFormLayoutItem Caption="نام دکل / دفتر:" ColSpanMd="4" ColSpanSm="12">
-                <DxComboBox TValue="Rig" TData="Rig" @ref="RigBx" Data="@Rigs" TextFieldName="@nameof(Rig.Name)" NullText="الزامی" ValueChanged="RigSelectionChanged" />
-            </DxFormLayoutItem>
-            <DxFormLayoutItem Caption="تعداد:" ColSpanMd="4" ColSpanSm="12">
-                <DxSpinEdit T="short" @bind-Value="@_selMedicationStock!.AvailCount" MinValue="0" MaxValue="1000" />
-            </DxFormLayoutItem>
-        </DxFormLayout>
-    </BodyContentTemplate>
-    <FooterContentTemplate>
-        <MudButton Color="Color.Success" StartIcon="fas fa-check" OnClick="SetCountOkBtnClick">تأیید</MudButton>
-    </FooterContentTemplate>
-</DxPopup>
+<SfDialog @ref="SetNumberModal" Header="تنظیم تعداد تجهیز" CloseOnEscape="false">
+    <DialogTemplates>
+        <Content>
+            <MudGrid>
+                <MudItem md="4" sm="12">
+                    <MudTextField T="string" @bind-Value="@_selMedicationStock!.MedicName.Name"
+                                  Label="نام تجهیز:" ReadOnly="true"/>
+                </MudItem>
+                <MudItem md="4" sm="12">
+                    <MudField Label="نام دکل / دفتر:" DisableUnderLine="true">
+                        <SamcoRigSelector DataSource="Rigs" Session="Session1" SelectedRigChanged="RigSelectionChanged"/>
+                    </MudField>
+                </MudItem>
+                <MudItem md="4" sm="12">
+                    <MudNumericField T="short" @bind-Value="@_selMedicationStock!.AvailCount" Min="0" Max="1000"/>
+                </MudItem>
+            </MudGrid>
+        </Content>
+        <FooterTemplate>
+            <MudButton Color="Color.Success" Variant="Variant.Filled" StartIcon="fas fa-check" OnClick="SetCountOkBtnClick">تأیید</MudButton>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>
 
-<DxPopup @ref="DrugRequestModal" HeaderText="درخواست دارو / تجهیزات" ShowFooter="true" CloseOnOutsideClick="false" CloseOnEscape="false">
-    <BodyContentTemplate Context="_">
-        <MudAlert Severity="Severity.Info" Icon="fas fa-info" Elevation="3">درخواست داروها بر اساس حداقل تعداد دارو / تجهیز تنظیم می‌شود. شما می‌توانید پس از دریافت فایل درخواست مقادیر آن‌ها را تغییر دهید.</MudAlert>
-        <DxFormLayout>
-            <DxFormLayoutItem Caption="نام دکل / دفتر:" ColSpanMd="4" ColSpanSm="12">
-                <DxComboBox Data="@Rigs" @bind-Value="_selRig" TextFieldName="@nameof(Rig.Name)" NullText="الزامی"/>
-            </DxFormLayoutItem>
-        </DxFormLayout>
-    </BodyContentTemplate>
-    <FooterContentTemplate>
-        <MudButton Color="Color.Success" StartIcon="fas fa-check" OnClick="RequestBtnClick">تأیید</MudButton>
-    </FooterContentTemplate>
-</DxPopup>
+<SfDialog @ref="DrugRequestModal" Header="درخواست دارو / تجهیزات" CloseOnEscape="false">
+    <DialogTemplates>
+        <Content>
+            <MudAlert Severity="Severity.Info" Icon="fas fa-info" Elevation="3">درخواست داروها بر اساس حداقل تعداد دارو / تجهیز تنظیم می‌شود. شما می‌توانید پس از دریافت فایل درخواست مقادیر آن‌ها را تغییر دهید.</MudAlert>
+            <MudField Label="نام دکل / دفتر:">
+                <SamcoRigSelector DataSource="Rigs" Session="Session1" @bind-SelectedRig="_selRig"/>
+            </MudField>
+        </Content>
+        <FooterTemplate>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" StartIcon="fas fa-check" OnClick="RequestBtnClick">تأیید</MudButton>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>

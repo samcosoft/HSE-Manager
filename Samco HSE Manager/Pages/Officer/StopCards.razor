@@ -1,196 +1,204 @@
 ﻿@page "/stopcard"
 @using Samco_HSE.HSEData
+@using AggregateType = Syncfusion.Blazor.Grids.AggregateType
+@using FilterType = Syncfusion.Blazor.Grids.FilterType
+@using Syncfusion.Blazor.Popups
 @attribute [Authorize(Roles = "Owner,Admin,Supervisor,Officer")]
 
 <PageTitle>گزارش اعمال / شرایط ایمن و نا ایمن</PageTitle>
 
 <MudCard>
     <MudCardHeader>
-        <DxMenu Title="گزارش اعمال / شرایط ایمن و نا ایمن" ItemsPosition="ItemPosition.Start" CssClass="card-header">
-            <Items>
-                <DxMenuItem Text="دریافت اطلاعات" IconCssClass="fas fa-paste" @onclick="OnPrintBtnClick" />
-                @*<DxMenuItem Text="تنظیم موجودی" IconCssClass="fas fa-shirt" @onclick="OnSetNumberBtnClick" />*@
-                @*<DxMenuItem Text="توزیع تجهیزات" IconCssClass="fas fa-boxes-packing" @onclick="OnDistributeBtnClick" />*@
-            </Items>
-        </DxMenu>
+        <MudPaper Elevation="3" Width="100%" Class="pa-3">
+            <MudGrid>
+                <MudItem>
+                    <MudText Typo="Typo.h5">گزارش اعمال / شرایط ایمن و نا ایمن</MudText>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
     </MudCardHeader>
     <MudCardContent>
-        <DxButton Text="تنظیم ستون‌ها"
-                  RenderStyle="ButtonRenderStyle.Secondary"
-                  CssClass="column-chooser-button"
-                  Click="ColumnChooserOnClick" />
-        <p />
-        <DxGrid @ref="StopGrid" Data="@StopsList" KeyFieldName="Oid" EditMode="GridEditMode.PopupEditForm"
-                EditModelSaving="OnEditModelSaving" UnboundColumnData="StopGridUnbound"
-                DataItemDeleting="OnDataItemDeleting" CustomizeEditModel="StopEditModel"
-                CustomizeElement="StopGrid_CustomizeElement"
-                ShowSearchBox="true" ShowFilterRow="true" ShowGroupPanel="true"
-                SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="true"
-                ColumnResizeMode="GridColumnResizeMode.ColumnsContainer"
-                SearchBoxNullText="برای جستجو تایپ کنید..." CssClass="text-center" ValidationEnabled="false">
-            <Columns>
-                <DxGridCommandColumn MinWidth="100" />
-                <DxGridDataColumn FieldName="WorkID.RigNo.Name" Caption="دکل / دفتر" MinWidth="100">
-                    <FilterRowCellTemplate>
-                        <TagBoxFilterRow TData="Rig" FilterContext="context" DataSource="Rigs" TextFieldName="Name" />
-                    </FilterRowCellTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn FieldName="WorkID.WellNo.Name" Caption="نام چاه" MinWidth="100" />
-                <DxGridDataColumn FieldName="ReportDate" Caption="تاریخ گزارش" SortIndex="0" SortOrder="GridColumnSortOrder.Descending" MinWidth="180">
-                    <FilterRowCellTemplate>
-                        <OperatorType FilterContext="@context" ShowFilterButton="true">
-                            <DxDateEdit Date="(DateTime?)context.FilterRowValue"
-                                        DateChanged="(DateTime? v) => context.FilterRowValue = v" />
-                        </OperatorType>
-                    </FilterRowCellTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn FieldName="Reporter.PersonnelName" Caption="گزارش دهنده" MinWidth="100" />
-                <DxGridDataColumn FieldName="Location" Caption="محل مشاهده" MinWidth="200" />
-                <DxGridDataColumn FieldName="Category" Caption="دسته بندی" MinWidth="400">
-                    <FilterRowCellTemplate>
-                        <TagBoxFilterRow TData="string" FilterContext="context" DataSource="_category" />
-                    </FilterRowCellTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn FieldName="Observation" Caption="مشاهدات" MinWidth="400" />
-                <DxGridDataColumn FieldName="Responsible" Caption="مسئول پیگیری" MinWidth="200">
-                    <FilterRowCellTemplate>
-                        <TagBoxFilterRow TData="string" FilterContext="context" DataSource="RigRoles" />
-                    </FilterRowCellTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn FieldName="Severity" Caption="درجه خطر" MinWidth="100">
-                    <FilterRowCellTemplate>
-                        <TagBoxFilterRow TData="string" FilterContext="context" DataSource="_stopRisk" />
-                    </FilterRowCellTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn FieldName="@nameof(StopCard.Probablety)" Caption="احتمال وقوع" MinWidth="100">
-                    <FilterRowCellTemplate>
-                        <TagBoxFilterRow TData="string" FilterContext="context" DataSource="_stopProb" />
-                    </FilterRowCellTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn FieldName="Risk" Caption="ریسک" MinWidth="70" UnboundType="GridUnboundColumnType.String" />
-                <DxGridDataColumn FieldName="Actions" Caption="اقدامات اصلاحی" MinWidth="400" />
-                <DxGridDataColumn FieldName="@nameof(StopCard.Efficiency)" Caption="اثر بخشی اقدامات اصلاحی" MinWidth="400" />
-                <DxGridDataColumn FieldName="Status" Caption="وضعیت" MinWidth="100">
-                    <FilterRowCellTemplate>
-                        <OperatorType FilterContext="@context">
-                            <DxComboBox Data="_status"
-                                        Value="(string?)context.FilterRowValue" AllowUserInput="true"
-                                        ValueChanged="(string? v) => context.FilterRowValue = v" />
-                        </OperatorType>
-                    </FilterRowCellTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn FieldName="Comments" Caption="توضیحات" MinWidth="300" />
-                <DxGridDataColumn Caption="تأیید شده" FieldName="IsApproved" MinWidth="100">
-                    <CellDisplayTemplate>
-                        <DxCheckBox CssClass="d-inline-block" Checked="@((bool)context.Value)" Enabled="false" />
-                    </CellDisplayTemplate>
-                    <FilterRowCellTemplate>
-                        <OperatorType FilterContext="@context">
-                            <DxComboBox Data="SamcoSoftShared.ComboboxBoolean" TextFieldName="Key" ValueFieldName="Value"
-                                        Value="(bool?)context.FilterRowValue" AllowUserInput="true"
-                                        ValueChanged="(bool? v) => context.FilterRowValue = v" />
-                        </OperatorType>
-                    </FilterRowCellTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn FieldName="Score" Caption="امتیاز" MinWidth="150">
-                    <CellDisplayTemplate>
-                        <MudRating SelectedValue="@((int)context.Value)" Disabled="true" MaxValue="5" Class="d-inline-block" />
-                    </CellDisplayTemplate>
-                    <FilterRowCellTemplate>
-                        <OperatorType FilterContext="@context">
-                            <DxSpinEdit Value="(int?)context.FilterRowValue" MaxValue="5" MinValue="1"
-                                        ValueChanged="(int? v) => context.FilterRowValue = v" />
-                        </OperatorType>
-                    </FilterRowCellTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn FieldName="Oid" Caption="تصاویر" AllowSort="false" Width="100">
-                    <CellDisplayTemplate>
-                        <DxButton RenderStyle="ButtonRenderStyle.Primary" Text="نمایش" Click="() => ShowImages((int)context.Value)" />
-                    </CellDisplayTemplate>
-                </DxGridDataColumn>
-                <DxGridDataColumn FieldName="Agent.PersonnelName" Caption="کارشناس ایمنی" MinWidth="100" />
-            </Columns>
-            <TotalSummary>
-                <DxGridSummaryItem SummaryType="GridSummaryItemType.Count" FieldName="ReportDate" />
-            </TotalSummary>
-
-            <EditFormTemplate Context="editFormContext">
-                @{
-                    var stopCard = (StopCard)editFormContext.EditModel;
-                }
-                <DxFormLayout>
-                    <DxFormLayoutItem Caption="دکل / دفتر:">
-                        <DxComboBox Data="@Rigs" @bind-Value="@_selRig" TextFieldName="@nameof(Rig.Name)" NullText="الزامی" SelectedItemChanged="@((Rig rig) => RigChanged(rig))"/>
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="تاریخ گزارش:">
-                        <SamcoDateSelector @bind-Date="@stopCard.ReportDate" DefaultCalendar="SamcoDateSelector.CalendarType.Shamsi" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="گزارش دهنده:">
-                        <DxComboBox Data="@PersonnelList" @bind-Value="@stopCard.Reporter" NullText="الزامی"
-                                    TextFieldName="@nameof(Samco_HSE.HSEData.Personnel.PersonnelName)" FilteringMode="DataGridFilteringMode.Contains">
-                            <DxListEditorColumn FieldName="@nameof(Samco_HSE.HSEData.Personnel.PersonnelName)" Caption="نام و نام خانوادگی" />
-                            <DxListEditorColumn FieldName="@nameof(Samco_HSE.HSEData.Personnel.CurrentRole)" Caption="سمت" />
-                        </DxComboBox>
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="محل مشاهده:">
-                        <DxComboBox Data="@_location" @bind-Value="@stopCard.Location" FilteringMode="DataGridFilteringMode.Contains" NullText="الزامی" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="دسته بندی:">
-                        <DxComboBox Data="@_category" @bind-Value="@stopCard.Category" FilteringMode="DataGridFilteringMode.Contains" NullText="الزامی" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="مشاهدات:">
-                        <DxMemo @bind-Text="@stopCard.Observation" NullText="الزامی" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="مسئول پیگیری:">
-                        <DxComboBox Data="@RigRoles" @bind-Value="@stopCard.Responsible" FilteringMode="DataGridFilteringMode.Contains" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="درجه خطر:">
-                        <DxComboBox Data="@_stopRisk" @bind-Value="@stopCard.Severity" FilteringMode="DataGridFilteringMode.Contains" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="احتمال وقوع:">
-                        <DxComboBox Data="@_stopProb" @bind-Value="@stopCard.Probablety" FilteringMode="DataGridFilteringMode.Contains" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="اقدامات اصلاحی:">
-                        <DxMemo @bind-Text="@stopCard.Actions" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="اثر بخشی اقدامات اصلاحی:">
-                        <DxMemo @bind-Text="@stopCard.Efficiency" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="وضعیت:">
-                        <DxComboBox Data="@_status" @bind-Value="stopCard.Status" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="توضیحات:">
-                        <DxTextBox @bind-Text="@stopCard.Comments" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="تأیید شده:">
-                        <DxCheckBox @bind-Checked="@stopCard.IsApproved" />
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="امتیاز ایمنی:">
-                        <MudRating @bind-SelectedValue="@stopCard.Score" MaxValue="5" />
-                    </DxFormLayoutItem>
-                    @{
-                        if (stopCard.Oid >= 0 && _photoList != null)
-                        {
-                            <DxFormLayoutItem Caption="تصاویر:">
-                                <DxButton RenderStyle="ButtonRenderStyle.Info" Text="نمایش" Click="() => _photoShowVisible = true"></DxButton>
-                            </DxFormLayoutItem>
+        <SfGrid @ref="StopGrid" ID="stopGrid" DataSource="@StopsList" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
+                AllowGrouping="true" Toolbar="@(new[] { "Add", "Edit", "Delete", "Excel Export", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
+                AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
+                AllowExcelExport="true" Width="100%">
+            <GridEvents TValue="StopCard" OnActionBegin="StopGrid_Action"
+                        OnToolbarClick="StopToolbarClickHandler" RowDataBound="Customize_Row"/>
+            <GridFilterSettings Type="FilterType.Excel"/>
+            <GridColumns>
+                <GridColumn HeaderText="ردیف" Field="Oid" IsIdentity="true" IsPrimaryKey="true" Visible="false"/>
+                <GridColumn HeaderText="دکل / دفتر" Field="WorkID.RigNo.Name" AutoFit="true"/>
+                <GridColumn HeaderText="نام چاه" Field="WorkID.WellNo.Name" AutoFit="true"/>
+                <GridColumn Field="ReportDate" HeaderText="تاریخ گزارش" AutoFit="true" MinWidth="180"/>
+                <GridColumn Field="Reporter.PersonnelName" HeaderText="گزارش دهنده" AutoFit="true" MinWidth="100"/>
+                <GridColumn Field="Location" HeaderText="محل مشاهده" AutoFit="true" MinWidth="200"/>
+                <GridColumn Field="Category" HeaderText="دسته بندی" AutoFit="true" MinWidth="400"/>
+                <GridColumn Field="Observation" HeaderText="مشاهدات" AutoFit="true" MinWidth="400"/>
+                <GridColumn Field="Responsible" HeaderText="مسئول پیگیری" AutoFit="true" MinWidth="200"/>
+                <GridColumn Field="Severity" HeaderText="درجه خطر" AutoFit="true" MinWidth="100"/>
+                <GridColumn Field="@nameof(StopCard.Probablety)" HeaderText="احتمال وقوع" AutoFit="true" MinWidth="100"/>
+                <GridColumn HeaderText="ریسک" MinWidth="70" AutoFit="true">
+                    <Template>
+                        @{
+                            var card = context as StopCard;
+                            var sever = _stopRisk.ToList().IndexOf(card.Severity) + 1;
+                            var prob = _stopProb.ToList().IndexOf(card.Probablety) + 1;
+                            var result = (sever * prob) switch
+                            {
+                                >= 16 => "High",
+                                >= 9 => "Medium",
+                                _ => "Low"
+                                };
+                            <MudText Typo="Typo.body1">@result</MudText>
                         }
+                    </Template>
+                </GridColumn>
+                <GridColumn Field="Actions" HeaderText="اقدامات اصلاحی" AutoFit="true" MinWidth="400"/>
+                <GridColumn Field="@nameof(StopCard.Efficiency)" HeaderText="اثر بخشی اقدامات اصلاحی" AutoFit="true" MinWidth="400"/>
+                <GridColumn Field="Status" HeaderText="وضعیت" AutoFit="true" MinWidth="100"/>
+                <GridColumn Field="Comments" HeaderText="توضیحات" AutoFit="true" MinWidth="300"/>
+                <GridColumn Field="IsApproved" HeaderText="تأیید شده" DisplayAsCheckBox="true" MinWidth="100"/>
+                <GridColumn HeaderText="امتیاز" AutoFit="true" MinWidth="150">
+                    <Template>
+                        <MudRating SelectedValue="@(((StopCard)context).Score)" Disabled="true" MaxValue="5" Class="d-inline-block"/>
+                    </Template>
+                </GridColumn>
+                <GridColumn HeaderText="تصاویر" AllowSorting="false" AutoFit="true" Width="100">
+                    <Template>
+                        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="() => ShowImages(((StopCard)context).Oid)">نمایش</MudButton>
+                    </Template>
+                </GridColumn>
+                <GridColumn Field="Agent.PersonnelName" HeaderText="کارشناس ایمنی" AutoFit="true" MinWidth="100"/>
+            </GridColumns>
+            <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" AllowEditOnDblClick="true" Mode="EditMode.Dialog"
+                              ShowDeleteConfirmDialog="true" Dialog="@SamcoSoftShared.GeneralGridEditOption">
+                <Validator>
+                    <DataAnnotationsValidator/>
+                </Validator>
+                <Template Context="editFormContext">
+                    @{
+                        var stopCard = editFormContext as StopCard;
                     }
-                </DxFormLayout>
-            </EditFormTemplate>
-        </DxGrid>
+                    <MudRTLProvider RightToLeft="true">
+                        <MudGrid>
+                            <MudItem md="4" sm="12">
+                                <MudField Label="دکل / دفتر:" DisableUnderLine="true">
+                                    <SamcoRigSelector DataSource="Rigs" Session="Session1" SelectedRig="_selRig"
+                                                      SelectedRigChanged="RigChanged"/>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudField Label="تاریخ گزارش:" DisableUnderLine="true">
+                                    <SamcoDateSelector @bind-Date="@stopCard.ReportDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudField Label="گزارش دهنده:" DisableUnderLine="true">
+                                    <SamcoPersonnelSelector DataSource="@PersonnelList" @bind-SelectedPersonnel="@stopCard.Reporter" Session="Session1"/>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudField Label="محل مشاهده:" DisableUnderLine="true">
+                                    <SfComboBox TItem="string" TValue="string" DataSource="_location" @bind-Value="@stopCard.Location"
+                                                FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains" Placeholder="الزامی"/>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudField Label="دسته بندی:" DisableUnderLine="true">
+                                    <SfComboBox TItem="string" TValue="string" DataSource="_category" @bind-Value="@stopCard.Category"
+                                                FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains" Placeholder="الزامی"/>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudTextField T="string" @bind-Value="@stopCard.Observation" Label="مشاهدات:" Placeholder="الزامی" Lines="3"/>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudField Label="مسئول پیگیری:" DisableUnderLine="true">
+                                    <SfComboBox TItem="string" TValue="string" DataSource="RigRoles" @bind-Value="@stopCard.Responsible"
+                                                FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"/>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudField Label="درجه خطر:" DisableUnderLine="true">
+                                    <SfComboBox TItem="string" TValue="string" DataSource="_stopRisk" @bind-Value="@stopCard.Severity"
+                                                FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"/>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudField Label="احتمال وقوع:" DisableUnderLine="true">
+                                    <SfComboBox TItem="string" TValue="string" DataSource="_stopProb" @bind-Value="@stopCard.Probablety"
+                                                FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"/>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudTextField T="string" @bind-Value="@stopCard.Actions" Label="اقدامات اصلاحی:" Lines="3"/>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudTextField T="string" @bind-Value="@stopCard.Efficiency" Label="اثر بخشی اقدامات اصلاحی:" Lines="3"/>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudField Label="وضعیت:" DisableUnderLine="true">
+                                    <SfComboBox TItem="string" TValue="string" DataSource="_status" @bind-Value="@stopCard.Status"
+                                                FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"/>
+                                </MudField>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudTextField T="string" @bind-Value="@stopCard.Comments" Label="توضیحات:"/>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudCheckBox @bind-Checked="@stopCard.IsApproved">تأیید شده</MudCheckBox>
+                            </MudItem>
+                            <MudItem md="4" sm="12">
+                                <MudField Label="امتیاز ایمنی:" DisableUnderLine="true">
+                                    <MudRating @bind-SelectedValue="@stopCard.Score" MaxValue="5"/>
+                                </MudField>
+                            </MudItem>
+                            @{
+                                if (stopCard.Oid >= 0 && _photoList != null)
+                                {
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="تصاویر ضمیمه:" DisableUnderLine="true">
+                                            <MudButton Color="Color.Info" OnClick="() => _photoShowVisible = true"
+                                                       Variant="Variant.Filled">
+                                                نمایش
+                                            </MudButton>
+                                        </MudField>
+                                    </MudItem>
+                                }
+                            }
+                        </MudGrid>
+                    </MudRTLProvider>
+                </Template>
+            </GridEditSettings>
+            <GridAggregates>
+                <GridAggregate>
+                    <GridAggregateColumns>
+                        <GridAggregateColumn Field="@nameof(StopCard.ReportDate)" Type="AggregateType.Count">
+                            <FooterTemplate>
+                                @{
+                                    var aggregate = context as AggregateTemplateContext;
+                                    <MudText Typo="Typo.body1">@aggregate.Count</MudText>
+                                }
+                            </FooterTemplate>
+                        </GridAggregateColumn>
+                    </GridAggregateColumns>
+                </GridAggregate>
+            </GridAggregates>
+        </SfGrid>
     </MudCardContent>
 </MudCard>
 
-<DxPopup @bind-Visible="@_photoShowVisible" ShowFooter="true" HeaderText="تصاویر" MaxWidth="500">
-    <BodyTemplate Context="_">
-        <MudCarousel ItemsSource="@_photoList" AutoCycle="true" AutoCycleTime="TimeSpan.FromSeconds(10)">
-            <ItemTemplate>
-                <MudImage Src="@context" Elevation="2"/>
-            </ItemTemplate>
-        </MudCarousel>
-    </BodyTemplate>
-    <FooterContentTemplate>
-        <DxButton CssClass="popup-button me-2" RenderStyle="ButtonRenderStyle.Danger" Text="بستن" Click="@(() => _photoShowVisible = false)" />
-    </FooterContentTemplate>
-</DxPopup>
+<SfDialog @bind-Visible="@_photoShowVisible" Header="تصاویر" Width="500" CloseOnEscape="true">
+    <DialogTemplates>
+        <Content>
+            <MudCarousel ItemsSource="@_photoList" AutoCycle="true" AutoCycleTime="TimeSpan.FromSeconds(10)">
+                <ItemTemplate>
+                    <MudImage Src="@context" Elevation="2"/>
+                </ItemTemplate>
+            </MudCarousel>
+        </Content>
+        <FooterTemplate>
+            <MudButton Color="Color.Error" OnClick="@(() => _photoShowVisible = false)">بستن</MudButton>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>

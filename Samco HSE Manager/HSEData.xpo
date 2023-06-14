@@ -286,7 +286,7 @@
           <simpleAssociation Id="65c712dd-3fd2-431f-9814-649fef6215c4" sourceCollectionName="StopCardsCollection" name="StopCardsReferencesUser" targetFieldName="Agent">
             <xpObjectMoniker Id="1070453d-e8ad-487f-a977-79896c238ab5" />
           </simpleAssociation>
-          <simpleAssociation Id="260694aa-2300-4466-aaab-6030daef019f" sourceCollectionName="Permits3" name="PermitReferencesUser" targetFieldName="Agent">
+          <simpleAssociation Id="260694aa-2300-4466-aaab-6030daef019f" sourceCollectionName="Permits" name="PermitReferencesUser" targetFieldName="Agent">
             <xpObjectMoniker Id="c17b1337-871c-4a9f-8477-7f9641b14949" />
           </simpleAssociation>
         </saTargets>
@@ -345,7 +345,7 @@
             <collectionField Id="040008bd-1c20-4833-afac-08f360344b4f" name="StopCardsCollection" />
           </xpObjectHasCollectionFields>
           <xpObjectHasCollectionFields Id="f3d9ef39-fc19-4e5c-a574-c25f0f78c15b">
-            <collectionField Id="aab310b8-0c7a-484e-a256-d3a3c76602b9" name="Permits3" />
+            <collectionField Id="aab310b8-0c7a-484e-a256-d3a3c76602b9" name="Permits" />
           </xpObjectHasCollectionFields>
         </collectionFields>
       </xpObject>
@@ -1316,7 +1316,7 @@
             <field Id="8fd95271-d8dc-4781-8c22-60ca82b56063" name="Status" virtualColumnType="String" delayedUpdateModifiedOnly="false" />
           </generalXpObjectHasFields>
           <generalXpObjectHasFields Id="687b7a5e-0188-42fd-98a0-caf5bd26fa52">
-            <field Id="792687f6-07f7-4650-849f-cb693f09c2b5" name="ReturnDate" columnType="DateTime" virtualColumnType="DateTime" delayedUpdateModifiedOnly="false" />
+            <field Id="792687f6-07f7-4650-849f-cb693f09c2b5" name="ReturnDate" columnType="DateTime" virtualColumnType="DateTime" delayedUpdateModifiedOnly="false" isNullable="true" />
           </generalXpObjectHasFields>
           <generalXpObjectHasFields Id="ece05746-d7d5-4203-bec8-b0527a07a0aa">
             <field Id="ce7ea228-6292-43a8-aec9-d4bcd838504d" name="Comment" virtualColumnType="String" delayedUpdateModifiedOnly="false" size="Unlimited" />

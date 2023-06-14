@@ -1,15 +1,14 @@
 ﻿using System.Reflection;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
-using DevExpress.Blazor;
-using DevExpress.Export;
-using DevExpress.Printing.ExportHelpers;
 using DevExpress.Xpo.Metadata;
 using DeviceId;
 using LogicNP.CryptoLicensing;
 using Newtonsoft.Json.Linq;
 using OtpNet;
 using Samco_HSE.HSEData;
+using Syncfusion.Blazor.Grids;
+using Syncfusion.Blazor.Popups;
 
 namespace Samco_HSE_Manager;
 
@@ -270,12 +269,28 @@ public static class SamcoSoftShared
         Disabled
     }
 
-    public static Dictionary<string, bool> ComboboxBoolean = new()
+    public static readonly Dictionary<string, bool> ComboboxBoolean = new()
     {
         { "بله", true },
         { "خیر", false }
     };
 
+    public static readonly DialogSettings GeneralGridEditOption = new()
+    {
+        Width = "80%",
+        AnimationEffect = DialogEffect.Zoom,
+        ShowCloseIcon = true,
+        AllowDragging = true,
+        CloseOnEscape = true,
+        Target = "#mainWindow",
+        YValue = "top"
+    };
+
+    public enum UploadFolders
+    {
+        StopCards,
+        Medical
+    }
     public static T PickRandom<T>(this IEnumerable<T> source)
     {
         return source.PickRandom(1).Single();
@@ -310,40 +325,40 @@ public static class SamcoSoftShared
     #endregion
 
     #region GridCustomization
-    public static void CustomizeSheet(GridExportCustomizeSheetEventArgs e)
-    {
-        e.Sheet.ViewOptions.RightToLeft = true;
-    }
-    public static void CustomizeCell(GridExportCustomizeCellEventArgs e)
-    {
-        e.Formatting.Font = new XlCellFont
-        {
-            Name = "Vazir",
-            Size = 14
-        };
-        e.Handled = true;
-    }
-    public static void CustomizeFooter(GridExportCustomizeSheetHeaderFooterEventArgs e)
-    {
-        e.ExportContext.AddRow();
-
-        // Create a new row.
-        var firstRow = new CellObject
-        {
-            Value = "Powered by Samco HSE Manager"
-        };
-        var rowFormat = new XlFormattingObject
-        {
-            Font = new XlCellFont
-            {
-                Name = "Vazir",
-                Size = 12,
-                Bold = true
-            }
-        };
-        firstRow.Formatting = rowFormat;
-        e.ExportContext.AddRow(new[] { firstRow });
-    }
+    // public static void CustomizeSheet(GridExportCustomizeSheetEventArgs e)
+    // {
+    //     e.Sheet.ViewOptions.RightToLeft = true;
+    // }
+    // public static void CustomizeCell(GridExportCustomizeCellEventArgs e)
+    // {
+    //     e.Formatting.Font = new XlCellFont
+    //     {
+    //         Name = "Vazir",
+    //         Size = 14
+    //     };
+    //     e.Handled = true;
+    // }
+    // public static void CustomizeFooter(GridExportCustomizeSheetHeaderFooterEventArgs e)
+    // {
+    //     e.ExportContext.AddRow();
+    //
+    //     // Create a new row.
+    //     var firstRow = new CellObject
+    //     {
+    //         Value = "Powered by Samco HSE Manager"
+    //     };
+    //     var rowFormat = new XlFormattingObject
+    //     {
+    //         Font = new XlCellFont
+    //         {
+    //             Name = "Vazir",
+    //             Size = 12,
+    //             Bold = true
+    //         }
+    //     };
+    //     firstRow.Formatting = rowFormat;
+    //     e.ExportContext.AddRow(new[] { firstRow });
+    // }
     #endregion
 
     #region Encryption

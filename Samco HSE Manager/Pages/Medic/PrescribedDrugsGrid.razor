@@ -1,40 +1,78 @@
 ﻿@using Samco_HSE.HSEData
-<div>
-    <MudAlert Severity="Severity.Normal">نسخه تجویزی</MudAlert>
+@using HorizontalAlignment = MudBlazor.HorizontalAlignment
+@using Syncfusion.Blazor.DropDowns
+@using FilterType = Syncfusion.Blazor.Grids.FilterType
+
+<div class="my-2">
+    <MudAlert Elevation="3" Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Right" Variant="Variant.Filled">نسخه تجویزی</MudAlert>
 </div>
 @{
     if (IsEditable)
     {
-        <MudCard>
-            <MudCardContent>
-                <DxFormLayout>
-                    <DxFormLayoutItem Caption="دارو / تجهیز">
-                        <DxComboBox Data="@_medicationList" @bind-Value="@_selUsedMedicine!.MedicName" NullText="الزامی"
-                                    EditFormat="{0} {2} {1}" CssClass="w-50"
-                                    FilteringMode="DataGridFilteringMode.Contains">
-                            <DxListEditorColumn FieldName="@nameof(Medication.Name)" Caption="نام دارو / تجهیز"/>
-                            <DxListEditorColumn FieldName="@nameof(Medication.Dose)" Caption="دوز"/>
-                            <DxListEditorColumn FieldName="@nameof(Medication.DrugForm)" Caption="فرم دارویی"/>
-                        </DxComboBox>
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem Caption="تعداد">
-                        <MudNumericField T="short" @bind-Value="@_selUsedMedicine.MedCount" Min="1" Max="100" Step="1"></MudNumericField>
-                    </DxFormLayoutItem>
-                    <DxFormLayoutItem>
-                        <MudButton StartIcon="fa-solid fa-check" Color="Color.Primary" OnClick="AddMedicineBtnClick"/>
-                    </DxFormLayoutItem>
-                </DxFormLayout>
-            </MudCardContent>
-        </MudCard>
+        <MudRTLProvider RightToLeft="true">
+            <MudGrid>
+                <MudItem md="6" sm="12">
+                    <MudField Label="دارو / تجهیز" Class="ltr" DisableUnderLine="true">
+                        <SfComboBox TValue="string" TItem="Medication" Placeholder="الزامی" DataSource="_medicationList" @bind-Value="@_selMedicineOid"
+                                    AllowFiltering="true">
+                            <ComboBoxTemplates TItem="Medication">
+                                <HeaderTemplate>
+                                    <MudGrid Justify="Justify.SpaceEvenly" Class="w-100">
+                                        <MudItem>
+                                            <MudText>نام دارو / تجهیز</MudText>
+                                        </MudItem>
+                                        <MudItem>
+                                            <MudText>دوز</MudText>
+                                        </MudItem>
+                                        <MudItem>
+                                            <MudText>فرم دارویی</MudText>
+                                        </MudItem>
+                                    </MudGrid>
+                                </HeaderTemplate>
+                                <ItemTemplate>
+                                    <MudGrid Justify="Justify.SpaceEvenly" Class="w-100">
+                                        <MudItem>@(context.Name)</MudItem>
+                                        <MudItem>@(context.Dose)</MudItem>
+                                        <MudItem>@(context.DrugForm)</MudItem>
+                                    </MudGrid>
+                                </ItemTemplate>
+                            </ComboBoxTemplates>
+                            <ComboBoxFieldSettings Text="Name" Value="Oid"/>
+                        </SfComboBox>
+                    </MudField>
+                </MudItem>
+                <MudItem md="4" sm="10">
+                    <MudNumericField T="short" @bind-Value="@_selUsedMedicine!.MedCount"
+                                     Class="ltr" Label="تعداد" Min="1" Max="100" Step="1">
+                    </MudNumericField>
+                </MudItem>
+                <MudItem md="2" Class="d-flex">
+                    <MudIconButton Icon="fa-solid fa-check" Class="align-self-center" Color="Color.Primary" Variant="Variant.Filled" OnClick="AddMedicineBtnClick"/>
+                </MudItem>
+            </MudGrid>
+        </MudRTLProvider>
     }
 }
-<DxGrid @ref="MedicineGrid" Data="DetailGridData"
-        PageSize="5" SelectionMode="GridSelectionMode.Single" AllowSelectRowByClick="@IsEditable"
-        AutoExpandAllGroupRows="true" SelectedDataItemChanged="MedicineGrid_SelectionChanged">
-    <Columns>
-        <DxGridDataColumn FieldName="MedicName.Name" Caption="نام دارو / تجهیز" Width="40%" />
-        <DxGridDataColumn FieldName="MedicName.Dose" Caption="دوز" />
-        <DxGridDataColumn FieldName="MedicName.DrugForm" Caption="فرم دارویی" />
-        <DxGridDataColumn FieldName="MedCount" Caption="تعداد" />
-    </Columns>
-</DxGrid>
+
+<SfGrid DataSource="@DetailGridData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
+        AllowGrouping="true" Toolbar="@(new[] { "Delete", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
+        AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
+        Width="100%">
+    <GridEvents TValue="UsedMedicine" OnActionBegin="Grid_Save"/>
+    <GridFilterSettings Type="FilterType.Excel"/>
+    <GridColumns>
+        <GridColumn HeaderText="ردیف" Field="Oid" IsIdentity="true" IsPrimaryKey="true" Visible="false"/>
+        <GridColumn HeaderText="نام دارو / تجهیز" Field="MedicName.Name"/>
+        <GridColumn HeaderText="دوز" Field="MedicName.Dose"/>
+        <GridColumn HeaderText="فرم دارویی" Field="MedicName.DrugForm"/>
+        <GridColumn HeaderText="تعداد" Field="MedCount"/>
+    </GridColumns>
+    <GridEditSettings AllowAdding="false" AllowDeleting="@IsEditable" AllowEditing="false"
+                      AllowEditOnDblClick="false" Mode="EditMode.Normal"
+                      ShowDeleteConfirmDialog="true">
+        <Validator>
+            <DataAnnotationsValidator/>
+        </Validator>
+    </GridEditSettings>
+
+</SfGrid>
