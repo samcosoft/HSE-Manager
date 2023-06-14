@@ -1,0 +1,79 @@
+﻿@using System.IO
+@using Syncfusion.Blazor.Inputs
+
+<SfUploader AutoUpload="true" AllowMultiple="true" SequentialUpload="true" MaxFileSize="5242880"
+            AllowedExtensions="@_allowedExtensions">
+    <UploaderEvents BeforeUpload="@BeforeStart" ValueChange="OnChange" OnRemove="OnRemove" />
+</SfUploader>
+
+@code {
+    [Parameter]
+    public SamcoSoftShared.UploadFolders SavePath { get; set; }
+
+    [Parameter]
+    public string? DataId { get; set; }
+
+    [Parameter]
+    public AllowedFileExtensions AllowedExtension { get; set; }
+
+    [Parameter]
+    public EventCallback<BeforeUploadEventArgs> BeforeStart { get; set; }
+
+    [Inject]
+    IWebHostEnvironment HostEnvironment { get; set; } = null!;
+
+    private string _rootPath = null!;
+    private string _allowedExtensions = null!;
+
+    public enum AllowedFileExtensions
+    {
+        ImagesOnly,
+        DocumentsOnly,
+        DocumentsAndImages,
+        AllFiles
+    }
+
+    protected override void OnInitialized()
+    {
+        _rootPath = SavePath switch
+        {
+            SamcoSoftShared.UploadFolders.StopCards => Path.Combine(HostEnvironment.WebRootPath, "upload", "STOPCards"),
+            SamcoSoftShared.UploadFolders.Medical => Path.Combine(HostEnvironment.WebRootPath, "upload", "MedicalDocuments"),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        _allowedExtensions = AllowedExtension switch
+        {
+            AllowedFileExtensions.ImagesOnly => ".jpg,.jpeg,.png",
+            AllowedFileExtensions.DocumentsOnly => ".doc,.docx,.xls,.xlsx,.pdf,.ppt,.pptx",
+            AllowedFileExtensions.DocumentsAndImages => ".jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx,.pdf,.ppt,.pptx",
+            AllowedFileExtensions.AllFiles => "",
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        if (!Directory.Exists(_rootPath))
+            Directory.CreateDirectory(_rootPath);
+    }
+
+    private async Task OnChange(UploadChangeEventArgs args)
+    {
+        var filePath = Path.Combine(_rootPath, DataId!);
+        if (!Directory.Exists(filePath))
+            Directory.CreateDirectory(filePath);
+
+        foreach (var file in args.Files)
+        {
+            var path = Path.Combine(filePath, file.FileInfo.Name);
+            var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write);
+            await file.File.OpenReadStream(5242880).CopyToAsync(fileStream);
+            fileStream.Close();
+        }
+    }
+
+    private void OnRemove(RemovingEventArgs args)
+    {
+        foreach (var removeFile in args.FilesData.Where(removeFile => removeFile != null && File.Exists(Path.Combine(_rootPath, DataId!, removeFile.Name))))
+        {
+            File.Delete(Path.Combine(_rootPath, DataId!, removeFile.Name));
+        }
+    }
+
+}
