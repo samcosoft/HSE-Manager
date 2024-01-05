@@ -6,219 +6,221 @@
 <PageTitle>مدیریت کارکنان</PageTitle>
 
 <MudCard>
-<MudCardHeader>
-    <MudPaper Elevation="3" Width="100%" Class="pa-3">
-        <MudGrid>
-            <MudItem>
-                <MudText Typo="Typo.h5">مدیریت کارکنان</MudText>
-            </MudItem>
-            <MudItem>
-                <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
-                    <MudButton StartIcon="fas fa-hat" IconColor="Color.Warning">تحویل تجهیزات</MudButton>
-                    <MudButton StartIcon="fas fa-info" IconColor="Color.Error">نمایش جزئیات</MudButton>
-                </MudButtonGroup>
-            </MudItem>
-        </MudGrid>
-    </MudPaper>
-</MudCardHeader>
-<MudCardContent>
-    <SfGrid @ref="PersonnelGrid" ID="personnelGrid" DataSource="@Personnels" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
-            AllowGrouping="true" Toolbar="@(new[] { "Add", "Edit", "Delete", "Excel Export", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
-            AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
-            AllowExcelExport="true" Width="100%">
-        <GridEvents TValue="Samco_HSE.HSEData.Personnel" OnActionBegin="PersonnelGrid_Action"
-                    OnToolbarClick="PersonnelToolbarClickHandler"/>
-        <GridFilterSettings Type="FilterType.Excel"/>
-        <GridColumns>
-            <GridColumn HeaderText="ردیف" Field="Oid" IsPrimaryKey="true" Visible="false"/>
-            <GridColumn HeaderText="نام دکل / دفتر" Field="ActiveRig.Name" AutoFit="true"/>
-            <GridColumn HeaderText="نام و نام خانوادگی" Field="PersonnelName" AutoFit="true"/>
-            <GridColumn HeaderText="نام و نام خانوادگی (انگلیسی)" Field="EnglishName" AutoFit="true"/>
-            <GridColumn HeaderText="کد ملی" Field="NationalID" AutoFit="true"/>
-            <GridColumn HeaderText="تاریخ تولد" Field="BirthDate" AutoFit="true"/>
-            <GridColumn HeaderText="متأهل" Field="Marriage" DisplayAsCheckBox="true" AutoFit="true"/>
-            <GridColumn HeaderText="اعتبار گواهینامه" Field="LicenseDate" AutoFit="true"/>
-            <GridColumn HeaderText="شماره پرسنلی" Field="PersonnelNum" AutoFit="true"/>
-            <GridColumn HeaderText="سمت فعلی" Field="CurrentRole" AutoFit="true"/>
-            <GridColumn HeaderText="تاریخ استخدام" Field="EmpDate" AutoFit="true"/>
-            <GridColumn HeaderText="تلفن همراه" Field="MobileNum" AutoFit="true"/>
-            <GridColumn HeaderText="تلفن منزل" Field="HomeNum" AutoFit="true"/>
-            <GridColumn HeaderText="شماره بیمه" Field="InsuranceNum" AutoFit="true"/>
-            <GridColumn HeaderText="آدرس منزل" Field="Address" AutoFit="true"/>
-            <GridColumn HeaderText="ایمیل" Field="BusinessEmail" AutoFit="true"/>
-            <GridColumn HeaderText="سایز کفش" Field="ShoeSize" AutoFit="true"/>
-            <GridColumn HeaderText="سایز لباس" Field="ClothSize" AutoFit="true"/>
-            <GridColumn HeaderText="وضعیت" Field="Status" AutoFit="true"/>
-            <GridColumn HeaderText="تعداد PPE دریافتی" Width="150px">
-                <Template>
+    <MudCardHeader>
+        <MudPaper Elevation="3" Width="100%" Class="pa-3">
+            <MudGrid>
+                <MudItem>
+                    <MudText Typo="Typo.h5">مدیریت کارکنان</MudText>
+                </MudItem>
+                <MudItem>
+                    <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
+                        <MudButton StartIcon="fas fa-helmet-safety" IconColor="Color.Warning">تحویل تجهیزات</MudButton>
+                        <MudButton StartIcon="fas fa-hands-clapping" IconColor="Color.Success" OnClick="OpenIncentiveDialog">ثبت تشویق</MudButton>
+                        <MudButton StartIcon="fas fa-circle-exclamation" IconColor="Color.Error">ثبت اخطار</MudButton>
+                        <MudButton StartIcon="fas fa-info" IconColor="Color.Info">نمایش جزئیات</MudButton>
+                    </MudButtonGroup>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </MudCardHeader>
+    <MudCardContent>
+        <SfGrid @ref="PersonnelGrid" ID="personnelGrid" DataSource="@Personnels" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
+                AllowGrouping="true" Toolbar="@(new[] { "Add", "Edit", "Delete", "Excel Export", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
+                AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
+                AllowExcelExport="true" Width="100%">
+            <GridEvents TValue="Samco_HSE.HSEData.Personnel" RowSelected="PersonnelSelectionChanged" OnActionBegin="PersonnelGrid_Action"
+                        OnToolbarClick="PersonnelToolbarClickHandler" />
+            <GridFilterSettings Type="FilterType.Excel" />
+            <GridColumns>
+                <GridColumn HeaderText="ردیف" Field="Oid" IsPrimaryKey="true" Visible="false" />
+                <GridColumn HeaderText="نام دکل / دفتر" Field="ActiveRig.Name" AutoFit="true" />
+                <GridColumn HeaderText="نام و نام خانوادگی" Field="PersonnelName" AutoFit="true" />
+                <GridColumn HeaderText="نام و نام خانوادگی (انگلیسی)" Field="EnglishName" AutoFit="true" />
+                <GridColumn HeaderText="کد ملی" Field="NationalID" AutoFit="true" />
+                <GridColumn HeaderText="تاریخ تولد" Field="BirthDate" AutoFit="true" />
+                <GridColumn HeaderText="متأهل" Field="Marriage" DisplayAsCheckBox="true" AutoFit="true" />
+                <GridColumn HeaderText="اعتبار گواهینامه" Field="LicenseDate" AutoFit="true" />
+                <GridColumn HeaderText="شماره پرسنلی" Field="PersonnelNum" AutoFit="true" />
+                <GridColumn HeaderText="سمت فعلی" Field="CurrentRole" AutoFit="true" />
+                <GridColumn HeaderText="تاریخ استخدام" Field="EmpDate" AutoFit="true" />
+                <GridColumn HeaderText="تلفن همراه" Field="MobileNum" AutoFit="true" />
+                <GridColumn HeaderText="تلفن منزل" Field="HomeNum" AutoFit="true" />
+                <GridColumn HeaderText="شماره بیمه" Field="InsuranceNum" AutoFit="true" />
+                <GridColumn HeaderText="آدرس منزل" Field="Address" AutoFit="true" />
+                <GridColumn HeaderText="ایمیل" Field="BusinessEmail" AutoFit="true" />
+                <GridColumn HeaderText="سایز کفش" Field="ShoeSize" AutoFit="true" />
+                <GridColumn HeaderText="سایز لباس" Field="ClothSize" AutoFit="true" />
+                <GridColumn HeaderText="وضعیت" Field="Status" AutoFit="true" />
+                <GridColumn HeaderText="تعداد PPE دریافتی" Width="150px">
+                    <Template>
+                        @{
+                            var person = context as Samco_HSE.HSEData.Personnel;
+                            @person.PPEs.Count
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn HeaderText="تعداد تشویق ایمنی" Width="150px">
+                    <Template>
+                        @{
+                            var person = context as Samco_HSE.HSEData.Personnel;
+                            @person.Incentives.Count
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn HeaderText="تعداد اخطار ایمنی" Width="150px">
+                    <Template>
+                        @{
+                            var person = context as Samco_HSE.HSEData.Personnel;
+                            @person.Warnings.Count
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn HeaderText="تعداد حادثه" Width="150px">
+                    <Template>
+                        @{
+                            var person = context as Samco_HSE.HSEData.Personnel;
+                            @person.Accidents.Count
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn HeaderText="تعداد آموزش" Width="150px">
+                    <Template>
+                        @{
+                            var person = context as Samco_HSE.HSEData.Personnel;
+                            @person.Trainings.Count
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn HeaderText="تعداد تمرین" Width="150px">
+                    <Template>
+                        @{
+                            var person = context as Samco_HSE.HSEData.Personnel;
+                            @person.Practices.Count
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn HeaderText="تعداد گزارش STOP Card" Width="200px">
+                    <Template>
+                        @{
+                            var person = context as Samco_HSE.HSEData.Personnel;
+                            @person.StopCardsReports.Count
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn HeaderText="تعداد مراجعه به درمانگاه" Width="150px">
+                    <Template>
+                        @{
+                            var person = context as Samco_HSE.HSEData.Personnel;
+                            @person.MedicalVisits.Count
+                        }
+                    </Template>
+                </GridColumn>
+            </GridColumns>
+            <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" AllowEditOnDblClick="true" Mode="EditMode.Dialog"
+                              ShowDeleteConfirmDialog="true" Dialog="@SamcoSoftShared.GeneralGridEditOption">
+                <Validator>
+                    <DataAnnotationsValidator />
+                </Validator>
+                <Template Context="editFormContext">
                     @{
-                        var person = context as Samco_HSE.HSEData.Personnel;
-                        @person.PPEs.Count
+                        var user = editFormContext as Samco_HSE.HSEData.Personnel;
                     }
+                    <MudRTLProvider RightToLeft="true">
+                        <MudExpansionPanels MultiExpansion="true">
+                            <MudExpansionPanel Text="اطلاعات شخصی" IsInitiallyExpanded="true">
+                                <MudGrid>
+                                    <MudItem md="4" sm="12">
+                                        <MudTextField @bind-Value="@user.PersonnelName" Label="نام و نام خانوادگی:" Variant="Variant.Text" Placeholder="الزامی" />
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudTextField @bind-Value="@user.EnglishName" Label=":نام و نام خانوادگی (انگلیسی)" Variant="Variant.Text" Adornment="Adornment.Start" Class="ltr" />
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudTextField @bind-Value="@user.NationalID" Label=":کد ملی" Variant="Variant.Text" Mask="@(new PatternMask("0000000000"))" Placeholder="الزامی" Class="ltr" />
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="تاریخ تولد:" DisableUnderLine="true">
+                                            <SamcoDateSelector @bind-Date="@user.BirthDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="وضعیت تأهل:" DisableUnderLine="true">
+                                            <MudCheckBox @bind-Checked="@user.Marriage" Label="متأهل" />
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudTextField @bind-Value="@user.MobileNum" Label=":تلفن همراه" Variant="Variant.Text" Mask="@(new PatternMask("00000000000"))" Adornment="Adornment.Start" Class="ltr" />
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudTextField @bind-Value="@user.HomeNum" Label=":تلفن منزل" Variant="Variant.Text" Mask="@(new PatternMask("00000000000"))" Adornment="Adornment.Start" Class="ltr" />
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudTextField @bind-Value="@user.InsuranceNum" Label=":شماره بیمه" Variant="Variant.Text" Adornment="Adornment.Start" Class="ltr" />
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="تاریخ انقضا گواهینامه:" DisableUnderLine="true">
+                                            <SamcoDateSelector @bind-Date="@user.LicenseDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
+                                        </MudField>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudExpansionPanel>
+                            <MudExpansionPanel Text="اطلاعات شغلی" IsInitiallyExpanded="true">
+                                <MudGrid>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="نام دکل / محل فعالیت:" DisableUnderLine="true">
+                                            <SamcoRigSelector DataSource="Rigs" @bind-SelectedRig="@user.ActiveRig" Session="Session1" />
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="تاریخ استخدام:" DisableUnderLine="true">
+                                            <SamcoDateSelector @bind-Date="@user.EmpDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="سمت فعلی:" DisableUnderLine="true">
+                                            <SfComboBox TItem="string" TValue="string" DataSource="@RigRoles" Placeholder="الزامی"
+                                            @bind-Value="@user.CurrentRole">
+                                            </SfComboBox>
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudTextField Label=":شماره پرسنلی" @bind-Value="@user.PersonnelNum" Variant="Variant.Text" Placeholder="الزامی" Class="ltr" />
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="وضعیت:" DisableUnderLine="true">
+                                            <SfComboBox TItem="string" TValue="string" DataSource="@_status" Placeholder="الزامی"
+                                            @bind-Value="@user.Status">
+                                            </SfComboBox>
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudTextField @bind-Value="@user.BusinessEmail" Variant="Variant.Text" Label="ایمیل سازمانی:"
+                                                      Mask="@(RegexMask.Email())" Class="ltr" InputMode="InputMode.email" Adornment="Adornment.Start" />
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="سمت قبلی:" DisableUnderLine="true">
+                                            <SfComboBox TItem="string" TValue="string" DataSource="@RigRoles"
+                                            @bind-Value="@user.PreviousRole">
+                                            </SfComboBox>
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="تاریخ آخرین ارتقا:" DisableUnderLine="true">
+                                            <SamcoDateSelector @bind-Date="@user.LastUpgradeDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudNumericField Label="سایز لباس:" Min="35" Max="50" @bind-Text="@user.ClothSize" Adornment="Adornment.Start" />
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudNumericField Label="سایز کفش:" Min="35" Max="50" @bind-Text="@user.ShoeSize" Adornment="Adornment.Start" />
+                                    </MudItem>
+                                </MudGrid>
+                            </MudExpansionPanel>
+                        </MudExpansionPanels>
+                    </MudRTLProvider>
                 </Template>
-            </GridColumn>
-            <GridColumn HeaderText="تعداد تشویق ایمنی" Width="150px">
-                <Template>
-                    @{
-                        var person = context as Samco_HSE.HSEData.Personnel;
-                        @person.Incentives.Count
-                    }
-                </Template>
-            </GridColumn>
-            <GridColumn HeaderText="تعداد اخطار ایمنی" Width="150px">
-                <Template>
-                    @{
-                        var person = context as Samco_HSE.HSEData.Personnel;
-                        @person.Warnings.Count
-                    }
-                </Template>
-            </GridColumn>
-            <GridColumn HeaderText="تعداد حادثه" Width="150px">
-                <Template>
-                    @{
-                        var person = context as Samco_HSE.HSEData.Personnel;
-                        @person.Accidents.Count
-                    }
-                </Template>
-            </GridColumn>
-            <GridColumn HeaderText="تعداد آموزش" Width="150px">
-                <Template>
-                    @{
-                        var person = context as Samco_HSE.HSEData.Personnel;
-                        @person.Trainings.Count
-                    }
-                </Template>
-            </GridColumn>
-            <GridColumn HeaderText="تعداد تمرین" Width="150px">
-                <Template>
-                    @{
-                        var person = context as Samco_HSE.HSEData.Personnel;
-                        @person.Practices.Count
-                    }
-                </Template>
-            </GridColumn>
-            <GridColumn HeaderText="تعداد گزارش STOP Card"  Width="200px">
-                <Template>
-                    @{
-                        var person = context as Samco_HSE.HSEData.Personnel;
-                        @person.StopCardsReports.Count
-                    }
-                </Template>
-            </GridColumn>
-            <GridColumn HeaderText="تعداد مراجعه به درمانگاه" Width="150px">
-                <Template>
-                    @{
-                        var person = context as Samco_HSE.HSEData.Personnel;
-                        @person.MedicalVisits.Count
-                    }
-                </Template>
-            </GridColumn>            
-        </GridColumns>
-        <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" AllowEditOnDblClick="true" Mode="EditMode.Dialog"
-                          ShowDeleteConfirmDialog="true" Dialog="@SamcoSoftShared.GeneralGridEditOption">
-            <Validator>
-                <DataAnnotationsValidator/>
-            </Validator>
-            <Template Context="editFormContext">
-                @{
-                    var user = editFormContext as Samco_HSE.HSEData.Personnel;
-                }
-                <MudRTLProvider RightToLeft="true">
-                    <MudExpansionPanels MultiExpansion="true">
-                        <MudExpansionPanel Text="اطلاعات شخصی" IsInitiallyExpanded="true">
-                            <MudGrid>
-                                <MudItem md="4" sm="12">
-                                    <MudTextField @bind-Value="@user.PersonnelName" Label="نام و نام خانوادگی:" Variant="Variant.Text" Placeholder="الزامی"/>
-                                </MudItem>
-                                <MudItem md="4" sm="12">
-                                    <MudTextField @bind-Value="@user.EnglishName" Label=":نام و نام خانوادگی (انگلیسی)" Variant="Variant.Text" Adornment="Adornment.Start" Class="ltr"/>
-                                </MudItem>
-                                <MudItem md="4" sm="12">
-                                    <MudTextField @bind-Value="@user.NationalID" Label=":کد ملی" Variant="Variant.Text" Mask="@(new PatternMask("0000000000"))" Placeholder="الزامی" Class="ltr"/>
-                                </MudItem>
-                                <MudItem md="4" sm="12">
-                                    <MudField Label="تاریخ تولد:" DisableUnderLine="true">
-                                        <SamcoDateSelector @bind-Date="@user.BirthDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
-                                    </MudField>
-                                </MudItem>
-                                <MudItem md="4" sm="12">
-                                    <MudField Label="وضعیت تأهل:" DisableUnderLine="true">
-                                        <MudCheckBox @bind-Checked="@user.Marriage" Label="متأهل"/>
-                                    </MudField>
-                                </MudItem>
-                                <MudItem md="4" sm="12">
-                                    <MudTextField @bind-Value="@user.MobileNum" Label=":تلفن همراه" Variant="Variant.Text" Mask="@(new PatternMask("00000000000"))" Adornment="Adornment.Start" Class="ltr"/>
-                                </MudItem>
-                                <MudItem md="4" sm="12">
-                                    <MudTextField @bind-Value="@user.HomeNum" Label=":تلفن منزل" Variant="Variant.Text" Mask="@(new PatternMask("00000000000"))" Adornment="Adornment.Start" Class="ltr"/>
-                                </MudItem>
-                                <MudItem md="4" sm="12">
-                                    <MudTextField @bind-Value="@user.InsuranceNum" Label=":شماره بیمه" Variant="Variant.Text" Adornment="Adornment.Start" Class="ltr"/>
-                                </MudItem>
-                                <MudItem md="4" sm="12">
-                                    <MudField Label="تاریخ انقضا گواهینامه:" DisableUnderLine="true">
-                                        <SamcoDateSelector @bind-Date="@user.LicenseDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
-                                    </MudField>
-                                </MudItem>
-                            </MudGrid>
-                        </MudExpansionPanel>
-                        <MudExpansionPanel Text="اطلاعات شغلی" IsInitiallyExpanded="true">
-                            <MudGrid>
-                                <MudItem md="4" sm="12">
-                                    <MudField Label="نام دکل / محل فعالیت:" DisableUnderLine="true">
-                                        <SamcoRigSelector DataSource="Rigs" @bind-SelectedRig="@user.ActiveRig" Session="Session1"/>
-                                    </MudField>
-                                </MudItem>
-                                <MudItem md="4" sm="12">
-                                    <MudField Label="تاریخ استخدام:" DisableUnderLine="true">
-                                        <SamcoDateSelector @bind-Date="@user.EmpDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
-                                    </MudField>
-                                </MudItem>
-                                <MudItem md="4" sm="12">
-                                    <MudField Label="سمت فعلی:" DisableUnderLine="true">
-                                        <SfComboBox TItem="string" TValue="string" DataSource="@RigRoles" Placeholder="الزامی"
-                                                    @bind-Value="@user.CurrentRole">
-                                        </SfComboBox>
-                                    </MudField>
-                                </MudItem>
-                                <MudItem md="4" sm="12">
-                                    <MudTextField Label=":شماره پرسنلی" @bind-Value="@user.PersonnelNum" Variant="Variant.Text" Placeholder="الزامی" Class="ltr"/>
-                                </MudItem>
-                                <MudItem md="4" sm="12">
-                                    <MudField Label="وضعیت:" DisableUnderLine="true">
-                                        <SfComboBox TItem="string" TValue="string" DataSource="@_status" Placeholder="الزامی"
-                                                    @bind-Value="@user.Status">
-                                        </SfComboBox>
-                                    </MudField>
-                                </MudItem>
-                                <MudItem md="4" sm="12">
-                                    <MudTextField @bind-Value="@user.BusinessEmail" Variant="Variant.Text" Label="ایمیل سازمانی:"
-                                                  Mask="@(RegexMask.Email())" Class="ltr" InputMode="InputMode.email" Adornment="Adornment.Start"/>
-                                </MudItem>
-                                <MudItem md="4" sm="12">
-                                    <MudField Label="سمت قبلی:" DisableUnderLine="true">
-                                        <SfComboBox TItem="string" TValue="string" DataSource="@RigRoles"
-                                                    @bind-Value="@user.PreviousRole">
-                                        </SfComboBox>
-                                    </MudField>
-                                </MudItem>
-                                <MudItem md="4" sm="12">
-                                    <MudField Label="تاریخ آخرین ارتقا:" DisableUnderLine="true">
-                                        <SamcoDateSelector @bind-Date="@user.LastUpgradeDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
-                                    </MudField>
-                                </MudItem>
-                                <MudItem md="4" sm="12">
-                                    <MudNumericField Label="سایز لباس:" Min="35" Max="50" @bind-Text="@user.ClothSize" Adornment="Adornment.Start"/>
-                                </MudItem>
-                                <MudItem md="4" sm="12">
-                                    <MudNumericField Label="سایز کفش:" Min="35" Max="50" @bind-Text="@user.ShoeSize" Adornment="Adornment.Start"/>
-                                </MudItem>
-                            </MudGrid>
-                        </MudExpansionPanel>
-                    </MudExpansionPanels>
-                </MudRTLProvider>
-            </Template>
-        </GridEditSettings>
-    </SfGrid>
-</MudCardContent>
+            </GridEditSettings>
+        </SfGrid>
+    </MudCardContent>
 </MudCard>

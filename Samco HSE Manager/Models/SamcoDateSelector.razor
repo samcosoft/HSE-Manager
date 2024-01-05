@@ -13,13 +13,13 @@
 <div class="d-flex gap-1">
     @{
         <div class="d-inline-flex w-100">
-            <MudDatePicker @bind-Date="@Date" Label="@DisplayText" DisableToolbar="true" Rounded="true" Class="@(DisplayText == null ? "calendarStyle" : "")"
+            <MudDatePicker @bind-Date="@Date" Label="@DisplayText"  PickerVariant="PickerVariant.Dialog" DisableToolbar="true" Rounded="true" Class="@(DisplayText == null ? "calendarStyle" : "")"
                            Culture="@GetPersianCulture()" IconSize="Size.Small" MinDate="@DateTime.Parse("1900/01/01")" Variant="Variant.Outlined"
                            Clearable="true"/>
         </div>
         <div class="d-inline-flex @(DisplayText == null ? "" : "pt-2")">
             <MudTooltip Text="@(_shamsiVisible ? "تقویم شمسی" : "تقویم میلادی")">
-                <MudIconButton Color="Color.Primary" Size="Size.Small" Class="h-100" Icon="@GetIcon()" Variant="Variant.Filled" OnClick="() => _shamsiVisible = !_shamsiVisible"/>
+                <MudIconButton Color="Color.Primary" Size="Size.Small" Class="h-100" Icon="@GetIcon()" Variant="Variant.Filled" OnClick="() => ShamsiVisible = !ShamsiVisible"/>
             </MudTooltip>
         </div>
     }
@@ -79,6 +79,16 @@
     }
 
     private bool _shamsiVisible;
+
+    private bool ShamsiVisible
+    {
+        get => _shamsiVisible;
+        set
+        {
+            _shamsiVisible = value;
+            StateHasChanged();
+        }
+    }
 
     protected override void OnInitialized()
     {

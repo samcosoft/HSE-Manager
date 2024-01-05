@@ -1,5 +1,13 @@
-﻿<h3>PersonnelIncentive</h3>
-
-@code {
-    
-}
+﻿<MudDialog>
+    <DialogContent>
+        <MudField Label="تاریخ ثبت:" DisableUnderLine="true">
+            <SamcoDateSelector @bind-Date="@SelIncentive.IssueDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
+        </MudField>
+        <MudTextField @bind-Value="@(SelIncentive.Reason)" Label="شرح تشویق:" Variant="Variant.Text" Adornment="Adornment.Start" 
+                       Placeholder="الزامی"/>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Success" OnClick="SaveIncentive">ثبت</MudButton>
+        <MudButton Color="Color.Error" OnClick="Cancel">انصراف</MudButton>
+    </DialogActions>
+</MudDialog>

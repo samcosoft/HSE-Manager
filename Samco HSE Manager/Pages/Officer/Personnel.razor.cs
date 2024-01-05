@@ -3,6 +3,7 @@ using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Samco_HSE.HSEData;
+using Samco_HSE_Manager.Pages.Officer.PersonnelEdit;
 using Syncfusion.Blazor.Grids;
 using Action = Syncfusion.Blazor.Grids.Action;
 
@@ -12,12 +13,12 @@ public partial class Personnel : IDisposable
 {
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
-
+    [Inject] private IDialogService DialogService { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
 
     private Session Session1 { get; set; } = null!;
     private IEnumerable<Samco_HSE.HSEData.Personnel>? Personnels { get; set; }
-
+    private Samco_HSE.HSEData.Personnel? SelPersonnel { get; set; }
     private IEnumerable<string>? RigRoles { get; set; }
 
     private readonly IEnumerable<string> _status = new List<string>
@@ -71,60 +72,60 @@ public partial class Personnel : IDisposable
                 e.Data = await Session1.GetObjectByKeyAsync<Samco_HSE.HSEData.Personnel>(e.RowData.Oid);
                 break;
             case Action.Save:
-            {
-                var editModel = e.Data;
-                //Validation
-                if (editModel.ActiveRig == null || string.IsNullOrEmpty(editModel.PersonnelName) ||
-                    string.IsNullOrEmpty(editModel.CurrentRole) || string.IsNullOrEmpty(editModel.Status))
                 {
-                    Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
-                    e.Cancel = true;
-                    return;
-                }
+                    var editModel = e.Data;
+                    //Validation
+                    if (editModel.ActiveRig == null || string.IsNullOrEmpty(editModel.PersonnelName) ||
+                        string.IsNullOrEmpty(editModel.CurrentRole) || string.IsNullOrEmpty(editModel.Status))
+                    {
+                        Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
+                        e.Cancel = true;
+                        return;
+                    }
 
-                if (string.IsNullOrEmpty(editModel.NationalID) == false && editModel.NationalID.Length < 10)
-                {
-                    Snackbar.Add("کد ملی باید حداقل 10 رقم باشد.", Severity.Error);
-                    e.Cancel = true;
-                    return;
-                }
+                    if (string.IsNullOrEmpty(editModel.NationalID) == false && editModel.NationalID.Length < 10)
+                    {
+                        Snackbar.Add("کد ملی باید حداقل 10 رقم باشد.", Severity.Error);
+                        e.Cancel = true;
+                        return;
+                    }
 
-                //Check user not existed before
-                var selPerson = Session1.FindObject<Samco_HSE.HSEData.Personnel>(
-                    new BinaryOperator(nameof(Samco_HSE.HSEData.Personnel.NationalID), editModel.NationalID));
-                if (selPerson != null && selPerson.Oid != editModel.Oid)
-                {
-                    //User existed
-                    Snackbar.Add(
-                        $"پرسنل با نام {selPerson.PersonnelName} با همین کد ملی در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.",
-                        Severity.Error);
-                    e.Cancel = true;
-                    return;
-                }
+                    //Check user not existed before
+                    var selPerson = Session1.FindObject<Samco_HSE.HSEData.Personnel>(
+                        new BinaryOperator(nameof(Samco_HSE.HSEData.Personnel.NationalID), editModel.NationalID));
+                    if (selPerson != null && selPerson.Oid != editModel.Oid)
+                    {
+                        //User existed
+                        Snackbar.Add(
+                            $"پرسنل با نام {selPerson.PersonnelName} با همین کد ملی در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.",
+                            Severity.Error);
+                        e.Cancel = true;
+                        return;
+                    }
 
-                if (string.IsNullOrEmpty(editModel.NationalID) == false && editModel.NationalID.Length < 10)
-                {
-                    Snackbar.Add("کد ملی باید حداقل 10 رقم باشد.", Severity.Error);
-                    e.Cancel = true;
-                    return;
-                }
+                    if (string.IsNullOrEmpty(editModel.NationalID) == false && editModel.NationalID.Length < 10)
+                    {
+                        Snackbar.Add("کد ملی باید حداقل 10 رقم باشد.", Severity.Error);
+                        e.Cancel = true;
+                        return;
+                    }
 
-                editModel.Save();
-                break;
-            }
+                    editModel.Save();
+                    break;
+                }
             case Action.Delete:
-            {
-                var systemUser = await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", e.RowData.Oid));
-                if (systemUser != null && systemUser.GetType() == typeof(User))
                 {
-                    Snackbar.Add("شما اجازه حذف اطلاعات کاربران سیستم را ندارید.", Severity.Error);
-                    e.Cancel = true;
-                }
+                    var systemUser = await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", e.RowData.Oid));
+                    if (systemUser != null && systemUser.GetType() == typeof(User))
+                    {
+                        Snackbar.Add("شما اجازه حذف اطلاعات کاربران سیستم را ندارید.", Severity.Error);
+                        e.Cancel = true;
+                    }
 
-                var dataItem = e.RowData;
-                dataItem.Delete();
-                break;
-            }
+                    var dataItem = e.RowData;
+                    dataItem.Delete();
+                    break;
+                }
         }
     }
 
@@ -144,5 +145,26 @@ public partial class Personnel : IDisposable
     public void Dispose()
     {
         Session1.Dispose();
+    }
+    private void PersonnelSelectionChanged(RowSelectEventArgs<Samco_HSE.HSEData.Personnel> obj)
+    {
+        SelPersonnel = obj.Data;
+    }
+
+    private async Task OpenIncentiveDialog()
+    {
+        if (SelPersonnel == null)
+        {
+            Snackbar.Add("لطفاً یک نفر را از لیست انتخاب کنید.", Severity.Error);
+            return;
+        }
+
+        if (SelPersonnel.ActiveRig.WellWorks.FirstOrDefault(x => x.IsActive) == null)
+        {
+            Snackbar.Add("پرسنل انتخاب شده در هیچ پروژه فعالی قرار ندارد.", Severity.Error);
+            return;
+        }
+        await DialogService.ShowAsync<PersonnelIncentive>($"ثبت تشویق برای {SelPersonnel.PersonnelName}",
+            new DialogParameters { { "PersonId", SelPersonnel.Oid } });
     }
 }

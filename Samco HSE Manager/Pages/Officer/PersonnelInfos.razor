@@ -1,0 +1,101 @@
+﻿@using FilterType = Syncfusion.Blazor.Grids.FilterType
+
+<PageTitle>اطلاعات کارمند</PageTitle>
+<MudPaper Elevation="3" Width="100%" Class="pa-3">
+    <MudText Typo="Typo.h5">اطلاعات @SelUser?.PersonnelName</MudText>
+</MudPaper>
+<MudCard>
+    <MudCardHeader>
+        <MudPaper Elevation="3" Width="100%" Class="pa-3">
+            <MudText Typo="Typo.h6">تشویق‌ها</MudText>
+        </MudPaper>
+    </MudCardHeader>
+    <MudCardContent>
+        <SfGrid @ref="IncentiveGrid" ID="incentiveGrid" DataSource="@SelUser?.Incentives" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
+                AllowGrouping="true" Toolbar="@(new[] { "Add", "Edit", "Delete", "Excel Export", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
+                AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
+                AllowExcelExport="true" Width="100%">
+            <GridEvents TValue="Samco_HSE.HSEData.Incentive" OnActionBegin="IncentiveGrid_Action"
+                        OnToolbarClick="IncentiveGridToolbarClickHandler"/>
+            <GridFilterSettings Type="FilterType.Excel"/>
+            <GridColumns>
+                <GridColumn HeaderText="ردیف" Field="Oid" IsPrimaryKey="true" Visible="false"/>
+                <GridColumn HeaderText="نام چاه" Field="WorkID.WellNo.Name" AutoFit="true"/>
+                <GridColumn HeaderText="نام دکل / دفتر" Field="WorkID.RigNo.Name" AutoFit="true"/>
+                <GridColumn HeaderText="تاریخ صدور" Field="IssueDate" AutoFit="true"/>
+                <GridColumn HeaderText="توضیحات" Field="Reason" AutoFit="true"/>
+                <GridColumn HeaderText="صادر کننده" Field="Issuer.PersonnelName" AutoFit="true"/>
+            </GridColumns>
+            <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" AllowEditOnDblClick="true" Mode="EditMode.Dialog"
+                              ShowDeleteConfirmDialog="true" Dialog="@SamcoSoftShared.GeneralGridEditOption">
+                <Validator>
+                    <DataAnnotationsValidator/>
+                </Validator>
+                <Template Context="editFormContext">
+                    @{
+                        var incentive = editFormContext as Samco_HSE.HSEData.Incentive;
+                    }
+                    <MudGrid>
+                        <MudItem md="6" sm="12">
+                            <MudField Label="تاریخ صدور:" DisableUnderLine="true">
+                                <SamcoDateSelector @bind-DateNotNull="@incentive.IssueDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
+                            </MudField>
+                        </MudItem>
+                        <MudItem md="6" sm="12">
+                            <MudTextField Label="یادداشت:" @bind-Value="@incentive.Reason" Placeholder="دلیل تشویق، درخواست دهنده و ..."
+                                          Adornment="Adornment.Start" AutoFocus="true"/>
+                        </MudItem>
+                    </MudGrid>
+                </Template>
+            </GridEditSettings>
+        </SfGrid>
+    </MudCardContent>
+</MudCard>
+
+<MudCard>
+    <MudCardHeader>
+        <MudPaper Elevation="3" Width="100%" Class="pa-3">
+            <MudText Typo="Typo.h6">اخطارها</MudText>
+        </MudPaper>
+    </MudCardHeader>
+    <MudCardContent>
+        <SfGrid @ref="WarningGrid" ID="warningGrid" DataSource="@SelUser?.Warnings" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
+                AllowGrouping="true" Toolbar="@(new[] { "Add", "Edit", "Delete", "Excel Export", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
+                AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
+                AllowExcelExport="true" Width="100%">
+            <GridEvents TValue="Samco_HSE.HSEData.Warning" OnActionBegin="WarningGrid_Action"
+                        OnToolbarClick="WarningGridToolbarClickHandler"/>
+            <GridFilterSettings Type="FilterType.Excel"/>
+            <GridColumns>
+                <GridColumn HeaderText="ردیف" Field="Oid" IsPrimaryKey="true" Visible="false"/>
+                <GridColumn HeaderText="نام چاه" Field="WorkID.WellNo.Name" AutoFit="true"/>
+                <GridColumn HeaderText="نام دکل / دفتر" Field="WorkID.RigNo.Name" AutoFit="true"/>
+                <GridColumn HeaderText="تاریخ صدور" Field="IssueDate" AutoFit="true"/>
+                <GridColumn HeaderText="توضیحات" Field="Reason" AutoFit="true"/>
+                <GridColumn HeaderText="صادر کننده" Field="Issuer.PersonnelName" AutoFit="true"/>
+            </GridColumns>
+            <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" AllowEditOnDblClick="true" Mode="EditMode.Dialog"
+                              ShowDeleteConfirmDialog="true" Dialog="@SamcoSoftShared.GeneralGridEditOption">
+                <Validator>
+                    <DataAnnotationsValidator/>
+                </Validator>
+                <Template Context="editFormContext">
+                    @{
+                        var warning = editFormContext as Samco_HSE.HSEData.Warning;
+                    }
+                    <MudGrid>
+                        <MudItem md="6" sm="12">
+                            <MudField Label="تاریخ صدور:" DisableUnderLine="true">
+                                <SamcoDateSelector @bind-DateNotNull="@warning.IssueDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
+                            </MudField>
+                        </MudItem>
+                        <MudItem md="6" sm="12">
+                            <MudTextField Label="یادداشت:" @bind-Value="@warning.Reason" Placeholder="دلیل تشویق، درخواست دهنده و ..."
+                                          Adornment="Adornment.Start" AutoFocus="true"/>
+                        </MudItem>
+                    </MudGrid>
+                </Template>
+            </GridEditSettings>
+        </SfGrid>
+    </MudCardContent>
+</MudCard>

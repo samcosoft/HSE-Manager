@@ -1,4 +1,6 @@
-﻿namespace Samco_HSE_Manager.Data.Reports
+﻿using DevExpress.Drawing.Printing;
+
+namespace Samco_HSE_Manager.Data.Reports
 {
     partial class MedicationRequest
     {
@@ -622,7 +624,7 @@
             this.Margins = new DevExpress.Drawing.DXMargins(150F, 150F, 50F, 50F);
             this.PageHeight = 2970;
             this.PageWidth = 2100;
-            this.PaperKind = System.Drawing.Printing.PaperKind.A4;
+            this.PaperKind = DXPaperKind.A4;
             this.ReportUnit = DevExpress.XtraReports.UI.ReportUnit.TenthsOfAMillimeter;
             this.RightToLeft = DevExpress.XtraReports.UI.RightToLeft.Yes;
             this.SnapGridSize = 25F;
