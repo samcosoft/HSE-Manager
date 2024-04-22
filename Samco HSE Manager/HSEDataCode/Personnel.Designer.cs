@@ -138,7 +138,7 @@ namespace Samco_HSE.HSEData
         public Rig ActiveRig
         {
             get { return fActiveRig; }
-            set { SetPropertyValue<Rig>(nameof(ActiveRig), ref fActiveRig, value); }
+            set { try { SetPropertyValue<Rig>(nameof(ActiveRig), ref fActiveRig, value); } catch { } }
         }
         [Association(@"TrainingReferencesPersonnel")]
         public XPCollection<Training> Trainings { get { return GetCollection<Training>(nameof(Trainings)); } }

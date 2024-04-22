@@ -69,7 +69,7 @@ public partial class Users : IDisposable
         switch (e.RequestType)
         {
             case Action.Add:
-                e.Data ??= new User(Session1);
+                e.Data = new User(Session1);
                 break;
             case Action.BeginEdit:
                 //prevent owner editing

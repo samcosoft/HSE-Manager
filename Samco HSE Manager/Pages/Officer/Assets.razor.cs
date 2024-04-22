@@ -39,20 +39,6 @@ public partial class Assets : IDisposable
             var loggedUser = await
                 Session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
             Rigs = loggedUser.Rigs;
-        }
-        else
-        {
-            //Owner
-            Rigs = await Session1.Query<Rig>().ToListAsync();
-        }
-
-        await LoadInformation();
-    }
-
-    private async Task LoadInformation()
-    {
-        if (SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Owner)
-        {
             var rigsOid = Rigs.Select(x => x.Oid).ToList();
             AssetsList = await Session1.Query<Asset>()
                 .Where(x => rigsOid.Contains(x.Oid)).ToListAsync();
@@ -60,6 +46,7 @@ public partial class Assets : IDisposable
         else
         {
             //Owner
+            Rigs = await Session1.Query<Rig>().ToListAsync();
             AssetsList = await Session1.Query<Asset>().ToListAsync();
         }
     }
@@ -88,8 +75,10 @@ public partial class Assets : IDisposable
     {
         switch (e.RequestType)
         {
+            case Action.BeforeBeginEdit:
+                
             case Action.Add:
-                e.Data ??= new Asset(Session1);
+                e.Data = new Asset(Session1);
                 break;
             case Action.BeginEdit:
                 e.Data = await Session1.FindObjectAsync<Asset>(new BinaryOperator("Oid", e.RowData.Oid));
@@ -135,7 +124,6 @@ public partial class Assets : IDisposable
                 }
 
                 editModel.Save();
-                await LoadInformation();
                 break;
             case Action.Delete:
                 e.RowData.Delete();

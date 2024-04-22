@@ -1,22 +1,12 @@
-﻿<MudDrawerHeader>
-    @* <MudGrid> *@
-    @*     <MudItem lg="3" md="3" sm="3"> *@
-    @*         <MudAvatar Elevation="2" Rounded="true">@_avatarName</MudAvatar> *@
-    @*     </MudItem> *@
-    @*     <MudItem lg="9" md="9" sm="9"> *@
-    @*         <MudText Typo="Typo.subtitle1">@_userName</MudText> *@
-    @*         <MudText Typo="Typo.subtitle2">@_userRole</MudText> *@
-    @*     </MudItem> *@
-    @* </MudGrid> *@
-    @* <MudDivider Class="my-2" /> *@
-</MudDrawerHeader>
-<MudNavMenu>
+﻿<MudNavMenu Style="height: auto">
     <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">داشبورد</MudNavLink>
     <AuthorizeView Roles="Admin,Owner">
         <Authorized>
             <MudNavGroup Title="مدیریت" Icon="@Icons.Material.Filled.ManageAccounts" Expanded="true">
                 <MudNavLink Href="projects" Icon="fas fa-oil-well">مدیریت پروژه و عملیات</MudNavLink>
                 <MudNavLink Href="users" Icon="fas fa-user">کاربران</MudNavLink>
+                <MudNavLink Href="dashboard" Icon="fas fa-gauge">تنظیمات داشبوردها</MudNavLink>
+                <MudNavLink Href="reportdesigner" Icon="fa-solid fa-file-chart-pie">تنظیمات گزارش‌ها</MudNavLink>
             </MudNavGroup>
         </Authorized>
     </AuthorizeView>
@@ -46,30 +36,8 @@
         <Authorized>
             <MudNavGroup Title="درمانگاه" Icon="@Icons.Material.Filled.Medication">
                 <MudNavLink Href="visit" Icon="fas fa-prescription">ویزیت بیمار</MudNavLink>
-                <MudNavLink Href="drug" Icon="fas fa-pills">مدیریت داروها</MudNavLink>
+                <MudNavLink Href="medication" Icon="fas fa-pills">مدیریت داروها</MudNavLink>
             </MudNavGroup>
         </Authorized>
     </AuthorizeView>
 </MudNavMenu>
-
-
-@code {
-
-    [Inject]
-    private IConfiguration Configuration { get; set; } = null!;
-
-    private string? _avatarName;
-    private string? _userName;
-    private string? _userRole;
-    private string? _companyName;
-
-    protected override Task OnInitializedAsync()
-    {
-        _companyName = Configuration["CompanyInfo:Name"];
-        _avatarName = SamcoSoftShared.CurrentUser?.PersonnelName.First().ToString() ?? "A";
-        _userName = SamcoSoftShared.CurrentUser?.PersonnelName ?? "مهمان";
-        _userRole = SamcoSoftShared.CurrentUserRole.ToString();
-        return base.OnInitializedAsync();
-    }
-
-}

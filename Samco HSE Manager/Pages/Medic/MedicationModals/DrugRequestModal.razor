@@ -1,0 +1,72 @@
+﻿@using Samco_HSE.HSEData;
+@using DevExpress.Data.Filtering;
+
+@inject IDataLayer DataLayer;
+@inject ISnackbar Snackbar;
+@inject IConfiguration Configuration;
+@inject NavigationManager NavigationManager;
+
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Numbers" Class="me-3 mb-1" />
+            تنظیم تعداد تجهیز
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudAlert Severity="Severity.Info" Icon="fas fa-info" Elevation="3">درخواست داروها بر اساس حداقل تعداد دارو / تجهیز تنظیم می‌شود. شما می‌توانید پس از دریافت فایل درخواست مقادیر آن‌ها را تغییر دهید.</MudAlert>
+        <MudField Label="نام دکل / دفتر:">
+            <SamcoRigSelector DataSource="Rigs" Session="Session1" @bind-SelectedRig="_selRig"/>
+        </MudField>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">انصراف</MudButton>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" StartIcon="fas fa-check" OnClick="Submit">تأیید</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public int SelMedicationId { get; set; }
+    private Session Session1 { get; set; } = null!;
+    private IEnumerable<Rig> Rigs { get; set; } = null!;
+    private Rig? _selRig;
+
+    protected override void OnInitialized()
+    {
+        Session1 = new Session(DataLayer);
+        if (SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Owner)
+        {
+            var loggedUser =
+                Session1.FindObject<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
+            Rigs = loggedUser.Rigs;
+        }
+        else
+        {
+            //Owner
+            Rigs = Session1.Query<Rig>().ToList();
+        }
+
+        base.OnInitialized();
+    }
+
+    private void Submit()
+    {
+        if (_selRig == null)
+        {
+            Snackbar.Add("لطفاً یک دکل را انتخاب کنید.", Severity.Error);
+            return;
+        }
+
+        var parameter =
+            $"ReportName=MedicineRequest&Parameters=RigId--{_selRig.Oid}|Title--شرکت {Configuration["CompanyInfo:Name"]} - دکل {_selRig.Name}";
+        NavigationManager.NavigateTo("report?" + parameter);
+        Snackbar.Add("اطلاعات با موفقیت ثبت شد.", Severity.Success);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

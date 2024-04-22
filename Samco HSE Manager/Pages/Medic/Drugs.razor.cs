@@ -3,18 +3,19 @@ using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using Samco_HSE.HSEData;
 using MudBlazor;
+using Samco_HSE_Manager.Pages.Medic.MedicationModals;
 using Syncfusion.Blazor.Grids;
-using Syncfusion.Blazor.Popups;
 using Action = Syncfusion.Blazor.Grids.Action;
 
 namespace Samco_HSE_Manager.Pages.Medic;
 
-public partial class Drugs
+public partial class Drugs : IDisposable
 {
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
     [Inject] private IConfiguration Configuration { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
+    [Inject] private IDialogService DialogService { get; set; } = null!;
 
     private Session Session1 { get; set; } = null!;
     private IEnumerable<Rig> Rigs { get; set; } = null!;
@@ -59,8 +60,9 @@ public partial class Drugs
 
     #region MedicationGrid
 
-    private string MedicGridUnbound(int rigOid, Medication medic)
+    private string MedicGridUnbound(int rigOid, Medication? medic)
     {
+        if (medic == null) return "0";
         using var tempSession = new Session(DataLayer);
         var currentMedication =
             tempSession.FindObject<Medication>(new BinaryOperator("Oid", medic.Oid));
@@ -80,7 +82,7 @@ public partial class Drugs
                     e.Cancel = true;
                 }
 
-                e.Data ??= new Medication(Session1);
+                e.Data = new Medication(Session1) { AvailForOrder = true };
                 break;
             case Action.BeginEdit:
                 if (SamcoSoftShared.CurrentUserRole > SamcoSoftShared.SiteRoles.Supervisor)
@@ -149,9 +151,6 @@ public partial class Drugs
 
     #region MedicationCount
 
-    private SfDialog? SetNumberModal { get; set; }
-    private MedicationStock? _selMedicationStock;
-
     private async Task OnSetNumberBtnClick()
     {
         if (MedicineGrid!.SelectedRecords.Any() == false)
@@ -160,71 +159,29 @@ public partial class Drugs
             return;
         }
 
-        _selMedicationStock = new MedicationStock(Session1) { MedicName = MedicineGrid!.SelectedRecords.First() };
-        //auto select rig
-        await SetNumberModal!.ShowAsync();
-    }
+        var selMedicine = MedicineGrid!.SelectedRecords.First();
 
-    private void RigSelectionChanged(Rig itm)
-    {
-        //Change data source if needed
-        var selMedication = MedicineGrid!.SelectedRecords.FirstOrDefault();
-        if (selMedication == null) return;
-        //Get stock items
-        var stockItm = Session1.Query<MedicationStock>().Where(x => x.RigNo.Oid == (itm).Oid &&
-                                                                    x.MedicName.Oid == selMedication.Oid);
-        if (stockItm.Any())
-        {
-            _selMedicationStock = stockItm.First();
-        }
-        else
-        {
-            _selMedicationStock = new MedicationStock(Session1)
-            {
-                MedicName = MedicineGrid!.SelectedRecords.First(),
-                RigNo = itm
-            };
-        }
-    }
-
-    private async Task SetCountOkBtnClick()
-    {
-        //Validation
-        if (_selMedicationStock?.RigNo == null)
-        {
-            Snackbar.Add("لطفاً یک دکل را انتخاب کنید.", Severity.Error);
-            return;
-        }
-
-        _selMedicationStock?.Save();
-        Snackbar.Add("اطلاعات با موفقیت ثبت شد.", Severity.Success);
-        await MedicineGrid!.Refresh();
-        await SetNumberModal!.HideAsync();
+        var dialog = await DialogService.ShowAsync<NumberModal>($"ثبت موجودی برای {selMedicine.Name}",
+            new DialogParameters { { "SelMedicationId", selMedicine.Oid } });
+        var result = await dialog.Result;
+        if (!result.Canceled)
+            StateHasChanged();
     }
 
     #endregion
 
     #region DrugRequest
-    private SfDialog? DrugRequestModal { get; set; }
-    private Rig? _selRig;
 
     private async Task OnDrugRequestBtnClick()
     {
-        await DrugRequestModal!.ShowAsync();
+        await DialogService.ShowAsync<DrugRequestModal>("درخواست دارو");
     }
 
-    private void RequestBtnClick()
-    {
-        if (_selRig == null)
-        {
-            Snackbar.Add("لطفاً یک دکل را انتخاب کنید.", Severity.Error);
-            return;
-        }
-
-        var parameter =
-            $"ReportName=MedicineRequest&Parameters=RigId--{_selRig.Oid}|Title--شرکت {Configuration["CompanyInfo:Name"]} - دکل {_selRig.Name}";
-        NavigationManager.NavigateTo("report?" + parameter);
-        DrugRequestModal?.HideAsync();
-    }
     #endregion
+
+    public void Dispose()
+    {
+        Session1.Dispose();
+        ((IDisposable)MedicineGrid!).Dispose();
+    }
 }

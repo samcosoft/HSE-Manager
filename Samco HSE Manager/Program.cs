@@ -68,6 +68,10 @@ builder.WebHost.UseWebRoot("wwwroot");
 builder.WebHost.UseStaticWebAssets();
 
 var app = builder.Build();
+
+//Register Syncfusion license
+//Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("YOUR LICENSE KEY");
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

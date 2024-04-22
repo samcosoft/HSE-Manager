@@ -82,7 +82,7 @@ public partial class Vehicles : IDisposable
         switch (e.RequestType)
         {
             case Action.Add:
-                e.Data ??= new Vehicle(Session1);
+                e.Data = new Vehicle(Session1);
                 break;
             case Action.BeginEdit:
                 e.Data = Session1.GetObjectByKey<Vehicle>(e.RowData.Oid);

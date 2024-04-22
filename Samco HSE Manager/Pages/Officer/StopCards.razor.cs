@@ -107,7 +107,7 @@ public partial class StopCards : IDisposable
         switch (e.RequestType)
         {
             case Action.Add:
-                e.Data ??= new StopCard(Session1);
+                e.Data = new StopCard(Session1);
                 break;
             case Action.BeginEdit:
                 var dataItem = e.RowData;

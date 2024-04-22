@@ -269,6 +269,22 @@ public static class SamcoSoftShared
         Disabled
     }
 
+    public static string GetPersianRoleName(SiteRoles roles)
+    {
+        return roles switch
+        {
+            SiteRoles.Owner => "مدیر سیستم",
+            SiteRoles.Admin => "مدیر ایمنی",
+            SiteRoles.Supervisor => "ناظر ایمنی",
+            SiteRoles.Officer => "افسر ایمنی",
+            SiteRoles.Medic => "پزشک",
+            SiteRoles.Teacher => "مدرس ایمنی",
+            SiteRoles.Personnel => "کارمند",
+            SiteRoles.Disabled => "کاربر غیر فعال",
+            _ => string.Empty
+        };
+    }
+
     public static readonly Dictionary<string, bool> ComboboxBoolean = new()
     {
         { "بله", true },

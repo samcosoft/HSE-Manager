@@ -59,7 +59,7 @@ public partial class Personnel : IDisposable
         switch (e.RequestType)
         {
             case Action.Add:
-                e.Data ??= new Samco_HSE.HSEData.Personnel(Session1);
+                e.Data = new Samco_HSE.HSEData.Personnel(Session1);
                 break;
             case Action.BeginEdit:
                 var existUser = await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", e.RowData.Oid));

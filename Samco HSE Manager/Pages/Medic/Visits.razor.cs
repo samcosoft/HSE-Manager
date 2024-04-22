@@ -81,7 +81,7 @@ public partial class Visits : IDisposable
                     return;
                 }
 
-                e.Data ??= new MedicalVisit(Session1);
+                e.Data = new MedicalVisit(Session1);
                 break;
             case Action.BeginEdit:
                 //prevent owner editing

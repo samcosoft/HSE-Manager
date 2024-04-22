@@ -1,5 +1,4 @@
 ﻿@using Samco_HSE.HSEData
-@using DevExpress.Data.Filtering
 <SfComboBox TValue="string" TItem="ComboPerson" @ref="_personnelBox" Placeholder="الزامی" DataSource="@PersonnelList"
             @bind-Value="SelPerson" AllowFiltering="true" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains" AllowCustom="false">
     <ComboBoxFieldSettings Value="Oid" Text="PersonnelName"/>

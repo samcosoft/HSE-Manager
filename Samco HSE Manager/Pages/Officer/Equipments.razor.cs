@@ -74,7 +74,7 @@ public partial class Equipments : IDisposable
                     e.Cancel = true;
                 }
 
-                e.Data ??= new Equipment(Session1);
+                e.Data = new Equipment(Session1);
                 break;
             case Action.BeginEdit:
                 if (SamcoSoftShared.CurrentUserRole > SamcoSoftShared.SiteRoles.Supervisor)

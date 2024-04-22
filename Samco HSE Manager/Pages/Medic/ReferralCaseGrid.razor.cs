@@ -45,7 +45,7 @@ public partial class ReferralCaseGrid
         switch (e.RequestType)
         {
             case Action.Add:
-                e.Data ??= new MedicalReferral(Session1);
+                e.Data = new MedicalReferral(Session1);
                 break;
             case Action.BeginEdit:
                 e.Data = await Session1.FindObjectAsync<MedicalReferral>(new BinaryOperator("Oid", e.RowData.Oid));

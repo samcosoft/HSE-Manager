@@ -224,7 +224,7 @@ public partial class Projects : IDisposable
         switch (e.RequestType)
         {
             case Action.Add:
-                e.Data ??= new WellWork(Session1);
+                e.Data = new WellWork(Session1);
                 break;
             case Action.BeginEdit:
                 e.Data = await Session1.GetObjectByKeyAsync<WellWork>(e.RowData.Oid, true);
