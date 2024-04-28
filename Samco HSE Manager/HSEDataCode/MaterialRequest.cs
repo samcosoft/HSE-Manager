@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class MaterialRequest
     {
+        public MaterialRequest() : base(Session.DefaultSession) { }
         public MaterialRequest(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

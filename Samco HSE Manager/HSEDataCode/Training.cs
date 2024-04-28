@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class Training
     {
+        public Training() : base(Session.DefaultSession) { }
         public Training(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

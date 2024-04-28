@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class Permit
     {
+        public Permit() : base(Session.DefaultSession) { }
         public Permit(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

@@ -1,0 +1,169 @@
+﻿@using Samco_HSE.HSEData;
+@using DevExpress.Data.Filtering;
+@using FilterType = Syncfusion.Blazor.Grids.FilterType
+
+@inject IDataLayer DataLayer;
+@inject ISnackbar Snackbar;
+
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.People" Class="me-3 mb-1" />
+            توزیع تجهیزات
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudAlert Severity="Severity.Info" Elevation="3" Variant="Variant.Filled"
+                  ContentAlignment="HorizontalAlignment.Right">از این قسمت می‌توانید یک تجهیز را بین تعداد زیادی از کارکنان توزیع کنید.</MudAlert>
+        <MudGrid>
+            <MudItem lg="12">
+                <SfGrid @ref="PersonnelGrid" DataSource="@Personnel" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
+                        AllowGrouping="true" Toolbar="@(new[] { "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
+                        AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
+                        Width="100%" AllowSelection="true">
+                    <GridFilterSettings Type="FilterType.Excel" />
+                    <GridSelectionSettings Type="SelectionType.Multiple" CheckboxOnly="true" EnableToggle="true" AllowDragSelection="true" />
+                    <GridEvents TValue="Personnel" RowSelected="PersonnelGrid_SelectionChanged" RowDeselected="PersonnelGrid_SelectionChanged" />
+                    <GridColumns>
+                        <GridColumn Type="ColumnType.CheckBox" Width="50" />
+                        <GridColumn HeaderText="ردیف" Field="Oid" IsPrimaryKey="true" Visible="false" />
+                        <GridColumn HeaderText="نام دکل / دفتر" Field="ActiveRig.Name" AutoFit="true" />
+                        <GridColumn HeaderText="نام و نام خانوادگی" Field="PersonnelName" AutoFit="true" />
+                        <GridColumn HeaderText="کد ملی" Field="NationalID" AutoFit="true" />
+                        <GridColumn HeaderText="شماره پرسنلی" Field="PersonnelNum" AutoFit="true" />
+                        <GridColumn HeaderText="سمت فعلی" Field="CurrentRole" AutoFit="true" />
+                        <GridColumn HeaderText="سایز کفش" Field="ShoeSize" AutoFit="true" />
+                        <GridColumn HeaderText="سایز لباس" Field="ClothSize" AutoFit="true" />
+                        <GridColumn HeaderText="وضعیت" Field="Status" AutoFit="true" />
+                    </GridColumns>
+                </SfGrid>
+            </MudItem>
+            <MudItem lg="12">
+                @{
+                    if (!string.IsNullOrEmpty(_alertMessage))
+                    {
+                        <MudAlert Severity="Severity.Warning" Elevation="3" Variant="Variant.Filled"
+                                  ContentAlignment="HorizontalAlignment.Right">@_alertMessage</MudAlert>
+                    }
+                }
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">انصراف</MudButton>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" StartIcon="fas fa-check" OnClick="Submit">تأیید</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public int SelEquipmentId { get; set; }
+    private Session Session1 { get; set; } = null!;
+
+    private IEnumerable<Personnel>? Personnel { get; set; }
+    private Equipment? _selEquipment;
+    private SfGrid<Personnel>? PersonnelGrid { get; set; }
+    private string? _alertMessage;
+
+    protected override void OnInitialized()
+    {
+        Session1 = new Session(DataLayer);
+
+        if (SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Owner)
+        {
+            var loggedUser =
+                Session1.GetObjectByKey<User>(SamcoSoftShared.CurrentUserId);
+            Personnel = Session1.Query<Personnel>()
+                .Where(x => loggedUser.Rigs.Contains(x.ActiveRig) &&
+                            x.Status == SamcoSoftShared.GetPersonnelStatus(SamcoSoftShared.PersonnelStatus.Active)).ToList();
+        }
+        else
+        {
+            Personnel = Session1.Query<Personnel>().Where(x => x.Status == SamcoSoftShared.GetPersonnelStatus(SamcoSoftShared.PersonnelStatus.Active)).ToList();
+        }
+
+        _selEquipment = Session1.GetObjectByKey<Equipment>(SelEquipmentId);
+
+        base.OnInitialized();
+    }
+
+    private void PersonnelGrid_SelectionChanged()
+    {
+        var itmList = PersonnelGrid!.SelectedRecords;
+        _alertMessage = string.Empty;
+        foreach (var personnel in itmList.Where(personnel => personnel.PPEs.Any(x =>
+                 x.EquipmentName.Oid == _selEquipment!.Oid && x.DeliverDate > DateTime.Today.AddMonths(-6))))
+        {
+            _alertMessage += $"{personnel.PersonnelName} به تازگی این تجهیز را دریافت کرده است." + Environment.NewLine;
+        }
+
+        var personnelRigGroup = itmList.GroupBy(x => x.ActiveRig)
+        .Select(x => new { RigName = x.Key, PersonnelCount = x.Count() }).ToList();
+        foreach (var itm in from itm in personnelRigGroup
+                            let availableStock = _selEquipment!.EquipmentStocks.FirstOrDefault(x => x.RigNo?.Oid == itm.RigName.Oid)
+                            where availableStock == null || itm.PersonnelCount > availableStock.Counts
+                            select itm)
+        {
+            _alertMessage +=
+                $"تعداد افراد انتخاب شده در {itm.RigName.Name} از موجودی این تجهیز در آنجا بیشتر است." +
+                Environment.NewLine;
+        }
+    }
+
+    private async Task Submit()
+    {
+        //Validation
+        if (!PersonnelGrid!.SelectedRecords.Any())
+        {
+            Snackbar.Add("لطفاً پرسنل مورد نظر را از لیست زیر انتخاب کنید.", Severity.Error);
+            return;
+        }
+
+        var selPersonnel = PersonnelGrid.SelectedRecords;
+        var personnelRigGroup = selPersonnel.GroupBy(x => x.ActiveRig)
+            .Select(x => new { RigName = x.Key, PersonnelCount = x.Count() }).ToList();
+        foreach (var itm in from itm in personnelRigGroup
+                            let availableStock = _selEquipment!.EquipmentStocks.FirstOrDefault(x => x.RigNo.Oid == itm.RigName.Oid)
+                            where availableStock == null || itm.PersonnelCount > availableStock.Counts
+                            select itm)
+        {
+            Snackbar.Add($"تعداد افراد انتخاب شده در {itm.RigName.Name} از موجودی این تجهیز در آنجا بیشتر است.",
+                Severity.Error);
+            return;
+        }
+
+        //Adding equipment
+        var loggedUser =
+            await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
+
+        foreach (var personnel in selPersonnel)
+        {
+            personnel.PPEs.Add(new PPE(Session1)
+                {
+                    Agent = loggedUser,
+                    DeliverDate = DateTime.Today,
+                    EquipmentName = _selEquipment,
+                });
+            personnel.Save();
+        }
+
+        //set stacks
+        foreach (var itm in personnelRigGroup)
+        {
+            var equipStack = Session1
+                .Query<EquipmentStock>()
+                .First(x => x.RigNo.Oid == itm.RigName.Oid && x.EquipmentName.Oid == _selEquipment!.Oid);
+            equipStack.Counts -= itm.PersonnelCount;
+            equipStack.Save();
+        }
+
+        Snackbar.Add("اطلاعات با موفقیت ذخیره شد.", Severity.Success);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+}

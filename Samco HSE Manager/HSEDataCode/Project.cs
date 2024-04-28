@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class Project
     {
+        public Project() : base(Session.DefaultSession) { }
         public Project(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

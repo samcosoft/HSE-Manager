@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class Vehicle
     {
+        public Vehicle() : base(Session.DefaultSession) { }
         public Vehicle(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

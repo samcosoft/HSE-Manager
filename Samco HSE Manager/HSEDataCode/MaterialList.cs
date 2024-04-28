@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class MaterialList
     {
+        public MaterialList() : base(Session.DefaultSession) { }
         public MaterialList(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

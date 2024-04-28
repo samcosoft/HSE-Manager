@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class Rig
     {
+        public Rig() : base(Session.DefaultSession) { }
         public Rig(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

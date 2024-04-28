@@ -10,14 +10,14 @@
 <MudDialog>
     <TitleContent>
         <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.Numbers" Class="me-3 mb-1" />
-            تنظیم تعداد تجهیز
+            <MudIcon Icon="@Icons.Material.Filled.FormatListNumbered" Class="me-3 mb-1" />
+            درخواست دارو و تجهیزات
         </MudText>
     </TitleContent>
     <DialogContent>
         <MudAlert Severity="Severity.Info" Icon="fas fa-info" Elevation="3">درخواست داروها بر اساس حداقل تعداد دارو / تجهیز تنظیم می‌شود. شما می‌توانید پس از دریافت فایل درخواست مقادیر آن‌ها را تغییر دهید.</MudAlert>
-        <MudField Label="نام دکل / دفتر:">
-            <SamcoRigSelector DataSource="Rigs" Session="Session1" @bind-SelectedRig="_selRig"/>
+        <MudField Label="نام دکل / دفتر:" DisableUnderLine="true">
+            <SamcoRigSelector @ref="_rigBox" DataSource="Rigs" @bind-SelectedRig="_selRig" />
         </MudField>
     </DialogContent>
     <DialogActions>
@@ -34,6 +34,7 @@
     private Session Session1 { get; set; } = null!;
     private IEnumerable<Rig> Rigs { get; set; } = null!;
     private Rig? _selRig;
+    private SamcoRigSelector? _rigBox;
 
     protected override void OnInitialized()
     {
@@ -48,6 +49,12 @@
         {
             //Owner
             Rigs = Session1.Query<Rig>().ToList();
+        }
+
+        if (Rigs.Any() && Rigs.Count() < 2)
+        {
+            _rigBox!.SelectedRig = Rigs.First();
+            _rigBox.IsReadonly = true;
         }
 
         base.OnInitialized();

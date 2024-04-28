@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class FireEquip
     {
+        public FireEquip() : base(Session.DefaultSession) { }
         public FireEquip(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

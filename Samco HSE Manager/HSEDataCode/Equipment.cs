@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class Equipment
     {
+        public Equipment() : base(Session.DefaultSession) { }
         public Equipment(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

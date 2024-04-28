@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class Asset
     {
+        public Asset() : base(Session.DefaultSession) { }
         public Asset(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

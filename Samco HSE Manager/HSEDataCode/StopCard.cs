@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class StopCard
     {
+        public StopCard() : base(Session.DefaultSession) { }
         public StopCard(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

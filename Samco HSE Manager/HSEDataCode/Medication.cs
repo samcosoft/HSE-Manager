@@ -7,8 +7,10 @@ using System.ComponentModel;
 using System.Reflection;
 namespace Samco_HSE.HSEData
 {
+
     public partial class Medication
     {
+        public Medication() : base(Session.DefaultSession) { }
         public Medication(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

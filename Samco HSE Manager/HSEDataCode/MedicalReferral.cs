@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class MedicalReferral
     {
+        public MedicalReferral() : base(Session.DefaultSession) { }
         public MedicalReferral(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

@@ -8,195 +8,197 @@
 
 <PageTitle>مدیریت بیماران</PageTitle>
 <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true">
-<MudTabPanel Text="ویزیت بیماران">
-    <MudCard>
-        <MudCardHeader>
-            <MudPaper Elevation="3" Width="100%" Class="pa-3">
-                <MudText Typo="Typo.h5">ویزیت بیماران</MudText>
-            </MudPaper>
-        </MudCardHeader>
-        <MudCardContent>
-            @*<Alert Color="Color.Info" ShowDismiss="true">همکار گرامی، از این قسمت فقط برای ثبت ویزیت سرپایی بیماران و FAC استفاده نمایید. برای سایر موارد شامل اعزام از قسمت گزارش حوادث استفاده کنید.</Alert>*@
+    <MudTabPanel Text="ویزیت بیماران">
+        <MudCard>
+            <MudCardHeader>
+                <MudPaper Elevation="3" Width="100%" Class="pa-3">
+                    <MudText Typo="Typo.h5">ویزیت بیماران</MudText>
+                </MudPaper>
+            </MudCardHeader>
+            <MudCardContent>
+                @*<Alert Color="Color.Info" ShowDismiss="true">همکار گرامی، از این قسمت فقط برای ثبت ویزیت سرپایی بیماران و FAC استفاده نمایید. برای سایر موارد شامل اعزام از قسمت گزارش حوادث استفاده کنید.</Alert>*@
 
-            <p/>
+                <p />
 
-            <SfGrid @ref="VisitGrid" ID="visitGrid" DataSource="@VisitList" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
-                    AllowGrouping="true" Toolbar="@(new[] { "Add", "Edit", "Delete", "Excel Export", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
-                    AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
-                    AllowExcelExport="true" Width="100%">
-                <GridEvents TValue="MedicalVisit" OnActionBegin="VisitGrid_Action"
-                            OnToolbarClick="VisitToolbarClickHandler"/>
-                <GridFilterSettings Type="FilterType.Excel"/>
-                <GridColumns>
-                    <GridColumn HeaderText="ردیف" Field="Oid" IsPrimaryKey="true" Visible="false"/>
-                    <GridColumn HeaderText="دکل / دفتر" Field="RigNo.Name" AutoFit="true"/>
-                    <GridColumn HeaderText="نام بیمار" Field="Patient.PersonnelName" AutoFit="true" Visible="@_showNames" ShowInColumnChooser="@_showNames"/>
-                    <GridColumn HeaderText="سمت" Field="Patient.CurrentRole" AutoFit="true"/>
-                    <GridColumn HeaderText="تاریخ ویزیت" Field="VisitDate" AutoFit="true"/>
-                    <GridColumn HeaderText="علائم" Field="Symptoms" AutoFit="true"/>
-                    <GridColumn HeaderText="تشخیص" Field="Diagnose" AutoFit="true"/>
-                    <GridColumn HeaderText="دسته بندی" Field="Category" AutoFit="true"/>
-                    <GridColumn HeaderText="توضیحات" Field="Comment" AutoFit="true"/>
-                </GridColumns>
-                <GridTemplates>
-                    <DetailTemplate>
-                        <PrescribedDrugsGrid Visit="(MedicalVisit)context"/>
-                        @{
-                            if (((MedicalVisit)context).MedicalReferrals.Any())
-                            {
-                                <ReferralCaseGrid Visit="(MedicalVisit)context"/>
+                <SfGrid @ref="VisitGrid" ID="visitGrid" DataSource="@VisitList" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
+                        AllowGrouping="true" Toolbar="@(new[] { "Add", "Edit", "Delete", "Excel Export", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
+                        AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
+                        AllowExcelExport="true" Width="100%">
+                    <GridEvents TValue="MedicalVisit" OnActionBegin="VisitGrid_Action"
+                                OnToolbarClick="VisitToolbarClickHandler" />
+                    <GridFilterSettings Type="FilterType.Excel" />
+                    <GridColumns>
+                        <GridColumn HeaderText="ردیف" Field="Oid" IsPrimaryKey="true" Visible="false" />
+                        <GridColumn HeaderText="دکل / دفتر" Field="RigNo.Name" AutoFit="true" />
+                        <GridColumn HeaderText="نام بیمار" Field="Patient.PersonnelName" AutoFit="true" Visible="@_showNames" ShowInColumnChooser="@_showNames" />
+                        <GridColumn HeaderText="سمت" Field="Patient.CurrentRole" AutoFit="true" />
+                        <GridColumn HeaderText="تاریخ ویزیت" Field="VisitDate" AutoFit="true" />
+                        <GridColumn HeaderText="علائم" Field="Symptoms" AutoFit="true" />
+                        <GridColumn HeaderText="تشخیص" Field="Diagnose" AutoFit="true" />
+                        <GridColumn HeaderText="دسته بندی" Field="Category" AutoFit="true" />
+                        <GridColumn HeaderText="توضیحات" Field="Comment" AutoFit="true" />
+                    </GridColumns>
+                    <GridTemplates>
+                        <DetailTemplate>
+                            <PrescribedDrugsGrid Visit="(MedicalVisit)context" />
+                            @{
+                                if (((MedicalVisit)context).MedicalReferrals.Any())
+                                {
+                                    <ReferralCaseGrid Visit="(MedicalVisit)context" />
+                                }
                             }
-                        }
-                    </DetailTemplate>
-                </GridTemplates>
-                <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" AllowEditOnDblClick="true" Mode="EditMode.Dialog"
-                                  ShowDeleteConfirmDialog="true" Dialog="@SamcoSoftShared.GeneralGridEditOption">
-                    <Validator>
-                        <DataAnnotationsValidator/>
-                    </Validator>
-                    <Template Context="editFormContext">
-                        @{
-                            var visit = editFormContext as MedicalVisit;
-                        }
-                        <MudRTLProvider RightToLeft="true">
+                        </DetailTemplate>
+                    </GridTemplates>
+                    <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" AllowEditOnDblClick="true" Mode="EditMode.Dialog"
+                                      ShowDeleteConfirmDialog="true" Dialog="@SamcoSoftShared.GeneralGridEditOption">
+                        <Validator>
+                            <DataAnnotationsValidator />
+                        </Validator>
+                        <Template Context="editFormContext">
+                            @{
+                                var visit = editFormContext as MedicalVisit;
+                            }
+                            <MudRTLProvider RightToLeft="true">
+                                <MudGrid>
+                                    <MudItem md="6" sm="12">
+                                        <MudField Label="نام بیمار:" DisableUnderLine="true">
+                                            <SamcoPersonnelSelector Session="Session1" DataSource="PersonnelList" @bind-SelectedPersonnel="@visit.Patient" />
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="6" sm="12">
+                                        <MudField Label="تاریخ ویزیت:" DisableUnderLine="true">
+                                            <SamcoDateSelector @bind-DateNotNull="@visit!.VisitDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="نوع ویزیت:" DisableUnderLine="true">
+                                            <SfComboBox TValue="string" TItem="KeyValuePair<string, string>" DataSource="@_visitType" Placeholder="الزامی"
+                                                        @bind-Value="@visit!.VisitType" AllowFiltering="true">
+                                                <ComboBoxEvents TItem="KeyValuePair<string, string>" TValue="string" />
+                                                <ComboBoxFieldSettings Text="Value" Value="Key" />
+                                            </SfComboBox>
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudField Label="دسته بندی بیماری:" DisableUnderLine="true">
+                                            <SfComboBox TValue="string" TItem="string" Placeholder="الزامی" DataSource="@_category"
+                                                        @bind-Value="@visit!.Category"
+                                                        AllowFiltering="true">
+                                            </SfComboBox>
+                                        </MudField>
+                                    </MudItem>
+                                    <MudItem md="4" sm="12">
+                                        <MudNumericField T="short?" @bind-Value="@visit!.LWD" Label="استراحت (روز):" Adornment="Adornment.Start"
+                                                         Min="1" Max="365" Step="1" Placeholder="فقط در صورت انتخاب LWDC" />
+                                    </MudItem>
+                                    <MudItem md="6" sm="12">
+                                        <MudTextField Label="علائم:" @bind-Value="@visit!.Symptoms" Adornment="Adornment.Start" />
+                                    </MudItem>
+                                    <MudItem md="6" sm="12">
+                                        <MudTextField Label="تشخیص:" @bind-Value="@visit!.Diagnose" Placeholder="الزامی" Adornment="Adornment.Start" />
+                                    </MudItem>
+                                    <MudItem lg="12">
+                                        <PrescribedDrugsGrid Visit="@visit" IsEditable="true" />
+                                    </MudItem>
+                                    <MudItem lg="12">
+                                        <ReferralCaseGrid Visit="@visit" CanAdd="true" CanEdit="true" />
+                                    </MudItem>
+                                </MudGrid>
+                            </MudRTLProvider>
+                        </Template>
+                    </GridEditSettings>
+                </SfGrid>
+            </MudCardContent>
+        </MudCard>
+    </MudTabPanel>
+    <MudTabPanel Text="ارجاع بیماران">
+        <MudCard>
+            <MudCardHeader>
+                <MudPaper Elevation="3" Width="100%" Class="pa-3">
+                    <MudText Typo="Typo.h5">ارجاع بیماران</MudText>
+                </MudPaper>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudAlert Elevation="3" Severity="Severity.Info" Variant="Variant.Filled" Class="mb-2" ContentAlignment="HorizontalAlignment.Right">برای ارجاع بیماران از قسمت ویزیت بیمار استفاده کنید.</MudAlert>
+                <SfGrid @ref="ReferGrid" ID="referGrid" DataSource="@ReferList" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
+                        AllowGrouping="true" Toolbar="@(new[] { "Add", "Edit", "Delete", "Excel Export", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
+                        AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
+                        AllowExcelExport="true" Width="100%">
+                    <GridEvents TValue="MedicalReferral" OnActionBegin="ReferGrid_Action"
+                                OnToolbarClick="ToolbarClickHandler" RowDataBound="Customize_Row" RowSelected="ReferralSelectionChanged" />
+                    <GridFilterSettings Type="FilterType.Excel" />
+                    <GridColumns>
+                        <GridColumn HeaderText="ردیف" Field="Oid" IsIdentity="true" IsPrimaryKey="true" Visible="false" />
+                        <GridColumn HeaderText="دکل / دفتر" Field="MedicalVisit.RigNo.Name" MinWidth="100" AutoFit="true" />
+                        <GridColumn HeaderText="نام پزشک" Field="MedicalVisit.DoctorName.PersonnelName" MinWidth="150" AutoFit="true" />
+                        <GridColumn HeaderText="نام بیمار" Field="MedicalVisit.Patient.PersonnelName" MinWidth="150" Visible="_showNames" AutoFit="true" />
+                        <GridColumn HeaderText="سمت" Field="MedicalVisit.Patient.CurrentRole" MinWidth="150" Visible="_showNames" AutoFit="true" />
+                        <GridColumn HeaderText="تاریخ ارجاع" Field="MedicalVisit.VisitDate" MinWidth="100" AutoFit="true" />
+                        <GridColumn HeaderText="تخصص مورد نظر" Field="Specialist" MinWidth="200" AutoFit="true" />
+                        <GridColumn HeaderText="اسناد پزشکی" Width="150px">
+                            <Template>
+                                @{
+                                    if (context is MedicalReferral refer)
+                                    {
+                                        <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="fas fa-file" OnClick="() => OpenFileDialog(refer)">نمایش</MudButton>
+                                    }
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn HeaderText="توضیحات" Field="Comment" MinWidth="200" AutoFit="true" />
+                        <GridColumn HeaderText="وضعیت" Field="Status" MinWidth="150" AutoFit="true" />
+                        <GridColumn HeaderText="تاریخ بازگشت به کار" Field="ReturnDate" MinWidth="100" AutoFit="true" />
+                    </GridColumns>
+                    <GridEditSettings AllowAdding="false" AllowDeleting="true" AllowEditing="true" AllowEditOnDblClick="true" Mode="EditMode.Dialog"
+                                      ShowDeleteConfirmDialog="true" Dialog="@SamcoSoftShared.GeneralGridEditOption">
+                        <Validator>
+                            <DataAnnotationsValidator />
+                        </Validator>
+                        <Template Context="editFormContext">
+                            @{
+                                var refer = editFormContext as MedicalReferral;
+                            }
                             <MudGrid>
-                                <MudItem md="6" sm="12">
-                                    <MudField Label="نام بیمار:" DisableUnderLine="true">
-                                        <SamcoPersonnelSelector Session="Session1" DataSource="PersonnelList" @bind-SelectedPersonnel="@visit.Patient"/>
-                                    </MudField>
-                                </MudItem>
-                                <MudItem md="6" sm="12">
-                                    <MudField Label="تاریخ ویزیت:" DisableUnderLine="true">
-                                        <SamcoDateSelector @bind-DateNotNull="@visit!.VisitDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
-                                    </MudField>
-                                </MudItem>
                                 <MudItem md="4" sm="12">
-                                    <MudField Label="نوع ویزیت:" DisableUnderLine="true">
-                                        <SfComboBox TValue="string" TItem="KeyValuePair<string, string>" DataSource="@_visitType" Placeholder="الزامی"
-                                                    @bind-Value="@visit!.VisitType" AllowFiltering="true">
-                                            <ComboBoxEvents TItem="KeyValuePair<string, string>" TValue="string"/>
-                                            <ComboBoxFieldSettings Text="Value" Value="Key"/>
+                                    <MudField Label="تخصص:" DisableUnderLine="true">
+                                        <SfComboBox TValue="string" TItem="string" Placeholder="الزامی" DataSource="@_specialistList"
+                                                    @bind-Value="@refer!.Specialist"
+                                                    AllowFiltering="true" CssClass="ltr">
                                         </SfComboBox>
                                     </MudField>
                                 </MudItem>
                                 <MudItem md="4" sm="12">
-                                    <MudField Label="دسته بندی بیماری:" DisableUnderLine="true">
-                                        <SfComboBox TValue="string" TItem="string" Placeholder="الزامی" DataSource="@_category"
-                                                    @bind-Value="@visit!.Category"
+                                    <MudField Label="وضعیت:" DisableUnderLine="true">
+                                        <SfComboBox TValue="string" TItem="string" Placeholder="الزامی" DataSource="@_status"
+                                                    @bind-Value="@refer!.Status"
                                                     AllowFiltering="true">
                                         </SfComboBox>
                                     </MudField>
                                 </MudItem>
                                 <MudItem md="4" sm="12">
-                                    <MudNumericField T="short?" @bind-Value="@visit!.LWD" Label="استراحت (روز):" Adornment="Adornment.Start"
-                                                     Min="1" Max="365" Step="1" Placeholder="فقط در صورت انتخاب LWDC"/>
+                                    <MudField Label="تاریخ بازگشت به کار:" DisableUnderLine="true">
+                                        <SamcoDateSelector @bind-Date="refer!.ReturnDate" />
+                                    </MudField>
                                 </MudItem>
-                                <MudItem md="6" sm="12">
-                                    <MudTextField Label="علائم:" @bind-Value="@visit!.Symptoms" Adornment="Adornment.Start"/>
-                                </MudItem>
-                                <MudItem md="6" sm="12">
-                                    <MudTextField Label="تشخیص:" @bind-Value="@visit!.Diagnose" Placeholder="الزامی" Adornment="Adornment.Start"/>
-                                </MudItem>
-                                <MudItem lg="12">
-                                    <PrescribedDrugsGrid Visit="@visit" IsEditable="true"/>
-                                </MudItem>
-                                <MudItem lg="12">
-                                    <ReferralCaseGrid Visit="@visit" CanAdd="true" CanEdit="true"/>
+                                <MudItem md="12">
+                                    <MudTextField Label="توضیحات:" @bind-Value="refer!.Comment" Placeholder="دلیل ارجاع و درمان احتمالی..." />
                                 </MudItem>
                             </MudGrid>
-                        </MudRTLProvider>
-                    </Template>
-                </GridEditSettings>
-            </SfGrid>
-        </MudCardContent>
-    </MudCard>
-</MudTabPanel>
-<MudTabPanel Text="ارجاع بیماران">
-    <MudCard>
-        <MudCardHeader>
-            <MudPaper Elevation="3" Width="100%" Class="pa-3">
-                <MudText Typo="Typo.h5">ارجاع بیماران</MudText>
-            </MudPaper>
-        </MudCardHeader>
-        <MudCardContent>
-            <MudAlert Elevation="3" Severity="Severity.Info" Variant="Variant.Filled" Class="mb-2" ContentAlignment="HorizontalAlignment.Right">برای ارجاع بیماران از قسمت ویزیت بیمار استفاده کنید.</MudAlert>
-            <SfGrid @ref="ReferGrid" ID="referGrid" DataSource="@ReferList" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
-                    AllowGrouping="true" Toolbar="@(new[] { "Add", "Edit", "Delete", "Excel Export", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
-                    AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
-                    AllowExcelExport="true" Width="100%">
-                <GridEvents TValue="MedicalReferral" OnActionBegin="ReferGrid_Action"
-                            OnToolbarClick="ToolbarClickHandler" RowDataBound="Customize_Row" RowSelected="ReferralSelectionChanged"/>
-                <GridFilterSettings Type="FilterType.Excel"/>
-                <GridColumns>
-                    <GridColumn HeaderText="ردیف" Field="Oid" IsIdentity="true" IsPrimaryKey="true" Visible="false"/>
-                    <GridColumn HeaderText="دکل / دفتر" Field="MedicalVisit.RigNo.Name" MinWidth="100" AutoFit="true"/>
-                    <GridColumn HeaderText="نام پزشک" Field="MedicalVisit.DoctorName.PersonnelName" MinWidth="150" AutoFit="true"/>
-                    <GridColumn HeaderText="نام بیمار" Field="MedicalVisit.Patient.PersonnelName" MinWidth="150" Visible="_showNames" AutoFit="true"/>
-                    <GridColumn HeaderText="سمت" Field="MedicalVisit.Patient.CurrentRole" MinWidth="150" Visible="_showNames" AutoFit="true"/>
-                    <GridColumn HeaderText="تاریخ ارجاع" Field="MedicalVisit.VisitDate" MinWidth="100" AutoFit="true"/>
-                    <GridColumn HeaderText="تخصص مورد نظر" Field="Specialist" MinWidth="200" AutoFit="true"/>
-                    <GridColumn HeaderText="اسناد پزشکی" Width="150px">
-                        <Template>
-                            @{
-                                var refer = (context as MedicalReferral);
-                                <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="fas fa-file" OnClick="() => OpenFileDialog(refer)">نمایش</MudButton>
-                            }
                         </Template>
-                    </GridColumn>
-                    <GridColumn HeaderText="توضیحات" Field="Comment" MinWidth="200" AutoFit="true"/>
-                    <GridColumn HeaderText="وضعیت" Field="Status" MinWidth="150" AutoFit="true"/>
-                    <GridColumn HeaderText="تاریخ بازگشت به کار" Field="ReturnDate" MinWidth="100" AutoFit="true"/>
-                </GridColumns>
-                <GridEditSettings AllowAdding="false" AllowDeleting="true" AllowEditing="true" AllowEditOnDblClick="true" Mode="EditMode.Dialog"
-                                  ShowDeleteConfirmDialog="true" Dialog="@SamcoSoftShared.GeneralGridEditOption">
-                    <Validator>
-                        <DataAnnotationsValidator/>
-                    </Validator>
-                    <Template Context="editFormContext">
-                        @{
-                            var refer = editFormContext as MedicalReferral;
-                        }
-                        <MudGrid>
-                            <MudItem md="4" sm="12">
-                                <MudField Label="تخصص:" DisableUnderLine="true">
-                                    <SfComboBox TValue="string" TItem="string" Placeholder="الزامی" DataSource="@_specialistList"
-                                                @bind-Value="@refer!.Specialist"
-                                                AllowFiltering="true" CssClass="ltr">
-                                    </SfComboBox>
-                                </MudField>
-                            </MudItem>
-                            <MudItem md="4" sm="12">
-                                <MudField Label="وضعیت:" DisableUnderLine="true">
-                                    <SfComboBox TValue="string" TItem="string" Placeholder="الزامی" DataSource="@_status"
-                                                @bind-Value="@refer!.Status"
-                                                AllowFiltering="true">
-                                    </SfComboBox>
-                                </MudField>
-                            </MudItem>
-                            <MudItem md="4" sm="12">
-                                <MudField Label="تاریخ بازگشت به کار:" DisableUnderLine="true">
-                                    <SamcoDateSelector @bind-Date="refer!.ReturnDate"/>
-                                </MudField>
-                            </MudItem>
-                            <MudItem md="12">
-                                <MudTextField Label="توضیحات:" @bind-Value="refer!.Comment" Placeholder="دلیل ارجاع و درمان احتمالی..."/>
-                            </MudItem>
-                        </MudGrid>
-                    </Template>
-                </GridEditSettings>
-            </SfGrid>
-            <SfDialog AllowDragging="true" @bind-Visible="@_fileVisible" IsModal="false" Width="600px" ShowCloseIcon="true" Target="#mainWindow">
-                <DialogTemplates>
-                    <Header>
-                        <MudText Typo="Typo.h5">مدارک ارجاع @($"{_selReferral.MedicalVisit.Patient.PersonnelName}")</MudText>
-                    </Header>
-                    <Content>
-                        <FileManager StartPath="SamcoSoftShared.UploadFolders.Medical" DataId="@_selReferral.Oid.ToString()"/>
-                    </Content>
-                </DialogTemplates>
-                <DialogAnimationSettings Effect="DialogEffect.FadeZoom"/>
-            </SfDialog>
-        </MudCardContent>
-    </MudCard>
-</MudTabPanel>
+                    </GridEditSettings>
+                </SfGrid>
+                <SfDialog AllowDragging="true" @bind-Visible="@_fileVisible" IsModal="false" Width="600px" ShowCloseIcon="true" Target="#mainWindow">
+                    <DialogTemplates>
+                        <Header>
+                            <MudText Typo="Typo.h5">مدارک ارجاع @($"{_selReferral.MedicalVisit.Patient.PersonnelName}")</MudText>
+                        </Header>
+                        <Content>
+                            <FileManager StartPath="SamcoSoftShared.UploadFolders.Medical" DataId="@_selReferral.Oid.ToString()" />
+                        </Content>
+                    </DialogTemplates>
+                    <DialogAnimationSettings Effect="DialogEffect.FadeZoom" />
+                </SfDialog>
+            </MudCardContent>
+        </MudCard>
+    </MudTabPanel>
 </MudTabs>

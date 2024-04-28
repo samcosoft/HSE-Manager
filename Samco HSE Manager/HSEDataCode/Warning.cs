@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class Warning
     {
+        public Warning() : base(Session.DefaultSession) { }
         public Warning(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

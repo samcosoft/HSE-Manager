@@ -43,19 +43,24 @@ public partial class Drugs : IDisposable
     protected override async Task OnInitializedAsync()
     {
         Session1 = new Session(DataLayer);
+        MedicineList = await Session1.Query<Medication>().ToListAsync();
         if (SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Owner)
         {
             var loggedUser =
                 Session1.FindObject<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
             Rigs = loggedUser.Rigs;
+            //DiscardList = await Session1.Query<DisposedMedicine>().Where(x => loggedUser.Rigs.Contains(x.RigNo)).ToListAsync();
+            var _rigOids = loggedUser.Rigs.Select(x => x.Oid).ToList();
+            DiscardList = new XPCollection<DisposedMedicine>(Session1, CriteriaOperator.FromLambda<DisposedMedicine, bool>(x => _rigOids.Contains(x.RigNo.Oid)));
+
         }
         else
         {
             //Owner
-            Rigs = Session1.Query<Rig>().ToList();
+            Rigs = await Session1.Query<Rig>().ToListAsync();
+            //DiscardList = await Session1.Query<DisposedMedicine>().ToListAsync();
+            DiscardList = new XPCollection<DisposedMedicine>(Session1, true);
         }
-
-        MedicineList = await Session1.Query<Medication>().ToListAsync();
     }
 
     #region MedicationGrid
@@ -184,4 +189,45 @@ public partial class Drugs : IDisposable
         Session1.Dispose();
         ((IDisposable)MedicineGrid!).Dispose();
     }
+
+    private async Task OnDrugDiscardBtnClick()
+    {
+        var dialog = await DialogService.ShowAsync<MedicationDiscardModal>("دور انداختن دارو / تجهیزات");
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            DiscardList!.Reload();
+        }
+    }
+
+    #region DiscardGrid
+    private XPCollection<DisposedMedicine>? DiscardList { get; set; }
+    private string? _searchString;
+
+    private Func<DisposedMedicine, bool> _quickFilter => x =>
+   {
+       if (string.IsNullOrWhiteSpace(_searchString))
+           return true;
+
+       if (x.MedicName.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+           return true;
+
+       return false;
+   };
+
+    private void RestoreMedication(DisposedMedicine item)
+    {
+        //Add to stock
+        //Remove from stock
+        var medStock = Session1.Query<MedicationStock>().FirstOrDefault(x => x.RigNo.Oid == item.RigNo.Oid &&
+                                                                        x.MedicName.Oid == item.MedicName.Oid);
+        if (medStock != null)
+        {
+            medStock.AvailCount += item.MedCount;
+            medStock.Save();
+        }
+
+        item.Delete();
+    }
+    #endregion
 }

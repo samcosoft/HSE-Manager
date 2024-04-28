@@ -13,7 +13,7 @@
 <div class="page">
     <MudRTLProvider RightToLeft="true">
         <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_samcoTheme" />
-        <MudDialogProvider Position="DialogPosition.Center" />
+        <MudDialogProvider Position="DialogPosition.Center" CloseButton="true" CloseOnEscapeKey="true"/>
         <MudSnackbarProvider />
         <Syncfusion.Blazor.Popups.SfDialogProvider />
         <MudLayout id="mainWindow">

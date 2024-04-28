@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class PPE
     {
+        public PPE() : base(Session.DefaultSession) { }
         public PPE(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

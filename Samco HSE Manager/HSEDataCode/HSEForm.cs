@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class HSEForm
     {
+        public HSEForm() : base(Session.DefaultSession) { }
         public HSEForm(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

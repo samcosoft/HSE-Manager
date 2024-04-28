@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class PracticeProns
     {
+        public PracticeProns() : base(Session.DefaultSession) { }
         public PracticeProns(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class Personnel
     {
+        public Personnel() : base(Session.DefaultSession) { }
         public Personnel(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

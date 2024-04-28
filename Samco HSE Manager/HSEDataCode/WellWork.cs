@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class WellWork
     {
+        public WellWork() : base(Session.DefaultSession) { }
         public WellWork(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

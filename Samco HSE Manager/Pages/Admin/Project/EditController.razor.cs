@@ -20,8 +20,6 @@ public partial class EditController
     [Parameter] public EventCallback<EditType> OnEditButtonClicked { get; set; }
     [Parameter] public EventCallback<EditType> OnDelButtonClicked { get; set; }
 
-    private bool _isOpen;
-
     private async void OpenNewClick()
     {
         await OnNewButtonClicked.InvokeAsync(EditorType);

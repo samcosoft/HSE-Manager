@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class DisposedMedicine
     {
+        public DisposedMedicine() : base(Session.DefaultSession) { }
         public DisposedMedicine(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

@@ -53,7 +53,8 @@ public partial class Visits : IDisposable
             VisitList = await Session1.Query<MedicalVisit>().Where(x =>
                 x.DoctorName.Oid == loggedUser.Oid || loggedUser.Rigs.Contains(x.Patient.ActiveRig)).ToListAsync();
             PersonnelList = await Session1.Query<Samco_HSE.HSEData.Personnel>()
-                .Where(x => loggedUser.Rigs.Contains(x.ActiveRig)).ToListAsync();
+                .Where(x => loggedUser.Rigs.Contains(x.ActiveRig) &&
+                            x.Status == SamcoSoftShared.GetPersonnelStatus(SamcoSoftShared.PersonnelStatus.Active)).ToListAsync();
             ReferList = await Session1.Query<MedicalReferral>()
                 .Where(x => loggedUser.Rigs.Contains(x.MedicalVisit.DoctorName.ActiveRig)).ToListAsync();
         }
@@ -61,7 +62,8 @@ public partial class Visits : IDisposable
         {
             //Owner
             VisitList = await Session1.Query<MedicalVisit>().ToListAsync();
-            PersonnelList = await Session1.Query<Samco_HSE.HSEData.Personnel>().ToListAsync();
+            PersonnelList = await Session1.Query<Samco_HSE.HSEData.Personnel>()
+                .Where(x => x.Status == SamcoSoftShared.GetPersonnelStatus(SamcoSoftShared.PersonnelStatus.Active)).ToListAsync();
             ReferList = await Session1.Query<MedicalReferral>().ToListAsync();
         }
     }
@@ -95,70 +97,70 @@ public partial class Visits : IDisposable
                 e.Data = await Session1.FindObjectAsync<MedicalVisit>(new BinaryOperator("Oid", e.RowData.Oid));
                 break;
             case Action.Save:
-            {
-                var editModel = e.Data;
-                //Validation
-                var loggedUser =
-                    await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
-                if (editModel.Patient == null || string.IsNullOrEmpty(editModel.Diagnose)
-                                       || string.IsNullOrEmpty(editModel.Category) ||
-                                       string.IsNullOrEmpty(editModel.VisitType))
                 {
-                    Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
-                    e.Cancel = true;
-                    return;
-                }
+                    var editModel = e.Data;
+                    //Validation
+                    var loggedUser =
+                        await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
+                    if (editModel.Patient == null || string.IsNullOrEmpty(editModel.Diagnose)
+                                           || string.IsNullOrEmpty(editModel.Category) ||
+                                           string.IsNullOrEmpty(editModel.VisitType))
+                    {
+                        Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
+                        e.Cancel = true;
+                        return;
+                    }
 
-                //LWD Validation
-                if (editModel is { VisitType: "LWDC", LWD: null })
-                {
-                    Snackbar.Add("لطفاً تعداد روزهای استراحت را وارد کنید.", Severity.Error);
-                    e.Cancel = true;
-                    return;
-                }
+                    //LWD Validation
+                    if (editModel is { VisitType: "LWDC", LWD: null })
+                    {
+                        Snackbar.Add("لطفاً تعداد روزهای استراحت را وارد کنید.", Severity.Error);
+                        e.Cancel = true;
+                        return;
+                    }
 
-                if (editModel.VisitType != "LWDC")
-                {
-                    editModel.LWD = null;
-                }
+                    if (editModel.VisitType != "LWDC")
+                    {
+                        editModel.LWD = null;
+                    }
 
-                editModel.RigNo = loggedUser.ActiveRig ?? editModel.Patient.ActiveRig;
-                editModel.DoctorName = loggedUser;
-                editModel.Save();
-                break;
-            }
+                    editModel.RigNo = loggedUser.ActiveRig ?? editModel.Patient.ActiveRig;
+                    editModel.DoctorName = loggedUser;
+                    editModel.Save();
+                    break;
+                }
             case Action.Delete:
-            {
-                if (SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Medic &&
-                    SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Owner)
                 {
-                    Snackbar.Add("فقط پزشک اجازه حذف ویزیت را دارد.", Severity.Error);
-                    e.Cancel = true;
-                    return;
-                }
+                    if (SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Medic &&
+                        SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Owner)
+                    {
+                        Snackbar.Add("فقط پزشک اجازه حذف ویزیت را دارد.", Severity.Error);
+                        e.Cancel = true;
+                        return;
+                    }
 
-                //prevent other doctor visit
-                if (e.RowData.DoctorName.Oid != SamcoSoftShared.CurrentUserId)
-                {
-                    Snackbar.Add("شما اجازه حذف ویزیت پزشک دیگری را ندارید.", Severity.Error);
-                    e.Cancel = true;
-                    return;
-                }
+                    //prevent other doctor visit
+                    if (e.RowData.DoctorName.Oid != SamcoSoftShared.CurrentUserId)
+                    {
+                        Snackbar.Add("شما اجازه حذف ویزیت پزشک دیگری را ندارید.", Severity.Error);
+                        e.Cancel = true;
+                        return;
+                    }
 
-                //restore drugs
-                foreach (var itm in e.RowData.UsedMedicines)
-                {
-                    var availDrug = Session1.Query<MedicationStock>().First(x =>
-                        x.RigNo.Oid == SamcoSoftShared.CurrentUser!.ActiveRig.Oid &&
-                        x.MedicName.Oid == itm.MedicName.Oid);
-                    //Change stock medicines
-                    availDrug.AvailCount += itm.MedCount;
-                    availDrug.Save();
-                }
+                    //restore drugs
+                    foreach (var itm in e.RowData.UsedMedicines)
+                    {
+                        var availDrug = Session1.Query<MedicationStock>().First(x =>
+                            x.RigNo.Oid == SamcoSoftShared.CurrentUser!.ActiveRig.Oid &&
+                            x.MedicName.Oid == itm.MedicName.Oid);
+                        //Change stock medicines
+                        availDrug.AvailCount += itm.MedCount;
+                        availDrug.Save();
+                    }
 
-                e.RowData.Delete();
-                break;
-            }
+                    e.RowData.Delete();
+                    break;
+                }
         }
     }
 
@@ -196,25 +198,25 @@ public partial class Visits : IDisposable
         switch (args.Data.Status)
         {
             case "ارجاع به متخصص":
-            {
-                args.Row.AddClass(new[] { "warning-item" });
-                break;
-            }
+                {
+                    args.Row.AddClass(new[] { "warning-item" });
+                    break;
+                }
             case "بازگشت به کار":
-            {
-                args.Row.AddClass(new[] { "safe-item" });
-                break;
-            }
+                {
+                    args.Row.AddClass(new[] { "safe-item" });
+                    break;
+                }
             case "عدم تحویل نامه ارجاع":
-            {
-                args.Row.AddClass(new[] { "danger-item" });
-                break;
-            }
+                {
+                    args.Row.AddClass(new[] { "danger-item" });
+                    break;
+                }
             default:
-            {
-                args.Row.AddClass(new[] { "warning-item" });
-                break;
-            }
+                {
+                    args.Row.AddClass(new[] { "warning-item" });
+                    break;
+                }
         }
     }
 

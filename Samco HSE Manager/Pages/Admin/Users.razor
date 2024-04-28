@@ -105,7 +105,7 @@
                                     </MudItem>
                                     <MudItem md="4" sm="12">
                                         <MudField Label="وضعیت تأهل:" DisableUnderLine="true">
-                                            <MudCheckBox @bind-Checked="@user.Marriage" Label="متأهل" />
+                                            <MudCheckBox @bind-Value="@user.Marriage" Label="متأهل" />
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
@@ -128,7 +128,7 @@
                                 <MudGrid>
                                     <MudItem md="4" sm="12">
                                         <MudField Label="نام دکل / محل فعالیت:" DisableUnderLine="true">
-                                            <SamcoRigSelector @bind-SelectedRig="@user.ActiveRig" DataSource="Rigs" IsMultiselect="false" Session="Session1" />
+                                            <SamcoRigSelector @bind-SelectedRig="@user.ActiveRig" DataSource="Rigs" IsMultiselect="false"/>
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
@@ -211,7 +211,7 @@
     <DialogTemplates>
         <Content>
             <MudAlert Variant="Variant.Filled" Severity="Severity.Info">فقط در صورتی که می‌خواهید به یک کاربر اجازه دسترسی به اطلاعات چند دکل را بدهید از این قسمت استفاده کنید. دقت کنید که کاربر همواره به اطلاعات دکل فعال خود دسترسی دارد.</MudAlert>
-            <SamcoRigSelector @bind-SelectedRigs="PermitRigList" IsMultiselect="true" DataSource="Rigs" Session="Session1" />
+            <SamcoRigSelector @bind-SelectedRigs="PermitRigList" IsMultiselect="true" DataSource="Rigs"/>
         </Content>
         <FooterTemplate>
             <MudButton Color="Color.Success" StartIcon="fas fa-check" Variant="Variant.Filled" OnClick="PermitOkBtnClick">تأیید</MudButton>

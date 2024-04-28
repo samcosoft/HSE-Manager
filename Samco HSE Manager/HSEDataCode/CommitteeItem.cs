@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class CommitteeItem
     {
+        public CommitteeItem() : base(Session.DefaultSession) { }
         public CommitteeItem(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

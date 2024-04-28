@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class AccidentReport
     {
+        public AccidentReport() : base(Session.DefaultSession) { }
         public AccidentReport(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

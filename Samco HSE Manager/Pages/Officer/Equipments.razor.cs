@@ -3,8 +3,8 @@ using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using Samco_HSE.HSEData;
 using MudBlazor;
+using Samco_HSE_Manager.Pages.Officer.EquipmentsModal;
 using Syncfusion.Blazor.Grids;
-using Syncfusion.Blazor.Popups;
 using Action = Syncfusion.Blazor.Grids.Action;
 
 namespace Samco_HSE_Manager.Pages.Officer;
@@ -14,9 +14,10 @@ public partial class Equipments : IDisposable
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
+    [Inject] private IDialogService DialogService { get; set; } = null!;
 
     private Session Session1 { get; set; } = null!;
-    private IEnumerable<Equipment>? EquipmentsList { get; set; }
+    private XPCollection<Equipment>? EquipmentsList { get; set; }
     private IEnumerable<Rig>? Rigs { get; set; }
     private IEnumerable<string>? RigRoles { get; set; }
 
@@ -30,7 +31,8 @@ public partial class Equipments : IDisposable
     protected override async Task OnInitializedAsync()
     {
         Session1 = new Session(DataLayer);
-        EquipmentsList = await Session1.Query<Equipment>().ToListAsync();
+        //EquipmentsList = await Session1.Query<Equipment>().ToListAsync();
+        EquipmentsList = new XPCollection<Equipment>(Session1);
         if (SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Owner)
         {
             var loggedUser = await
@@ -53,8 +55,9 @@ public partial class Equipments : IDisposable
 
     #region EquipmentGrid
 
-    private string EquipmentGridUnbound(int rigOid, Equipment equip)
+    private string EquipmentGridUnbound(int rigOid, Equipment? equip)
     {
+        if (equip == null) return string.Empty;
         using var tempSession = new Session(DataLayer);
         //var equipStock = (from itm in tempSession.Query<EquipmentStock>() where itm.RigNo.Oid == int.Parse(e.FieldName) && itm.EquipmentName.Oid == currentEquipment.Oid select itm).FirstOrDefault();
         var equipStock = tempSession.Query<EquipmentStock>().FirstOrDefault(itm =>
@@ -124,7 +127,7 @@ public partial class Equipments : IDisposable
                         return;
                     }
                 }
-                editModel.WhoNeed = string.Join(";",Consumers);
+                editModel.WhoNeed = string.Join(";", Consumers);
                 editModel.Save();
                 break;
             case Action.Delete:
@@ -156,10 +159,6 @@ public partial class Equipments : IDisposable
 
     #region EquipmentCount
 
-    private SfDialog? SetNumberModal { get; set; }
-    private EquipmentStock? _selEquipmentStock;
-    private Rig? _selRig;
-
     private async Task OnSetNumberBtnClick()
     {
         if (EquipmentGrid!.SelectedRecords.Any() == false)
@@ -168,56 +167,18 @@ public partial class Equipments : IDisposable
             return;
         }
 
-        _selEquipmentStock = new EquipmentStock(Session1)
-            { EquipmentName = EquipmentGrid!.SelectedRecords.First() };
-        //auto select rig
-        if (Rigs?.Count() == 1) _selRig = Rigs.First();
-        await SetNumberModal!.ShowAsync();
-    }
-
-    private void RigSelectionChanged(Rig itm)
-    {
-        //Change data source if needed
-        var selEquipment = EquipmentGrid!.SelectedRecords.First();
-        //Get stock items
-        var stockItm = Session1.Query<EquipmentStock>().Where(x => x.RigNo.Oid == (itm).Oid &&
-                                                                   x.EquipmentName.Oid == selEquipment.Oid);
-        if (stockItm.Any())
+        var dialog = await DialogService.ShowAsync<EquipmentNumberModal>("تنظیم تعداد تجهیزات",
+            new DialogParameters { { "SelEquipmentId", EquipmentGrid.SelectedRecords.First().Oid } });
+        var result = await dialog.Result;
+        if (!result.Canceled)
         {
-            _selEquipmentStock = stockItm.First();
+            EquipmentsList!.Reload();
         }
-        else
-        {
-            _selEquipmentStock = new EquipmentStock(Session1)
-            {
-                EquipmentName = EquipmentGrid!.SelectedRecords.First(),
-                RigNo = itm
-            };
-        }
-    }
-
-    private async Task SetCountOkBtnClick()
-    {
-        if (_selEquipmentStock?.RigNo == null)
-        {
-            Snackbar.Add("لطفاً دکل را انتخاب کنید.", Severity.Error);
-            return;
-        }
-
-        _selEquipmentStock?.Save();
-        Snackbar.Add("اطلاعات با موفقیت ثبت شد.", Severity.Success);
-        await SetNumberModal!.HideAsync();
     }
 
     #endregion
 
     #region DistributeEquipment
-
-    private IEnumerable<Samco_HSE.HSEData.Personnel>? Personnel { get; set; }
-    private SfGrid<Samco_HSE.HSEData.Personnel>? PersonnelGrid { get; set; }
-    private SfDialog? DistModal { get; set; }
-    private string? _alertMessage;
-    private bool _alertVisible;
 
     private async Task OnDistributeBtnClick()
     {
@@ -227,98 +188,14 @@ public partial class Equipments : IDisposable
             return;
         }
 
-        if (SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Owner)
+        var dialog = await DialogService.ShowAsync<EquipmentDistributeModal>("توزیع تجهیزات",
+            new DialogParameters { { "SelEquipmentId", EquipmentGrid.SelectedRecords.First().Oid } });
+        var result = await dialog.Result;
+        if (!result.Canceled)
         {
-            var loggedUser =
-                await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
-            Personnel = await Session1.Query<Samco_HSE.HSEData.Personnel>()
-                .Where(x => loggedUser.Rigs.Contains(x.ActiveRig)).ToListAsync();
-        }
-        else
-        {
-            Personnel = await Session1.Query<Samco_HSE.HSEData.Personnel>().ToListAsync();
+            EquipmentsList!.Reload();
         }
 
-        await DistModal!.ShowAsync();
-    }
-
-    private void PersonnelGrid_SelectionChanged()
-    {
-        var itmList = PersonnelGrid!.SelectedRecords;
-        var selEquipment = EquipmentGrid!.SelectedRecords.First();
-        _alertMessage = string.Empty;
-        _alertVisible = false;
-        foreach (var personnel in itmList.Where(personnel => personnel.PPEs.Any(x =>
-                     x.EquipmentName.Oid == selEquipment.Oid && x.DeliverDate > DateTime.Today.AddMonths(-6))))
-        {
-            _alertMessage += $"{personnel.PersonnelName} به تازگی این تجهیز را دریافت کرده است." + Environment.NewLine;
-            _alertVisible = true;
-        }
-        
-        var personnelRigGroup = itmList.GroupBy(x => x.ActiveRig)
-            .Select(x => new { RigName = x.Key, PersonnelCount = x.Count() }).ToList();
-        foreach (var itm in from itm in personnelRigGroup
-                 let availableStock = selEquipment.EquipmentStocks.FirstOrDefault(x => x.RigNo?.Oid == itm.RigName.Oid)
-                 where availableStock == null || itm.PersonnelCount > availableStock.Counts
-                 select itm)
-        {
-            _alertMessage +=
-                $"تعداد افراد انتخاب شده در {itm.RigName.Name} از موجودی این تجهیز در آنجا بیشتر است." +
-                Environment.NewLine;
-            _alertVisible = true;
-        }
     }
     #endregion
-
-    private async Task DistributeOkBtnClick()
-    {
-        //Validation
-        if (!PersonnelGrid!.SelectedRecords.Any())
-        {
-            Snackbar.Add("لطفاً پرسنل مورد نظر را از لیست زیر انتخاب کنید.", Severity.Error);
-            return;
-        }
-
-        var selPersonnel = PersonnelGrid.SelectedRecords;
-        var selEquipment = EquipmentGrid!.SelectedRecords.First();
-        var personnelRigGroup = selPersonnel.GroupBy(x => x.ActiveRig)
-            .Select(x => new { RigName = x.Key, PersonnelCount = x.Count() }).ToList();
-        foreach (var itm in from itm in personnelRigGroup
-                 let availableStock = selEquipment.EquipmentStocks.FirstOrDefault(x => x.RigNo.Oid == itm.RigName.Oid)
-                 where availableStock == null || itm.PersonnelCount > availableStock.Counts
-                 select itm)
-        {
-            Snackbar.Add($"تعداد افراد انتخاب شده در {itm.RigName.Name} از موجودی این تجهیز در آنجا بیشتر است.",
-                Severity.Error);
-            return;
-        }
-
-        //Adding equipment
-        var loggedUser =
-            await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
-
-        foreach (var personnel in selPersonnel)
-        {
-            personnel.PPEs.Add(new PPE(Session1)
-            {
-                Agent = loggedUser,
-                DeliverDate = DateTime.Today,
-                EquipmentName = selEquipment,
-            });
-            personnel.Save();
-        }
-
-        //set stacks
-        foreach (var itm in personnelRigGroup)
-        {
-            var equipStack = Session1
-                .Query<EquipmentStock>()
-                .First(x => x.RigNo.Oid == itm.RigName.Oid && x.EquipmentName.Oid == selEquipment.Oid);
-            equipStack.Counts -= itm.PersonnelCount;
-            equipStack.Save();
-        }
-
-        Snackbar.Add("اطلاعات با موفقیت ذخیره شد.", Severity.Success);
-        await DistModal!.HideAsync();
-    }
 }

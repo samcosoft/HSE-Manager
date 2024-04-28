@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class MedicationStock
     {
+        public MedicationStock() : base(Session.DefaultSession) { }
         public MedicationStock(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

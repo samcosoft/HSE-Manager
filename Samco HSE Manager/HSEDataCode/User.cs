@@ -10,6 +10,7 @@ namespace Samco_HSE.HSEData
 
     public partial class User
     {
+        public User() : base(Session.DefaultSession) { }
         public User(Session session) : base(session) { }
         public override void AfterConstruction() { base.AfterConstruction(); }
     }

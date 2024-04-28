@@ -285,6 +285,24 @@ public static class SamcoSoftShared
         };
     }
 
+    public enum PersonnelStatus
+    {
+        Active,
+        Inactive,
+        Transferred
+    }
+
+    public static string GetPersonnelStatus(PersonnelStatus status)
+    {
+        return status switch
+        {
+            PersonnelStatus.Active => "فعال",
+            PersonnelStatus.Inactive => "خاتمه همکاری",
+            PersonnelStatus.Transferred => "انتقال به سایر شرکت‌ها",
+            _ => string.Empty
+        };
+    }
+
     public static readonly Dictionary<string, bool> ComboboxBoolean = new()
     {
         { "بله", true },
