@@ -15,9 +15,9 @@
         <Authorized>
             <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="LogOut_Click">خروج از سیستم</MudButton>
         </Authorized>
-        <NotAuthorized>
+        @* <NotAuthorized>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LogIn_Click">ورود به سیستم</MudButton>
-        </NotAuthorized>
+        </NotAuthorized> *@
     </AuthorizeView>
 </MudAppBar>
 
@@ -70,9 +70,9 @@
         NavigationManager.NavigateTo("/");
     }
 
-    private void LogIn_Click()
-    {
-        NavigationManager.NavigateTo("login");
-    }
+    // private void LogIn_Click()
+    // {
+    //     NavigationManager.NavigateTo("login");
+    // }
 
 }

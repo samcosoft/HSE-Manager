@@ -73,7 +73,7 @@ public partial class Prmits : IDisposable
         switch (e.RequestType)
         {
             case Action.Add:
-                e.Data ??= new Permit(Session1);
+                e.Data = new Permit(Session1);
                 break;
             case Action.BeginEdit:
                 e.Data = Session1.FindObject<Permit>(new BinaryOperator("Oid", e.RowData.Oid));

@@ -5,10 +5,14 @@ using DevExpress.Data.Filtering;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
-namespace Samco_HSE.HSEData;
-
-public partial class PracticeCons
+namespace Samco_HSE.HSEData
 {
-    public PracticeCons(Session session) : base(session) { }
-    public override void AfterConstruction() { base.AfterConstruction(); }
+
+    public partial class PracticeCons
+    {
+        public PracticeCons() : base(Session.DefaultSession) { }
+        public PracticeCons(Session session) : base(session) { }
+        public override void AfterConstruction() { base.AfterConstruction(); }
+    }
+
 }

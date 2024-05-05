@@ -1,10 +1,11 @@
-﻿using DevExpress.Blazor.Reporting;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 
 namespace Samco_HSE_Manager.Pages.Shared;
 
 public partial class ReportViewer
 {
+    [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
+
     [Parameter]
     [SupplyParameterFromQuery]
     public string? ReportName { get; set; }
@@ -16,10 +17,11 @@ public partial class ReportViewer
     [Parameter]
     [SupplyParameterFromQuery]
     public string? Parameters { get; set; }
-    private DxDocumentViewer? _dxDocumentViewer;
 
     protected override void OnInitialized()
     {
+        Stimulsoft.Base.StiLicense.LoadFromFile(Path.Combine(HostEnvironment.WebRootPath, "content","stimulsoft", "License.key"));
+
         if (Parameters != null)
         {
             //Load parameters
@@ -31,5 +33,6 @@ public partial class ReportViewer
         }
 
         //ReportName = "MedicineRequest?RigNo=1&Title=شرکت پترو ایران - دکل DCI 2";
+        base.OnInitialized();
     }
 }

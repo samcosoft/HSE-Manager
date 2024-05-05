@@ -1,0 +1,107 @@
+﻿@using Samco_HSE.HSEData;
+@using DevExpress.Data.Filtering;
+
+@inject IDataLayer DataLayer;
+@inject ISnackbar Snackbar;
+
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.FormatListNumbered" Class="me-3 mb-1" />
+            تنظیم تعداد تجهیز
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudGrid>
+            <MudItem md="4" sm="12">
+                <MudTextField Label="نام تجهیز:" @bind-Value="@_selEquipment!.Name" ReadOnly="true" />
+            </MudItem>
+            <MudItem md="4" sm="12">
+                <MudField Label="نام دکل / دفتر:" DisableUnderLine="true">
+                    <SamcoRigSelector DataSource="Rigs" SelectedRigChanged="RigSelectionChanged" />
+                </MudField>
+            </MudItem>
+            <MudItem md="4" sm="12">
+                <MudNumericField T="int" @bind-Value="@_selEquipmentStock!.Counts" Label="تعداد:" Adornment="Adornment.Start"
+                                 Min="1" Max="3000" Step="1" />
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">انصراف</MudButton>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" StartIcon="fas fa-check" OnClick="Submit">تأیید</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public int SelEquipmentId { get; set; }
+    private Session Session1 { get; set; } = null!;
+
+    private Equipment? _selEquipment;
+    private EquipmentStock? _selEquipmentStock;
+    private IEnumerable<Rig>? Rigs { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Session1 = new Session(DataLayer);
+        _selEquipment = Session1.GetObjectByKey<Equipment>(SelEquipmentId);
+        if (SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Owner)
+        {
+            var loggedUser =
+                Session1.FindObject<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
+            Rigs = loggedUser.Rigs;
+        }
+        else
+        {
+            //Owner
+            Rigs = Session1.Query<Rig>().ToList();
+        }
+
+        _selEquipmentStock = new EquipmentStock(Session1)
+            {
+                EquipmentName = _selEquipment,
+                RigNo = Rigs.FirstOrDefault()
+            };
+
+        base.OnInitialized();
+    }
+
+    private void RigSelectionChanged(Rig itm)
+    {
+        //Get stock items
+        var stockItm = Session1.Query<EquipmentStock>().Where(x => x.RigNo.Oid == (itm).Oid &&
+                                                                    x.EquipmentName.Oid == _selEquipment!.Oid);
+        if (stockItm.Any())
+        {
+            _selEquipmentStock = stockItm.First();
+        }
+        else
+        {
+            _selEquipmentStock = new EquipmentStock(Session1)
+                {
+                    EquipmentName = _selEquipment,
+                    RigNo = itm
+                };
+        }
+    }
+
+    private void Submit()
+    {
+        //Validation
+        if (_selEquipmentStock?.RigNo == null)
+        {
+            Snackbar.Add("لطفاً یک محل را انتخاب کنید.", Severity.Error);
+            return;
+        }
+
+        _selEquipmentStock?.Save();
+        Snackbar.Add("اطلاعات با موفقیت ثبت شد.", Severity.Success);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

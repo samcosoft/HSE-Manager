@@ -1,0 +1,22 @@
+﻿<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Recycling" Class="me-3 mb-1" />
+            افزودن / ویرایش فایل
+        </MudText>
+        <MudAlert Severity="Severity.Warning">فایل قبلی در صورت وجود جایگزین خواهد شد.</MudAlert>
+    </TitleContent>
+    <DialogContent>
+        <MudGrid>
+            <MudItem lg="12">
+                <FileUploader @ref="_uploader" AllowedExtension="FileUploader.AllowedFileExtensions.DocumentsOnly"
+                              DataId="@SelFormId.ToString()" SavePath="SamcoSoftShared.UploadFolders.Forms"
+                              DoNotCreateDirectory="true"/>
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">انصراف</MudButton>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" StartIcon="fas fa-check" OnClick="Submit">تأیید</MudButton>
+    </DialogActions>
+</MudDialog>

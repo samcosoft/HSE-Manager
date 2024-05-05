@@ -5,10 +5,14 @@ using DevExpress.Data.Filtering;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
-namespace Samco_HSE.HSEData;
-
-public partial class HSEForm
+namespace Samco_HSE.HSEData
 {
-    public HSEForm(Session session) : base(session) { }
-    public override void AfterConstruction() { base.AfterConstruction(); }
+
+    public partial class HSEForm
+    {
+        public HSEForm() : base(Session.DefaultSession) { }
+        public HSEForm(Session session) : base(session) { }
+        public override void AfterConstruction() { base.AfterConstruction(); }
+    }
+
 }

@@ -16,13 +16,13 @@
         <SfGrid @ref="AssetGrid" ID="assetGrid" DataSource="@AssetsList" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
                 AllowGrouping="true" Toolbar="@(new[] { "Add", "Edit", "Delete", "Excel Export", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
                 AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
-                AllowExcelExport="true" Width="100%">
+                AllowExcelExport="true" Width="100%" EnablePersistence="true">
             <GridEvents TValue="Asset" OnActionBegin="AssetGrid_Action"
                         OnToolbarClick="ToolbarClickHandler" RowDataBound="Customize_Row"/>
             <GridFilterSettings Type="FilterType.Excel"/>
             <GridColumns>
                 <GridColumn HeaderText="ردیف" Field="Oid" IsIdentity="true" IsPrimaryKey="true" Visible="false"/>
-                <GridColumn HeaderText="دکل / دفتر" Field="RigNo.Name"/>
+                @* <GridColumn HeaderText="دکل / دفتر" Field="RigNo.Name"/> *@
                 <GridColumn HeaderText="نام تجهیز" Field="Name"/>
                 <GridColumn HeaderText="مالکیت" Field="Owner"/>
                 <GridColumn HeaderText="شماره سریال" Field="Serial"/>
@@ -48,7 +48,7 @@
                             </MudItem>
                             <MudItem md="4" sm="12">
                                 <MudField Label="نام دکل / پالایشگاه:" DisableUnderLine="true">
-                                    <SamcoRigSelector DataSource="Rigs" @bind-SelectedRig="@asset.RigNo" Session="Session1"/>
+                                    <SamcoRigSelector DataSource="Rigs" @bind-SelectedRig="@asset.RigNo"/>
                                 </MudField>
                             </MudItem>
                             <MudItem md="4" sm="12">

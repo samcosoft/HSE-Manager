@@ -5,10 +5,14 @@ using DevExpress.Data.Filtering;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
-namespace Samco_HSE.HSEData;
-
-public partial class UsedMedicine
+namespace Samco_HSE.HSEData
 {
-    public UsedMedicine(Session session) : base(session) { }
-    public override void AfterConstruction() { base.AfterConstruction(); }
+
+    public partial class UsedMedicine
+    {
+        public UsedMedicine() : base(Session.DefaultSession) { }
+        public UsedMedicine(Session session) : base(session) { }
+        public override void AfterConstruction() { base.AfterConstruction(); }
+    }
+
 }

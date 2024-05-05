@@ -3,18 +3,19 @@ using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using Samco_HSE.HSEData;
 using MudBlazor;
+using Samco_HSE_Manager.Pages.Medic.MedicationModals;
 using Syncfusion.Blazor.Grids;
-using Syncfusion.Blazor.Popups;
 using Action = Syncfusion.Blazor.Grids.Action;
 
 namespace Samco_HSE_Manager.Pages.Medic;
 
-public partial class Drugs
+public partial class Drugs : IDisposable
 {
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
     [Inject] private IConfiguration Configuration { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
+    [Inject] private IDialogService DialogService { get; set; } = null!;
 
     private Session Session1 { get; set; } = null!;
     private IEnumerable<Rig> Rigs { get; set; } = null!;
@@ -42,25 +43,31 @@ public partial class Drugs
     protected override async Task OnInitializedAsync()
     {
         Session1 = new Session(DataLayer);
+        MedicineList = await Session1.Query<Medication>().ToListAsync();
         if (SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Owner)
         {
             var loggedUser =
                 Session1.FindObject<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
             Rigs = loggedUser.Rigs;
+            //DiscardList = await Session1.Query<DisposedMedicine>().Where(x => loggedUser.Rigs.Contains(x.RigNo)).ToListAsync();
+            var _rigOids = loggedUser.Rigs.Select(x => x.Oid).ToList();
+            DiscardList = new XPCollection<DisposedMedicine>(Session1, CriteriaOperator.FromLambda<DisposedMedicine, bool>(x => _rigOids.Contains(x.RigNo.Oid)));
+
         }
         else
         {
             //Owner
-            Rigs = Session1.Query<Rig>().ToList();
+            Rigs = await Session1.Query<Rig>().ToListAsync();
+            //DiscardList = await Session1.Query<DisposedMedicine>().ToListAsync();
+            DiscardList = new XPCollection<DisposedMedicine>(Session1, true);
         }
-
-        MedicineList = await Session1.Query<Medication>().ToListAsync();
     }
 
     #region MedicationGrid
 
-    private string MedicGridUnbound(int rigOid, Medication medic)
+    private string MedicGridUnbound(int rigOid, Medication? medic)
     {
+        if (medic == null) return "0";
         using var tempSession = new Session(DataLayer);
         var currentMedication =
             tempSession.FindObject<Medication>(new BinaryOperator("Oid", medic.Oid));
@@ -80,7 +87,7 @@ public partial class Drugs
                     e.Cancel = true;
                 }
 
-                e.Data ??= new Medication(Session1);
+                e.Data = new Medication(Session1) { AvailForOrder = true };
                 break;
             case Action.BeginEdit:
                 if (SamcoSoftShared.CurrentUserRole > SamcoSoftShared.SiteRoles.Supervisor)
@@ -149,9 +156,6 @@ public partial class Drugs
 
     #region MedicationCount
 
-    private SfDialog? SetNumberModal { get; set; }
-    private MedicationStock? _selMedicationStock;
-
     private async Task OnSetNumberBtnClick()
     {
         if (MedicineGrid!.SelectedRecords.Any() == false)
@@ -160,71 +164,70 @@ public partial class Drugs
             return;
         }
 
-        _selMedicationStock = new MedicationStock(Session1) { MedicName = MedicineGrid!.SelectedRecords.First() };
-        //auto select rig
-        await SetNumberModal!.ShowAsync();
-    }
+        var selMedicine = MedicineGrid!.SelectedRecords.First();
 
-    private void RigSelectionChanged(Rig itm)
-    {
-        //Change data source if needed
-        var selMedication = MedicineGrid!.SelectedRecords.FirstOrDefault();
-        if (selMedication == null) return;
-        //Get stock items
-        var stockItm = Session1.Query<MedicationStock>().Where(x => x.RigNo.Oid == (itm).Oid &&
-                                                                    x.MedicName.Oid == selMedication.Oid);
-        if (stockItm.Any())
-        {
-            _selMedicationStock = stockItm.First();
-        }
-        else
-        {
-            _selMedicationStock = new MedicationStock(Session1)
-            {
-                MedicName = MedicineGrid!.SelectedRecords.First(),
-                RigNo = itm
-            };
-        }
-    }
-
-    private async Task SetCountOkBtnClick()
-    {
-        //Validation
-        if (_selMedicationStock?.RigNo == null)
-        {
-            Snackbar.Add("لطفاً یک دکل را انتخاب کنید.", Severity.Error);
-            return;
-        }
-
-        _selMedicationStock?.Save();
-        Snackbar.Add("اطلاعات با موفقیت ثبت شد.", Severity.Success);
-        await MedicineGrid!.Refresh();
-        await SetNumberModal!.HideAsync();
+        var dialog = await DialogService.ShowAsync<NumberModal>($"ثبت موجودی برای {selMedicine.Name}",
+            new DialogParameters { { "SelMedicationId", selMedicine.Oid } });
+        var result = await dialog.Result;
+        if (!result.Canceled)
+            StateHasChanged();
     }
 
     #endregion
 
     #region DrugRequest
-    private SfDialog? DrugRequestModal { get; set; }
-    private Rig? _selRig;
 
     private async Task OnDrugRequestBtnClick()
     {
-        await DrugRequestModal!.ShowAsync();
+        await DialogService.ShowAsync<DrugRequestModal>("درخواست دارو");
     }
 
-    private void RequestBtnClick()
+    #endregion
+
+    public void Dispose()
     {
-        if (_selRig == null)
+        Session1.Dispose();
+        ((IDisposable)MedicineGrid!).Dispose();
+    }
+
+    private async Task OnDrugDiscardBtnClick()
+    {
+        var dialog = await DialogService.ShowAsync<MedicationDiscardModal>("دور انداختن دارو / تجهیزات");
+        var result = await dialog.Result;
+        if (!result.Canceled)
         {
-            Snackbar.Add("لطفاً یک دکل را انتخاب کنید.", Severity.Error);
-            return;
+            DiscardList!.Reload();
+        }
+    }
+
+    #region DiscardGrid
+    private XPCollection<DisposedMedicine>? DiscardList { get; set; }
+    private string? _searchString;
+
+    private Func<DisposedMedicine, bool> _quickFilter => x =>
+   {
+       if (string.IsNullOrWhiteSpace(_searchString))
+           return true;
+
+       if (x.MedicName.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+           return true;
+
+       return false;
+   };
+
+    private void RestoreMedication(DisposedMedicine item)
+    {
+        //Add to stock
+        //Remove from stock
+        var medStock = Session1.Query<MedicationStock>().FirstOrDefault(x => x.RigNo.Oid == item.RigNo.Oid &&
+                                                                        x.MedicName.Oid == item.MedicName.Oid);
+        if (medStock != null)
+        {
+            medStock.AvailCount += item.MedCount;
+            medStock.Save();
         }
 
-        var parameter =
-            $"ReportName=MedicineRequest&Parameters=RigId--{_selRig.Oid}|Title--شرکت {Configuration["CompanyInfo:Name"]} - دکل {_selRig.Name}";
-        NavigationManager.NavigateTo("report?" + parameter);
-        DrugRequestModal?.HideAsync();
+        item.Delete();
     }
     #endregion
 }

@@ -11,7 +11,7 @@
                     <MudCardContent>
                         <MudText Typo="Typo.h6">@_loggedUser?.PersonnelName عزیز سلام! به پنل مدیریت HSE خوش آمدید!</MudText>
                         <hr class="my-3">
-                        <MudAlert Severity="Severity.Info" Icon="fa fa-info" Elevation="3">
+                        <MudAlert Severity="Severity.Info" Icon="fa fa-info" Elevation="3" Variant="Variant.Filled">
                             با توجه به آزمایشی بودن این نسخه، ممکن است برخی ایرادات در آن وجود داشته باشد که به مرور برطرف می‌گردند. از شکیبایی شما سپاسگزاریم.
                             در صورت داشتن سوال در مورد قابلیت‌های سیستم و یا بروز خطا با ایمیل <a href="mailto:info@samcosoft.ir">SamcoSoft Support</a> ارتباط برقرار کنید.
                         </MudAlert>
@@ -24,19 +24,19 @@
                         <h2 class="mt-2">آمار سیستم</h2>
                     </MudCardHeader>
                     <MudCardContent>
-                        <DxDashboard @bind-DashboardId="@_dashboardId" WorkingMode="WorkingMode.ViewerOnly"
-                                     Endpoint="api/dashboard" style="width: 100%; height: 800px;"/>
+                       
                     </MudCardContent>
                 </MudCard>
             </Animation>
         </Authorized>
         <NotAuthorized>
-            <Animation Effect="@Effect.ZoomInUp">
+            <Animation Effect="@Effect.FadeIn" Speed="TimeSpan.FromMilliseconds(600)">
                 <MudCard>
                     <MudCardContent>
-                        <MudText Typo="Typo.h6">همکار عزیز سلام! به پنل مدیریت HSE خوش آمدید!</MudText>
-                        <hr class="my-3">
-                        <MudText Typo="Typo.body1">لطفاً وارد سیستم شوید.</MudText>
+                        <MudText Typo="Typo.h6" Align="Align.Center">همکار عزیز سلام! به پنل مدیریت HSE خوش آمدید!</MudText>
+                        <MudDivider DividerType="DividerType.Middle" Class="my-3"/>
+                        @* <MudText Typo="Typo.body1">لطفاً وارد سیستم شوید.</MudText> *@
+                        <Login/>
                     </MudCardContent>
                 </MudCard>
             </Animation>

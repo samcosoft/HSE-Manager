@@ -37,12 +37,11 @@ namespace Samco_HSE.HSEData
             get { return fForm; }
             set { SetPropertyValue<HSEForm>(nameof(Form), ref fForm, value); }
         }
-        byte[] fFormData;
-        [MemberDesignTimeVisibility(true)]
-        public byte[] FormData
+        string fFileName;
+        public string FileName
         {
-            get { return fFormData; }
-            set { SetPropertyValue<byte[]>(nameof(FormData), ref fFormData, value); }
+            get { return fFileName; }
+            set { SetPropertyValue<string>(nameof(FileName), ref fFileName, value); }
         }
         User fUserName;
         [Association(@"ReportReferencesUser2")]
@@ -58,10 +57,6 @@ namespace Samco_HSE.HSEData
             get { return fWorkID; }
             set { SetPropertyValue<WellWork>(nameof(WorkID), ref fWorkID, value); }
         }
-        [Association(@"ReportReferencesUser")]
-        public XPCollection<User> RecieverUsers { get { return GetCollection<User>(nameof(RecieverUsers)); } }
-        [Association(@"ReportReferencesUser1")]
-        public XPCollection<User> ReadedUsers { get { return GetCollection<User>(nameof(ReadedUsers)); } }
         [Association(@"ReportReferencesPatient")]
         public XPCollection<MedicalVisit> Visits { get { return GetCollection<MedicalVisit>(nameof(Visits)); } }
     }

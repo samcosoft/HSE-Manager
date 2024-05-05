@@ -269,6 +269,40 @@ public static class SamcoSoftShared
         Disabled
     }
 
+    public static string GetPersianRoleName(SiteRoles roles)
+    {
+        return roles switch
+        {
+            SiteRoles.Owner => "مدیر سیستم",
+            SiteRoles.Admin => "مدیر ایمنی",
+            SiteRoles.Supervisor => "ناظر ایمنی",
+            SiteRoles.Officer => "افسر ایمنی",
+            SiteRoles.Medic => "پزشک",
+            SiteRoles.Teacher => "مدرس ایمنی",
+            SiteRoles.Personnel => "کارمند",
+            SiteRoles.Disabled => "کاربر غیر فعال",
+            _ => string.Empty
+        };
+    }
+
+    public enum PersonnelStatus
+    {
+        Active,
+        Inactive,
+        Transferred
+    }
+
+    public static string GetPersonnelStatus(PersonnelStatus status)
+    {
+        return status switch
+        {
+            PersonnelStatus.Active => "فعال",
+            PersonnelStatus.Inactive => "خاتمه همکاری",
+            PersonnelStatus.Transferred => "انتقال به سایر شرکت‌ها",
+            _ => string.Empty
+        };
+    }
+
     public static readonly Dictionary<string, bool> ComboboxBoolean = new()
     {
         { "بله", true },
@@ -289,7 +323,8 @@ public static class SamcoSoftShared
     public enum UploadFolders
     {
         StopCards,
-        Medical
+        Medical,
+        Forms
     }
     public static T PickRandom<T>(this IEnumerable<T> source)
     {

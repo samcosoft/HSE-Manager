@@ -5,10 +5,14 @@ using DevExpress.Data.Filtering;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
-namespace Samco_HSE.HSEData;
-
-public partial class Vehicle
+namespace Samco_HSE.HSEData
 {
-    public Vehicle(Session session) : base(session) { }
-    public override void AfterConstruction() { base.AfterConstruction(); }
+
+    public partial class Vehicle
+    {
+        public Vehicle() : base(Session.DefaultSession) { }
+        public Vehicle(Session session) : base(session) { }
+        public override void AfterConstruction() { base.AfterConstruction(); }
+    }
+
 }

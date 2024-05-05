@@ -1,0 +1,114 @@
+﻿@using Samco_HSE.HSEData;
+@using DevExpress.Data.Filtering;
+
+@inject IDataLayer DataLayer;
+@inject ISnackbar Snackbar;
+@implements IDisposable;
+
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Report" Class="me-3 mb-1" />
+            تنظیم تعداد تجهیز
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudGrid>
+            <MudItem md="4" sm="12">
+                <MudTextField T="string" @bind-Value="@_selMedication!.Name"
+                              Label="نام تجهیز /  دارو:" ReadOnly="true" />
+            </MudItem>
+            <MudItem md="4" sm="12">
+                <MudField Label="نام دکل / دفتر:" DisableUnderLine="true">
+                    <SamcoRigSelector DataSource="Rigs" SelectedRigChanged="RigSelectionChanged" />
+                </MudField>
+            </MudItem>
+            <MudItem md="4" sm="12">
+                <MudNumericField T="short" @bind-Value="@_selMedicationStock!.AvailCount" Min="0" Max="1000" />
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">انصراف</MudButton>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" StartIcon="fas fa-check" OnClick="Submit">تأیید</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public int SelMedicationId { get; set; }
+    private Session Session1 { get; set; } = null!;
+
+    private Medication? _selMedication;
+    private MedicationStock? _selMedicationStock ;
+    private IEnumerable<Rig>? Rigs { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Session1 = new Session(DataLayer);
+        _selMedication = Session1.GetObjectByKey<Medication>(SelMedicationId);
+        if (SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Owner)
+        {
+            var loggedUser =
+                Session1.FindObject<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
+            Rigs = loggedUser.Rigs;
+        }
+        else
+        {
+            //Owner
+            Rigs = Session1.Query<Rig>().ToList();
+        }
+
+        _selMedicationStock = new MedicationStock(Session1)
+        {
+                MedicName = _selMedication,
+            RigNo = Rigs.FirstOrDefault()
+        };
+
+        base.OnInitialized();
+    }
+
+    private void RigSelectionChanged(Rig itm)
+    {
+        //Get stock items
+        var stockItm = Session1.Query<MedicationStock>().Where(x => x.RigNo.Oid == (itm).Oid &&
+                                                                    x.MedicName.Oid == _selMedication!.Oid);
+        if (stockItm.Any())
+        {
+            _selMedicationStock = stockItm.First();
+        }
+        else
+        {
+            _selMedicationStock = new MedicationStock(Session1)
+                {
+                    MedicName = _selMedication,
+                    RigNo = itm
+                };
+        }
+    }
+
+    private void Submit()
+    {
+        //Validation
+        if (_selMedicationStock?.RigNo == null)
+        {
+            Snackbar.Add("لطفاً یک محل را انتخاب کنید.", Severity.Error);
+            return;
+        }
+
+        _selMedicationStock?.Save();
+        Snackbar.Add("اطلاعات با موفقیت ثبت شد.", Severity.Success);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    public void Dispose()
+    {
+        Session1.Dispose();
+    }
+
+}

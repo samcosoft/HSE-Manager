@@ -1,7 +1,6 @@
 ﻿@page "/vehicle"
 @attribute [Authorize(Roles = "Owner,Admin,Supervisor,Officer")]
 @using Samco_HSE.HSEData
-@using Microsoft.AspNetCore.Components
 @using FilterType = Syncfusion.Blazor.Grids.FilterType
 
 <PageTitle>مدیریت ماشین آلات</PageTitle>
@@ -53,7 +52,7 @@
                         <MudGrid>
                             <MudItem md="4" sm="12">
                                 <MudField Label="محل فعالیت:" DisableUnderLine="true">
-                                    <SamcoRigSelector @bind-SelectedRig="@vehicle.RigNo" Session="Session1" DataSource="Rigs"/>
+                                    <SamcoRigSelector @bind-SelectedRig="@vehicle.RigNo" DataSource="Rigs"/>
                                 </MudField>
                             </MudItem>
                             <MudItem md="4" sm="12">

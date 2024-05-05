@@ -1,9 +1,11 @@
 ﻿@using System.IO
 @using Syncfusion.Blazor.Inputs
+@using FileInfo = System.IO.FileInfo
 
-<SfUploader AutoUpload="true" AllowMultiple="true" SequentialUpload="true" MaxFileSize="5242880"
+<SfUploader AutoUpload="true" AllowMultiple="@AllowMultiple" SequentialUpload="true" MaxFileSize="5242880"
             AllowedExtensions="@_allowedExtensions">
-    <UploaderEvents BeforeUpload="@BeforeStart" ValueChange="OnChange" OnRemove="OnRemove" />
+    <UploaderFiles @ref="_uploader"/>
+    <UploaderEvents BeforeUpload="@BeforeStart" ValueChange="OnChange" OnRemove="OnRemove"/>
 </SfUploader>
 
 @code {
@@ -14,6 +16,12 @@
     public string? DataId { get; set; }
 
     [Parameter]
+    public bool DoNotCreateDirectory { get; set; }
+
+    [Parameter]
+    public bool AllowMultiple { get; set; }
+
+    [Parameter]
     public AllowedFileExtensions AllowedExtension { get; set; }
 
     [Parameter]
@@ -22,8 +30,11 @@
     [Inject]
     IWebHostEnvironment HostEnvironment { get; set; } = null!;
 
+    public List<Syncfusion.Blazor.Inputs.FileInfo> FileList { get; set; } = [];
+
     private string _rootPath = null!;
     private string _allowedExtensions = null!;
+    private UploaderFiles? _uploader;
 
     public enum AllowedFileExtensions
     {
@@ -39,40 +50,105 @@
         {
             SamcoSoftShared.UploadFolders.StopCards => Path.Combine(HostEnvironment.WebRootPath, "upload", "STOPCards"),
             SamcoSoftShared.UploadFolders.Medical => Path.Combine(HostEnvironment.WebRootPath, "upload", "MedicalDocuments"),
+            SamcoSoftShared.UploadFolders.Forms => Path.Combine(HostEnvironment.ContentRootPath, "Data", "Forms"),
             _ => throw new ArgumentOutOfRangeException()
         };
         _allowedExtensions = AllowedExtension switch
         {
             AllowedFileExtensions.ImagesOnly => ".jpg,.jpeg,.png",
-            AllowedFileExtensions.DocumentsOnly => ".doc,.docx,.xls,.xlsx,.pdf,.ppt,.pptx",
+            AllowedFileExtensions.DocumentsOnly => ".doc,.docx,.xls,.xlsx,.pdf",
             AllowedFileExtensions.DocumentsAndImages => ".jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx,.pdf,.ppt,.pptx",
             AllowedFileExtensions.AllFiles => "",
             _ => throw new ArgumentOutOfRangeException()
         };
         if (!Directory.Exists(_rootPath))
             Directory.CreateDirectory(_rootPath);
+
+        //Check for previous files
+        if (DoNotCreateDirectory)
+        {
+            var fileList = Directory.GetFiles(_rootPath, $"{DataId}.*");
+            foreach (var file in fileList)
+            {
+                _uploader!.Files.Add(new UploaderUploadedFiles { Name = Path.GetFileName(file), 
+                    Size = new FileInfo(file).Length, Type = new FileInfo(file).Extension });
+            }
+        }
+        else
+        {
+            var fileList = Directory.GetFiles(Path.Combine(_rootPath, DataId!),"*.*");
+            foreach (var file in fileList)
+            {
+                _uploader!.Files.Add(new UploaderUploadedFiles { Name = Path.GetFileName(file), 
+                    Size = new FileInfo(file).Length, Type = new FileInfo(file).Extension });
+            }
+        }
     }
 
     private async Task OnChange(UploadChangeEventArgs args)
     {
-        var filePath = Path.Combine(_rootPath, DataId!);
-        if (!Directory.Exists(filePath))
-            Directory.CreateDirectory(filePath);
-
-        foreach (var file in args.Files)
+        try
         {
-            var path = Path.Combine(filePath, file.FileInfo.Name);
-            var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write);
-            await file.File.OpenReadStream(5242880).CopyToAsync(fileStream);
-            fileStream.Close();
+            if (DoNotCreateDirectory)
+            {
+                foreach (var file in args.Files)
+                {
+                    var path = Path.Combine(_rootPath, DataId! + file.FileInfo.Type);
+                    var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write);
+                    await file.File.OpenReadStream(5242880).CopyToAsync(fileStream);
+                    fileStream.Close();
+                }
+            }
+            else
+            {
+                var filePath = Path.Combine(_rootPath, DataId!);
+                if (!Directory.Exists(filePath))
+                    Directory.CreateDirectory(filePath);
+
+                foreach (var file in args.Files)
+                {
+                    var path = Path.Combine(filePath, file.FileInfo.Name);
+                    var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write);
+                    await file.File.OpenReadStream(5242880).CopyToAsync(fileStream);
+                    fileStream.Close();
+                }
+            }
+            FileList.AddRange(args.Files.Select(x=>x.FileInfo));
         }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+
     }
 
     private void OnRemove(RemovingEventArgs args)
     {
-        foreach (var removeFile in args.FilesData.Where(removeFile => removeFile != null && File.Exists(Path.Combine(_rootPath, DataId!, removeFile.Name))))
+        try
         {
-            File.Delete(Path.Combine(_rootPath, DataId!, removeFile.Name));
+            if (DoNotCreateDirectory)
+            {
+                foreach (var removeFile in args.FilesData.Where(removeFile => removeFile != null && File.Exists(Path.Combine(_rootPath, removeFile.Name))))
+                {
+                    File.Delete(Path.Combine(_rootPath, DataId!, removeFile.Name));
+                }
+            }
+            else
+            {
+                foreach (var removeFile in args.FilesData.Where(removeFile => removeFile != null && File.Exists(Path.Combine(_rootPath, DataId!, removeFile.Name))))
+                {
+                    File.Delete(Path.Combine(_rootPath, DataId!, removeFile.Name));
+                }
+            }
+
+            foreach (var itm in args.FilesData)
+            {
+                FileList.Remove(itm);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
         }
     }
 

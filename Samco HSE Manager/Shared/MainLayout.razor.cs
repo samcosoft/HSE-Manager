@@ -13,10 +13,13 @@ public partial class MainLayout : IDisposable
 {
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
     [Inject] private IHostEnvironment HostEnvironment { get; set; } = null!;
+    [Inject] private IConfiguration Configuration { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
 
     private bool IsSidebarExpanded { get; set; } = true;
+
+    private string DisplayProfile => "align-self: center; min-height: 170px; display:" + (IsSidebarExpanded ? "block" : "none");
 
     private bool _isValid;
     protected override async Task OnInitializedAsync()
@@ -44,6 +47,12 @@ public partial class MainLayout : IDisposable
             //Set Theme
             _isDarkMode = await _mudThemeProvider.GetSystemPreference();
             SetDevexpressTheme();
+
+            _location = SamcoSoftShared.CurrentUser?.ActiveRig?.Name;
+            // _avatarSrc = Path.Combine(HostEnvironment.WebRootPath, "upload", "profile", $"{SamcoSoftShared.CurrentUser?.Oid.ToString() ?? string.Empty}.png");
+            _avatarSrc = SamcoSoftShared.CurrentUser?.PersonnelName?[..1];
+            _userName = SamcoSoftShared.CurrentUser?.PersonnelName ?? "مهمان";
+            _userRole =SamcoSoftShared.GetPersianRoleName(SamcoSoftShared.CurrentUserRole);
         }
         catch (Exception)
         {
@@ -125,6 +134,14 @@ public partial class MainLayout : IDisposable
     }
     #endregion
 
+    #region Information
+
+    private string? _avatarSrc;
+    private string? _userName;
+    private string? _userRole;
+    private string? _location;
+
+    #endregion
 
     private string? GetApplicationVersion()
     {

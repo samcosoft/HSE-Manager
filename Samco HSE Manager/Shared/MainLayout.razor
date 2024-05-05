@@ -5,34 +5,62 @@
     @{
         foreach (var theme in _devexpressTheme)
         {
-            <link href="@theme" asp-append-version="true" rel="stylesheet"/>
+            <link href="@theme" asp-append-version="true" rel="stylesheet" />
         }
     }
 </HeadContent>
 
 <div class="page">
     <MudRTLProvider RightToLeft="true">
+<<<<<<< HEAD
         <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_samcoTheme"/>
-        <MudDialogProvider Position="DialogPosition.Center"/>
+        <MudDialogProvider Position="DialogPosition.Center" CloseButton="true" CloseOnEscapeKey="true"/>
         <MudSnackbarProvider/>
         <Syncfusion.Blazor.Popups.SfDialogProvider/>
+=======
+        <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_samcoTheme" />
+        <MudDialogProvider Position="DialogPosition.Center" CloseButton="true" CloseOnEscapeKey="true"/>
+        <MudSnackbarProvider />
+        <Syncfusion.Blazor.Popups.SfDialogProvider />
+>>>>>>> be697d2bb4241c75660036950b79ee7e3dfb1f26
         <MudLayout id="mainWindow">
             <Header @bind-ToggleOn="@IsSidebarExpanded" DarkMode="_isDarkMode" DarkModeChanged="SetTheme"></Header>
-            <MudDrawer @bind-Open="@IsSidebarExpanded" Style="top: 0; height: 100vh" Variant="DrawerVariant.Mini" ClipMode="DrawerClipMode.Always">
-                <NavMenu/>
-            </MudDrawer>
-            <MudMainContent>
-                <div class="mx-3 mt-2" style="margin-bottom: 60px">
-                    @Body
-                </div>
-            </MudMainContent>
-            <MudAppBar Bottom="true" Fixed="true" Color="Color.Dark" Elevation="1" Dense="true">
-                <MudSpacer/>
-                <MudText Typo="Typo.subtitle2">
-                    Copyright 2022-@DateTime.Now.Year Samco Software Group. All rights reserved. Version: <a style="display: inline; color: white" href="about">@GetApplicationVersion()</a>
-                </MudText>
-                <MudSpacer/>
-            </MudAppBar>
+            <MudDrawerContainer Style="height: 100%; min-height: 700px">
+                <MudDrawer @bind-Open="@IsSidebarExpanded" Style="margin-top: 72px" Variant="DrawerVariant.Mini"
+                           ClipMode="DrawerClipMode.Always">
+                    <AuthorizeView>
+                        <Authorized>
+                            <MudDrawerHeader Style="@DisplayProfile">
+                                <MudStack Spacing="0" AlignItems="AlignItems.Center">
+                                    <MudAvatar Elevation="2" Rounded="true" Size="Size.Large" Class="mb-4">@_avatarSrc</MudAvatar>
+                                    <MudChip Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Medium">@_userName</MudChip>
+                                    <MudChip Color="Color.Secondary" Size="Size.Small">@_userRole</MudChip>
+                                    @{
+                                        if (!string.IsNullOrEmpty(_location))
+                                        {
+                                            <MudChip Color="Color.Tertiary" Size="Size.Small">@_location</MudChip>
+                                        }
+                                    }
+                                </MudStack>
+                            </MudDrawerHeader>
+                        </Authorized>
+                    </AuthorizeView>
+                    <MudDivider Class="my-2" DividerType="DividerType.Middle" />
+                    <NavMenu />
+                </MudDrawer>
+                <MudMainContent>
+                    <div class="mx-3 mt-2" style="margin-bottom: 60px">
+                        @Body
+                    </div>
+                </MudMainContent>
+                <MudAppBar Bottom="true" Fixed="true" Color="Color.Dark" Elevation="1" Dense="true">
+                    <MudSpacer />
+                    <MudText Typo="Typo.subtitle2">
+                        Copyright 2022-@DateTime.Now.Year Samco Software Group. All rights reserved. Version: <a style="display: inline; color: white" href="about">@GetApplicationVersion()</a>
+                    </MudText>
+                    <MudSpacer />
+                </MudAppBar>
+            </MudDrawerContainer>
         </MudLayout>
     </MudRTLProvider>
 </div>

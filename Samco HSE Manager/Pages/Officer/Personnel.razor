@@ -1,6 +1,5 @@
 ﻿@page "/personnel"
 @attribute [Authorize(Roles = "Owner,Admin,Supervisor,Officer,Doctor")]
-@using Microsoft.AspNetCore.Components
 @using FilterType = Syncfusion.Blazor.Grids.FilterType
 
 <PageTitle>مدیریت کارکنان</PageTitle>
@@ -14,9 +13,9 @@
                 </MudItem>
                 <MudItem>
                     <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
-                        <MudButton StartIcon="fas fa-helmet-safety" IconColor="Color.Warning">تحویل تجهیزات</MudButton>
+                        <MudButton StartIcon="fas fa-helmet-safety" IconColor="Color.Warning" OnClick="OpenEquipmentDialog">تحویل تجهیزات</MudButton>
                         <MudButton StartIcon="fas fa-hands-clapping" IconColor="Color.Success" OnClick="OpenIncentiveDialog">ثبت تشویق</MudButton>
-                        <MudButton StartIcon="fas fa-circle-exclamation" IconColor="Color.Error">ثبت اخطار</MudButton>
+                        <MudButton StartIcon="fas fa-circle-exclamation" IconColor="Color.Error" OnClick="OpenWarningDialog">ثبت اخطار</MudButton>
                         <MudButton StartIcon="fas fa-info" IconColor="Color.Info">نمایش جزئیات</MudButton>
                     </MudButtonGroup>
                 </MudItem>
@@ -168,7 +167,7 @@
                                 <MudGrid>
                                     <MudItem md="4" sm="12">
                                         <MudField Label="نام دکل / محل فعالیت:" DisableUnderLine="true">
-                                            <SamcoRigSelector DataSource="Rigs" @bind-SelectedRig="@user.ActiveRig" Session="Session1" />
+                                            <SamcoRigSelector DataSource="Rigs" @bind-SelectedRig="@user.ActiveRig"/>
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="4" sm="12">

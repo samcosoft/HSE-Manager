@@ -1,7 +1,6 @@
 ﻿using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using Samco_HSE_Manager.Models;
 using Samco_HSE.HSEData;
 using Syncfusion.Blazor.DropDowns;
 using Syncfusion.Blazor.Grids;
@@ -25,7 +24,6 @@ public partial class Projects : IDisposable
     private int[]? _selWellOid;
 
     private IEnumerable<Rig>? Rigs { get; set; }
-    private IEnumerable<SamcoRigSelector.ComboRig>? ListRigs { get; set; }
     private Rig? _selRig;
     private int[]? _selRigOid;
     private IEnumerable<WellWork>? WellWorks { get; set; }
@@ -40,7 +38,6 @@ public partial class Projects : IDisposable
     {
         DrillProjects = await Session1.Query<Samco_HSE.HSEData.Project>().Select(x => new ListProject(x)).ToListAsync();
         Rigs = await Session1.Query<Rig>().ToListAsync();
-        ListRigs = Rigs.Select(x => new SamcoRigSelector.ComboRig(x));
         WellWorks = await Session1.Query<WellWork>().ToListAsync();
         _selRigOid = null;
         _selWellOid = null;
@@ -224,64 +221,64 @@ public partial class Projects : IDisposable
         switch (e.RequestType)
         {
             case Action.Add:
-                e.Data ??= new WellWork(Session1);
+                e.Data = new WellWork(Session1) { IsActive = true };
                 break;
             case Action.BeginEdit:
                 e.Data = await Session1.GetObjectByKeyAsync<WellWork>(e.RowData.Oid, true);
                 _selProjectWell = ListWell.GetListWell(_selProjectWllList, e.Data.WellNo);
                 break;
             case Action.Save:
-            {
-                var editModel = e.Data;
-                //Validation
-                if (editModel.RigNo == null || _selProjectWell == null)
                 {
-                    Snackbar.Add("انتخاب چاه، دکل و تاریخ شروع عملیات لازم است.", Severity.Error);
-                    e.Cancel = true;
-                    return;
-                }
-
-                if (editModel.EndDate != null && editModel.EndDate < editModel.StartDate)
-                {
-                    Snackbar.Add("تاریخ پایان عملیات باید از شروع آن بزرگتر باشد.", Severity.Error);
-                    e.Cancel = true;
-                    return;
-                }
-
-                var otherRigIsActive = Session1.Query<WellWork>().Where(x => x.WellNo.Oid == editModel.WellNo.Oid &&
-                                                                             x.RigNo.Oid != editModel.RigNo.Oid &&
-                                                                             x.IsActive).ToList();
-                if (otherRigIsActive.Any())
-                {
-                    Snackbar.Add($"در حال حاضر دکل {otherRigIsActive.First().RigNo.Name} بر روی این چاه و پروژه در حال فعالیت است.", Severity.Error);
-                    e.Cancel = true;
-                    return;
-                }
-
-                editModel.WellNo = await Session1.GetObjectByKeyAsync<Well>(_selProjectWell.Oid, true);
-                if (editModel.IsActive)
-                {
-                    var prevWork = await Session1.Query<WellWork>()
-                        .FirstOrDefaultAsync(x => x.WellNo.Oid == editModel.WellNo.Oid && x.IsActive);
-                    if (prevWork != null)
+                    var editModel = e.Data;
+                    //Validation
+                    if (editModel.RigNo == null || _selProjectWell == null)
                     {
-                        prevWork.IsActive = false;
-                        prevWork.Save();
+                        Snackbar.Add("انتخاب چاه، دکل و تاریخ شروع عملیات لازم است.", Severity.Error);
+                        e.Cancel = true;
+                        return;
                     }
-                }
 
-                editModel.Save();
-                break;
-            }
+                    if (editModel.EndDate != null && editModel.EndDate < editModel.StartDate)
+                    {
+                        Snackbar.Add("تاریخ پایان عملیات باید از شروع آن بزرگتر باشد.", Severity.Error);
+                        e.Cancel = true;
+                        return;
+                    }
+
+                    var otherRigIsActive = Session1.Query<WellWork>().Where(x => x.WellNo.Oid == _selProjectWell.Oid &&
+                                                                                 x.RigNo.Oid != editModel.RigNo.Oid &&
+                                                                                 x.IsActive).ToList();
+                    if (otherRigIsActive.Any())
+                    {
+                        Snackbar.Add($"در حال حاضر دکل {otherRigIsActive.First().RigNo.Name} بر روی این چاه و پروژه در حال فعالیت است.", Severity.Error);
+                        e.Cancel = true;
+                        return;
+                    }
+
+                    editModel.WellNo = await Session1.GetObjectByKeyAsync<Well>(_selProjectWell.Oid, true);
+                    if (editModel.IsActive)
+                    {
+                        var prevWork = await Session1.Query<WellWork>()
+                            .FirstOrDefaultAsync(x => x.WellNo.Oid == editModel.WellNo.Oid && x.IsActive);
+                        if (prevWork != null)
+                        {
+                            prevWork.IsActive = false;
+                            prevWork.Save();
+                        }
+                    }
+
+                    editModel.Save();
+                    break;
+                }
             case Action.Delete:
-            {
-                if (!await ConfirmDialog.ConfirmAsync(
-                        "اخطار! با حذف پروژه کاری تمامی اطلاعات زیر مجموعه آن شامل گزارشات مرتبط نیز حذف خواهند شد. آیا مطمئنید؟",
-                        "اخطار حذف عملیات")) return;
-                var dataItem = e.RowData;
-                dataItem.Delete();
-                break;
-            }
+                {
+                    if (!await ConfirmDialog.ConfirmAsync(
+                            "اخطار! با حذف پروژه کاری تمامی اطلاعات زیر مجموعه آن شامل گزارشات مرتبط نیز حذف خواهند شد. آیا مطمئنید؟",
+                            "اخطار حذف عملیات")) return;
+                    var dataItem = e.RowData;
+                    dataItem.Delete();
+                    break;
+                }
         }
     }
 
@@ -300,33 +297,19 @@ public partial class Projects : IDisposable
 
     #endregion
 
-    private class ListProject
+    private class ListProject(Samco_HSE.HSEData.Project project)
     {
-        public int Oid { get; set; }
-        public string? Name { get; set; }
-
-        public ListProject(Samco_HSE.HSEData.Project project)
-        {
-            Oid = project.Oid;
-            Name = project.Name;
-        }
+        public int Oid { get; set; } = project.Oid;
+        public string? Name { get; set; } = project.Name;
     }
 
-    private class ListWell
+    private class ListWell(Well well)
     {
-        public int Oid { get; set; }
-        public string? Name { get; set; }
+        public int Oid { get; set; } = well.Oid;
+        public string? Name { get; set; } = well.Name;
 
-        public string? ProjectName { get; set; }
-        public string? Location { get; set; }
-
-        public ListWell(Well well)
-        {
-            Oid = well.Oid;
-            Name = well.Name;
-            ProjectName = well.ProjectName?.Name;
-            Location = well.Location;
-        }
+        public string? ProjectName { get; set; } = well.ProjectName?.Name;
+        public string? Location { get; set; } = well.Location;
 
         public static ListWell? GetListWell(IEnumerable<ListWell>? rigList, Well selRig)
         {

@@ -49,10 +49,6 @@ namespace Samco_HSE.HSEData
             get { return fDashboardId; }
             set { SetPropertyValue<string>(nameof(DashboardId), ref fDashboardId, value); }
         }
-        [Association(@"ReportReferencesUser")]
-        public XPCollection<Report> RecievedReports { get { return GetCollection<Report>(nameof(RecievedReports)); } }
-        [Association(@"ReportReferencesUser1")]
-        public XPCollection<Report> ReadedReports { get { return GetCollection<Report>(nameof(ReadedReports)); } }
         [Association(@"RigReferencesUser")]
         public XPCollection<Rig> Rigs { get { return GetCollection<Rig>(nameof(Rigs)); } }
         [Association(@"MaterialRequestReferencesUser")]

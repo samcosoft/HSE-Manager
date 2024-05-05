@@ -1,0 +1,71 @@
+﻿@using Samco_HSE.HSEData
+@using FilterType = Syncfusion.Blazor.DropDowns.FilterType
+@inject IDataLayer DataLayer;
+@inject ISnackbar Snackbar;
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Recycling" Class="me-3 mb-1" />
+            دور انداختن دارو / تجهیزات
+        </MudText>
+        <MudAlert Severity="Severity.Warning">دارو و تجهیزاتی که در این قسمت وارد می‌نمایید از موجودی دکل کم می‌شوند.</MudAlert>
+    </TitleContent>
+    <DialogContent>
+        <MudGrid>
+            <MudItem lg="12">
+                <MudField Label="نام دکل / دفتر" DisableUnderLine="true">
+                    <SamcoRigSelector DataSource="Rigs" SelectedRigChanged="RigSelectionChanged" />
+                </MudField>
+            </MudItem>
+            <MudItem md="6" sm="12">
+                <MudField Label="نام دارو / تجهیز" DisableUnderLine="true">
+                    <SfComboBox TItem="Medication" TValue="int?" DataSource="MedicationList" @bind-Value="_selMedication" AllowFiltering="true"
+                                FilterType="FilterType.Contains" AllowCustom="false" Placeholder="">
+                        <ComboBoxFieldSettings Text="Name" Value="Oid" />
+                    </SfComboBox>
+                </MudField>
+            </MudItem>
+            <MudItem md="3" sm="12">
+                <MudNumericField Label="تعداد" T="short" @bind-Value="@_selCount" Min="0" Max="1000" />
+            </MudItem>
+            <MudItem md="3" sm="12" Class="align-content-center">
+                <MudButton Color="Color.Success" ButtonType="ButtonType.Submit" Variant="Variant.Filled"
+                           StartIcon="@Icons.Material.Filled.Add" OnClick="AddToList" FullWidth="true">افزودن</MudButton>
+            </MudItem>
+            <MudItem lg="12">
+                <MudDataGrid Items="_selMedicationList">
+                    <Columns>
+                        <PropertyColumn Property="x=>x.Key.Name" Title="نام دارو / تجهیز" />
+                        <PropertyColumn Property="x=>x.Value" Title="تعداد" />
+                        <TemplateColumn CellClass="d-flex justify-end">
+                            <CellTemplate>
+                                <MudStack Row>
+                                    <MudButton Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Error"
+                                               OnClick="()=>RemoveFromList(context.Item.Key)">حذف</MudButton>
+                                </MudStack>
+                            </CellTemplate>
+                        </TemplateColumn>
+                    </Columns>
+                </MudDataGrid>
+            </MudItem>
+            @{
+                if (!string.IsNullOrEmpty(_alertText))
+                {
+                    <MudItem lg="12">
+                        <MudAlert Severity="Severity.Warning" ShowCloseIcon="true">
+                            @_alertText
+                        </MudAlert>
+                    </MudItem>
+                }
+            }
+            <MudItem lg="12">
+                <MudTextField T="string" @bind-Text="@_reason" Label="دلیل دور انداختن"></MudTextField>
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">انصراف</MudButton>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" StartIcon="fas fa-check" OnClick="Submit">تأیید</MudButton>
+    </DialogActions>
+</MudDialog>
