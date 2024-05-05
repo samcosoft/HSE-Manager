@@ -14,6 +14,7 @@ public class FileManagerController : Controller
     private static string _startPath = null!;
     private readonly string _basePath;
     private readonly string _root = "wwwroot\\upload";
+
     public FileManagerController(IHostEnvironment hostingEnvironment)
     {
         _basePath = hostingEnvironment.ContentRootPath;
@@ -82,7 +83,7 @@ public class FileManagerController : Controller
         _operation.RootFolder(Path.Combine(_root, _startPath));
         foreach (var file in uploadFiles)
         {
-            var folders = (file.FileName).Split('/');
+            var folders = file.FileName.Split('/');
             // checking the folder upload
             if (folders.Length > 1)
             {

@@ -323,7 +323,8 @@ public static class SamcoSoftShared
     public enum UploadFolders
     {
         StopCards,
-        Medical
+        Medical,
+        Forms
     }
     public static T PickRandom<T>(this IEnumerable<T> source)
     {

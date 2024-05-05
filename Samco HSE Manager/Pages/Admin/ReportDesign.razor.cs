@@ -2,7 +2,7 @@
 using DevExpress.Xpo.Metadata;
 using Microsoft.AspNetCore.Components;
 
-namespace Samco_HSE_Manager.Pages.Shared;
+namespace Samco_HSE_Manager.Pages.Admin;
 
 public partial class ReportDesign
 {

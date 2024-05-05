@@ -36,11 +36,11 @@ namespace Samco_HSE.HSEData
             get { return fRevDate; }
             set { SetPropertyValue<DateTime>(nameof(RevDate), ref fRevDate, value); }
         }
-        string fRevision;
-        public string Revision
+        short fRevision;
+        public short Revision
         {
             get { return fRevision; }
-            set { SetPropertyValue<string>(nameof(Revision), ref fRevision, value); }
+            set { SetPropertyValue<short>(nameof(Revision), ref fRevision, value); }
         }
         string fKeywords;
         public string Keywords
@@ -54,18 +54,23 @@ namespace Samco_HSE.HSEData
             get { return fFormType; }
             set { SetPropertyValue<string>(nameof(FormType), ref fFormType, value); }
         }
-        byte[] fData;
-        [MemberDesignTimeVisibility(true)]
-        public byte[] Data
+        string fFileName;
+        public string FileName
         {
-            get { return fData; }
-            set { SetPropertyValue<byte[]>(nameof(Data), ref fData, value); }
+            get { return fFileName; }
+            set { SetPropertyValue<string>(nameof(FileName), ref fFileName, value); }
         }
         string fModuleCode;
         public string ModuleCode
         {
             get { return fModuleCode; }
             set { SetPropertyValue<string>(nameof(ModuleCode), ref fModuleCode, value); }
+        }
+        string fAccessGroup;
+        public string AccessGroup
+        {
+            get { return fAccessGroup; }
+            set { SetPropertyValue<string>(nameof(AccessGroup), ref fAccessGroup, value); }
         }
         [Association(@"ReportReferencesHSEForm"), Aggregated]
         public XPCollection<Report> Reports { get { return GetCollection<Report>(nameof(Reports)); } }

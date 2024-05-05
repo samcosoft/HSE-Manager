@@ -3,6 +3,7 @@
 
 @inject IDataLayer DataLayer;
 @inject ISnackbar Snackbar;
+@implements IDisposable;
 
 
 <MudDialog>
@@ -104,4 +105,10 @@
     }
 
     void Cancel() => MudDialog.Cancel();
+
+    public void Dispose()
+    {
+        Session1.Dispose();
+    }
+
 }

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Samco_HSE.HSEData;
-using Samco_HSE_Manager.Models;
 
 namespace Samco_HSE_Manager.Pages.Medic.MedicationModals;
 
@@ -20,7 +19,6 @@ public partial class MedicationDiscardModal
     private short _selCount;
     private string? _alertText;
     private string? _reason;
-    private SamcoRigSelector? _rigBox;
 
     protected override void OnInitialized()
     {
@@ -41,16 +39,6 @@ public partial class MedicationDiscardModal
 
         base.OnInitialized();
     }
-
-    //protected override void OnAfterRender(bool firstRender)
-    //{
-    //    if (Rigs.Any() && Rigs.Count() < 2 && _rigBox != null)
-    //    {
-    //        _rigBox.SelectedRig = Rigs.First();
-    //        _rigBox.IsReadonly = true;
-    //    }
-    //    base.OnAfterRender(firstRender);
-    //}
 
     private void AddToList()
     {
