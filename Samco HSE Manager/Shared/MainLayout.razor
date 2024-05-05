@@ -12,17 +12,10 @@
 
 <div class="page">
     <MudRTLProvider RightToLeft="true">
-<<<<<<< HEAD
-        <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_samcoTheme"/>
-        <MudDialogProvider Position="DialogPosition.Center" CloseButton="true" CloseOnEscapeKey="true"/>
-        <MudSnackbarProvider/>
-        <Syncfusion.Blazor.Popups.SfDialogProvider/>
-=======
         <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_samcoTheme" />
         <MudDialogProvider Position="DialogPosition.Center" CloseButton="true" CloseOnEscapeKey="true"/>
         <MudSnackbarProvider />
         <Syncfusion.Blazor.Popups.SfDialogProvider />
->>>>>>> be697d2bb4241c75660036950b79ee7e3dfb1f26
         <MudLayout id="mainWindow">
             <Header @bind-ToggleOn="@IsSidebarExpanded" DarkMode="_isDarkMode" DarkModeChanged="SetTheme"></Header>
             <MudDrawerContainer Style="height: 100%; min-height: 700px">

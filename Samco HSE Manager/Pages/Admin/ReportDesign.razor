@@ -1,35 +1,11 @@
 ﻿@page "/reportdesigner"
-@using Color = MudBlazor.Color
 @attribute [Authorize(Roles = "Owner,Admin")]
+<dir dir="ltr">
+    <DxReportDesigner Height="1000px" Width="100%" AllowMDI="true" DataSources="_hseDataSources">
+        <DxReportDesignerWizardSettings UseFullscreenWizard="true" />
+        <DxReportDesignerDataSourceSettings AllowAddDataSource="true"
+                                            AllowEditDataSource="true"
+                                            AllowRemoveDataSource="true" />
 
-<MudGrid Class="mt-6">
-    <MudItem lg="6">
-        <MudCard>
-            <MudCardHeader><MudText Typo="Typo.h6">ویرایش گزارش</MudText></MudCardHeader>
-            <MudCardContent>
-                <MudText>یک مورد را انتخاب کنید:</MudText>
-                <MudList Clickable="true">
-                    @if (_reportList != null)
-                    {
-                        foreach (var itm in _reportList)
-                        {
-                            <MudListItem Text="@itm" OnClick="()=>OpenReport(itm)"/>
-                        }
-                    }
-
-                </MudList>
-            </MudCardContent>
-        </MudCard>
-    </MudItem>
-    <MudItem lg="6">
-        <MudCard>
-            <MudCardHeader><MudText Typo="Typo.h6">گزارش جدید</MudText></MudCardHeader>
-            <MudCardContent>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Create">ایجاد گزارش جدید</MudButton>
-            </MudCardContent>
-        </MudCard>
-    </MudItem>
-    <MudItem lg="12">
-        <StiBlazorViewer Report="@_report"></StiBlazorViewer>
-    </MudItem>
-</MudGrid>
+    </DxReportDesigner>
+</dir>
