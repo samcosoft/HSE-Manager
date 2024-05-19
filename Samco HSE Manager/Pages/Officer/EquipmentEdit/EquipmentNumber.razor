@@ -1,0 +1,23 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudGrid>
+            <MudItem md="4" sm="12">
+                <MudTextField T="string" Label="نام تجهیز:" Text="@_selEquipmentStock!.EquipmentName.Name" ReadOnly="true"/>
+            </MudItem>
+            <MudItem md="4" sm="12">
+                <MudField Label="نام دکل / دفتر:" DisableUnderLine="true">
+                    <SamcoRigSelector DataSource="Rigs" SelectedRig="_selRig" SelectedRigChanged="RigSelectionChanged"
+                                      Session="Session1"/>
+                </MudField>
+            </MudItem>
+            <MudItem md="4" sm="12">
+                <MudNumericField T="int" @bind-Value="@_selEquipmentStock!.Counts" Label="تعداد:" Adornment="Adornment.Start"
+                                 Min="1" Max="365" Step="1" />
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="() => MudDialogParent.Cancel()">انصراف</MudButton>
+        <MudButton Color="Color.Success" OnClick="SetCountOkBtnClick" Variant="Variant.Filled">تأیید</MudButton>
+    </DialogActions>
+</MudDialog>

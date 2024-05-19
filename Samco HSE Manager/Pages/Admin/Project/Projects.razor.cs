@@ -1,10 +1,12 @@
-﻿using DevExpress.Xpo;
+﻿using DevExpress.Data.Filtering;
+using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Samco_HSE.HSEData;
 using Syncfusion.Blazor.DropDowns;
 using Syncfusion.Blazor.Grids;
 using Action = Syncfusion.Blazor.Grids.Action;
+// ReSharper disable CollectionNeverUpdated.Local
 
 namespace Samco_HSE_Manager.Pages.Admin.Project;
 
@@ -15,41 +17,43 @@ public partial class Projects : IDisposable
     [Inject] private IDialogService DialogService { get; set; } = null!;
     [Inject] private Syncfusion.Blazor.Popups.SfDialogService ConfirmDialog { get; set; } = null!;
     private Session Session1 { get; set; } = null!;
-    private IEnumerable<ListProject>? DrillProjects { get; set; }
+    private XPCollection<Samco_HSE.HSEData.Project>? DrillProjects { get; set; }
     private Samco_HSE.HSEData.Project? _selProject;
     private int[]? _selProjectOid;
 
-    private IEnumerable<ListWell>? Wells { get; set; }
+    private XPCollection<Well>? _wells;
     private Well? _selWell;
     private int[]? _selWellOid;
 
-    private IEnumerable<Rig>? Rigs { get; set; }
+    private XPCollection<Rig>? _rigs;
     private Rig? _selRig;
     private int[]? _selRigOid;
-    private IEnumerable<WellWork>? WellWorks { get; set; }
+    private XPCollection<WellWork>? WellWorks { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         Session1 = new Session(DataLayer);
-        await LoadInformation();
+        ReloadInformation();
     }
 
-    private async Task LoadInformation()
+    private void ReloadInformation()
     {
-        DrillProjects = await Session1.Query<Samco_HSE.HSEData.Project>().Select(x => new ListProject(x)).ToListAsync();
-        Rigs = await Session1.Query<Rig>().ToListAsync();
-        WellWorks = await Session1.Query<WellWork>().ToListAsync();
+        //Update data
+        DrillProjects = new XPCollection<Samco_HSE.HSEData.Project>(Session1);
+        _rigs = new XPCollection<Rig>(Session1);
+        WellWorks = new XPCollection<WellWork>(Session1);
+        _selRigOid = null;
+        _selWellOid = null;
         _selRigOid = null;
         _selWellOid = null;
     }
 
     #region PopupControlls
 
-    private void OnProjectChange(ListBoxChangeEventArgs<int[], ListProject> obj)
+    private void OnProjectChange(ListBoxChangeEventArgs<int[], Samco_HSE.HSEData.Project> obj)
     {
         if (!obj.Items.Any()) return;
-        Wells = Session1.GetObjectByKey<Samco_HSE.HSEData.Project>(obj.Value.First()).Wells
-            .Select(x => new ListWell(x));
+        _wells = new XPCollection<Well>(Session1, CriteriaOperator.Parse("[ProjectName.Oid] = ?", obj.Value.FirstOrDefault()));
         _selWellOid = null;
     }
 
@@ -150,8 +154,7 @@ public partial class Projects : IDisposable
         var result = await dialog.Result;
         if (!result.Canceled)
         {
-            await LoadInformation();
-            StateHasChanged();
+            ReloadInformation();
         }
     }
 
@@ -203,7 +206,7 @@ public partial class Projects : IDisposable
             //Ignored
         }
 
-        await LoadInformation();
+        ReloadInformation();
         StateHasChanged();
     }
 
@@ -297,20 +300,11 @@ public partial class Projects : IDisposable
 
     #endregion
 
-    private class ListProject(Samco_HSE.HSEData.Project project)
-    {
-        public int Oid { get; set; } = project.Oid;
-        public string? Name { get; set; } = project.Name;
-    }
-
     private class ListWell(Well well)
     {
         public int Oid { get; set; } = well.Oid;
         public string? Name { get; set; } = well.Name;
-
         public string? ProjectName { get; set; } = well.ProjectName?.Name;
-        public string? Location { get; set; } = well.Location;
-
         public static ListWell? GetListWell(IEnumerable<ListWell>? rigList, Well selRig)
         {
             return rigList?.FirstOrDefault(x => x.Oid == selRig.Oid);

@@ -11,8 +11,8 @@
     <Description>A web-based application for managing HSE datas on oil rigs.</Description>
     <PackageProjectUrl>https://samcosoft.ir</PackageProjectUrl>
     <PackageIcon>HSE.png</PackageIcon>
-    <AssemblyVersion>1.3.438.24140</AssemblyVersion>
-    <FileVersion>1.3.438.24140</FileVersion>
+    <AssemblyVersion>1.3.431.24126</AssemblyVersion>
+    <FileVersion>1.3.431.24126</FileVersion>
     <Copyright>Copyright $(Company) 2020 - 2024. All rights reserved.</Copyright>
     <Version>1.3.215.23114</Version>
   </PropertyGroup>
