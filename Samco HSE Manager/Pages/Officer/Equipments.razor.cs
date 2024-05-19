@@ -3,14 +3,9 @@ using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using Samco_HSE.HSEData;
 using MudBlazor;
-<<<<<<< HEAD
-using Samco_HSE_Manager.Pages.Officer.EquipmentEdit;
-=======
 using Samco_HSE_Manager.Pages.Officer.EquipmentsModal;
->>>>>>> be697d2bb4241c75660036950b79ee7e3dfb1f26
 using Syncfusion.Blazor.Grids;
 using Action = Syncfusion.Blazor.Grids.Action;
-using DialogOptions = MudBlazor.DialogOptions;
 
 namespace Samco_HSE_Manager.Pages.Officer;
 
@@ -71,7 +66,6 @@ public partial class Equipments : IDisposable
     }
 
     private string[]? Consumers { get; set; }
-
     private async Task EquipGrid_Action(ActionEventArgs<Equipment> e)
     {
         switch (e.RequestType)
@@ -133,10 +127,6 @@ public partial class Equipments : IDisposable
                         return;
                     }
                 }
-<<<<<<< HEAD
-
-=======
->>>>>>> be697d2bb4241c75660036950b79ee7e3dfb1f26
                 editModel.WhoNeed = string.Join(";", Consumers);
                 editModel.Save();
                 break;
@@ -147,7 +137,6 @@ public partial class Equipments : IDisposable
                     e.Cancel = true;
                     return;
                 }
-
                 e.RowData.Delete();
                 break;
         }
@@ -168,38 +157,16 @@ public partial class Equipments : IDisposable
 
     #endregion
 
-<<<<<<< HEAD
-=======
     #region EquipmentCount
 
->>>>>>> be697d2bb4241c75660036950b79ee7e3dfb1f26
     private async Task OnSetNumberBtnClick()
     {
-        if (EquipmentGrid!.SelectedRecords.Count == 0)
+        if (EquipmentGrid!.SelectedRecords.Any() == false)
         {
             Snackbar.Add("لطفاً یک تجهیز را از لیست زیر انتخاب کنید.", Severity.Warning);
             return;
         }
 
-<<<<<<< HEAD
-        var selEquip = EquipmentGrid!.SelectedRecords.First();
-        var dialog = await DialogService.ShowAsync<EquipmentNumber>($"ثبت موجودی برای {selEquip.Name}",
-            new DialogParameters { { "EquipmentId", selEquip.Oid } }, new DialogOptions());
-        var result = await dialog.Result;
-        if (!result.Canceled) StateHasChanged();
-    }
-
-    #region DistributeEquipment
-
-    private IEnumerable<Samco_HSE.HSEData.Personnel>? Personnel { get; set; }
-    private SfGrid<Samco_HSE.HSEData.Personnel>? PersonnelGrid { get; set; }
-    private SfDialog? DistModal { get; set; }
-    private MudNumericField<int>? EquipCountBox { get; set; }
-    private int _equipCount;
-    private string? _alertMessage;
-    private bool _alertVisible;
-
-=======
         var dialog = await DialogService.ShowAsync<EquipmentNumberModal>("تنظیم تعداد تجهیزات",
             new DialogParameters { { "SelEquipmentId", EquipmentGrid.SelectedRecords.First().Oid } });
         var result = await dialog.Result;
@@ -213,10 +180,9 @@ public partial class Equipments : IDisposable
 
     #region DistributeEquipment
 
->>>>>>> be697d2bb4241c75660036950b79ee7e3dfb1f26
     private async Task OnDistributeBtnClick()
     {
-        if (EquipmentGrid!.SelectedRecords.Count == 0)
+        if (EquipmentGrid!.SelectedRecords.Any() == false)
         {
             Snackbar.Add("لطفاً یک تجهیز را از لیست زیر انتخاب کنید.", Severity.Warning);
             return;
@@ -230,98 +196,6 @@ public partial class Equipments : IDisposable
             EquipmentsList!.Reload();
         }
 
-<<<<<<< HEAD
-        await DistModal!.ShowAsync();
     }
-
-    private void PersonnelGrid_SelectionChanged()
-    {
-        var itmList = PersonnelGrid!.SelectedRecords;
-        var selEquipment = EquipmentGrid!.SelectedRecords.First();
-        _equipCount = EquipCountBox!.Value;
-        _alertMessage = string.Empty;
-        _alertVisible = false;
-        foreach (var personnel in itmList.Where(personnel => personnel.PPEs.Any(x =>
-                     x.EquipmentName.Oid == selEquipment.Oid && x.DeliverDate > DateTime.Today.AddMonths(-6))))
-        {
-            _alertMessage += $"{personnel.PersonnelName} به تازگی این تجهیز را دریافت کرده است." + Environment.NewLine;
-            _alertVisible = true;
-        }
-
-        var personnelRigGroup = itmList.GroupBy(x => x.ActiveRig)
-            .Select(x => new { RigName = x.Key, PersonnelCount = x.Count() }).ToList();
-        foreach (var itm in from itm in personnelRigGroup
-                 let availableStock = selEquipment.EquipmentStocks.FirstOrDefault(x => x.RigNo?.Oid == itm.RigName.Oid)
-                 where availableStock == null || itm.PersonnelCount * _equipCount > availableStock.Counts
-                 select itm)
-        {
-            _alertMessage +=
-                $"تعداد افراد انتخاب شده در {itm.RigName.Name} از موجودی این تجهیز در آنجا بیشتر است." +
-                Environment.NewLine;
-            _alertVisible = true;
-        }
-=======
->>>>>>> be697d2bb4241c75660036950b79ee7e3dfb1f26
-    }
-
     #endregion
-<<<<<<< HEAD
-
-    private async Task DistributeOkBtnClick()
-    {
-        //Validation
-        if (PersonnelGrid!.SelectedRecords.Count == 0)
-        {
-            Snackbar.Add("لطفاً پرسنل مورد نظر را از لیست زیر انتخاب کنید.", Severity.Error);
-            return;
-        }
-
-        var selPersonnel = PersonnelGrid.SelectedRecords;
-        var selEquipment = EquipmentGrid!.SelectedRecords.First();
-        var personnelRigGroup = selPersonnel.GroupBy(x => x.ActiveRig)
-            .Select(x => new { RigName = x.Key, PersonnelCount = x.Count() }).ToList();
-        foreach (var itm in from itm in personnelRigGroup
-                 let availableStock = selEquipment.EquipmentStocks.FirstOrDefault(x => x.RigNo.Oid == itm.RigName.Oid)
-                 where availableStock == null || itm.PersonnelCount * _equipCount > availableStock.Counts
-                 select itm)
-        {
-            Snackbar.Add($"تعداد افراد انتخاب شده در {itm.RigName.Name} از موجودی این تجهیز در آنجا بیشتر است.",
-                Severity.Error);
-            return;
-        }
-
-        //Adding equipment
-        var loggedUser =
-            await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
-
-        foreach (var personnel in selPersonnel)
-        {
-            for (var i = 0; i < _equipCount; i++)
-            {
-                personnel.PPEs.Add(new PPE(Session1)
-                {
-                    Agent = loggedUser,
-                    DeliverDate = DateTime.Today,
-                    EquipmentName = selEquipment,
-                });
-            }
-
-            personnel.Save();
-        }
-
-        //set stacks
-        foreach (var itm in personnelRigGroup)
-        {
-            var equipStack = Session1
-                .Query<EquipmentStock>()
-                .First(x => x.RigNo.Oid == itm.RigName.Oid && x.EquipmentName.Oid == selEquipment.Oid);
-            equipStack.Counts -= itm.PersonnelCount * _equipCount;
-            equipStack.Save();
-        }
-
-        Snackbar.Add("اطلاعات با موفقیت ذخیره شد.", Severity.Success);
-        await DistModal!.HideAsync();
-    }
-=======
->>>>>>> be697d2bb4241c75660036950b79ee7e3dfb1f26
 }

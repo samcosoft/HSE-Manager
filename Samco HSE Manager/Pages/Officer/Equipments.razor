@@ -1,10 +1,6 @@
 ﻿@page "/equipment"
 @attribute [Authorize(Roles = "Owner,Admin,Supervisor,Officer")]
 @using Samco_HSE.HSEData
-<<<<<<< HEAD
-@using Syncfusion.Blazor.Popups
-=======
->>>>>>> be697d2bb4241c75660036950b79ee7e3dfb1f26
 @using FilterType = Syncfusion.Blazor.Grids.FilterType
 
 <PageTitle>مدیریت تجهیزات حفاظت فردی</PageTitle>
@@ -37,7 +33,7 @@
                 <GridColumn HeaderText="ردیف" Field="Oid" IsPrimaryKey="true" Visible="false"/>
                 <GridColumn HeaderText="نام تجهیز" Field="Name" AutoFit="true"/>
                 <GridColumn HeaderText="واحد شمارش" Field="CountUnit" AutoFit="true"/>
-                <GridColumn HeaderText="مدل / اندازه" Field="Model" AutoFit="true"/>
+                <GridColumn HeaderText="مدل" Field="Model" AutoFit="true"/>
                 <GridColumn HeaderText="نوع تجهیز" Field="@nameof(Equipment.EquipType)" AutoFit="true"/>
                 @{
                     if (Rigs != null)
@@ -48,7 +44,7 @@
                                 <Template>
                                     @{
                                         var itm = context as Equipment;
-                                        @EquipmentGridUnbound(rig.Oid, itm!)
+                                        @EquipmentGridUnbound(rig.Oid, itm)
                                     }
                                 </Template>
                             </GridColumn>
@@ -72,7 +68,7 @@
                                               Adornment="Adornment.Start" AutoFocus="true"/>
                             </MudItem>
                             <MudItem md="6" sm="12">
-                                <MudTextField Label="مدل / اندازه:" @bind-Value="@equipment.Model"
+                                <MudTextField Label="مدل:" @bind-Value="@equipment.Model"
                                               Adornment="Adornment.Start"/>
                             </MudItem>
                             <MudItem md="6" sm="12">
@@ -101,57 +97,4 @@
             </GridEditSettings>
         </SfGrid>
     </MudCardContent>
-<<<<<<< HEAD
 </MudCard>
-
-<SfDialog @ref="DistModal" Header="توزیع تجهیز" AllowDragging="true" Visible="false" IsModal="true" Width="600px" ShowCloseIcon="true"
-          CloseOnEscape="true">
-    <DialogTemplates>
-        <Content>
-            <MudAlert Severity="Severity.Info" Elevation="3" Variant="Variant.Filled"
-                      ContentAlignment="HorizontalAlignment.Right">
-                از این قسمت می‌توانید یک تجهیز را بین تعداد زیادی از کارکنان توزیع کنید.
-            </MudAlert>
-            <MudGrid>
-                <MudItem lg="12">
-                    <SfGrid @ref="PersonnelGrid" DataSource="@Personnel" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
-                            AllowGrouping="true" Toolbar="@(new[] { "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
-                            AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
-                            Width="100%" AllowSelection="true">
-                        <GridFilterSettings Type="FilterType.Excel"/>
-                        <GridSelectionSettings Type="SelectionType.Multiple" EnableToggle="true" AllowDragSelection="true"/>
-                        <GridEvents TValue="Samco_HSE.HSEData.Personnel" RowSelected="PersonnelGrid_SelectionChanged"/>
-                        <GridColumns>
-                            <GridColumn Type="ColumnType.CheckBox" Width="50"/>
-                            <GridColumn HeaderText="ردیف" Field="Oid" IsPrimaryKey="true" Visible="false"/>
-                            <GridColumn HeaderText="نام دکل / دفتر" Field="ActiveRig.Name" AutoFit="true"/>
-                            <GridColumn HeaderText="نام و نام خانوادگی" Field="PersonnelName" AutoFit="true"/>
-                            <GridColumn HeaderText="کد ملی" Field="NationalID" AutoFit="true"/>
-                            <GridColumn HeaderText="شماره پرسنلی" Field="PersonnelNum" AutoFit="true"/>
-                            <GridColumn HeaderText="سمت فعلی" Field="CurrentRole" AutoFit="true"/>
-                            <GridColumn HeaderText="سایز کفش" Field="ShoeSize" AutoFit="true"/>
-                            <GridColumn HeaderText="سایز لباس" Field="ClothSize" AutoFit="true"/>
-                            <GridColumn HeaderText="وضعیت" Field="Status" AutoFit="true"/>
-                        </GridColumns>
-                    </SfGrid>
-                </MudItem>
-                <MudItem lg="12">
-                    <MudNumericField @ref="EquipCountBox" Label="تعداد:" T="int" Min="1" ValueChanged="PersonnelGrid_SelectionChanged"/>
-                </MudItem>
-                <MudItem lg="12">
-                    <div style="display: @(_alertVisible ? "block" : "none")">
-                        <MudAlert Severity="Severity.Warning" Elevation="3">
-                            @_alertMessage
-                        </MudAlert>
-                    </div>
-                </MudItem>
-            </MudGrid>
-        </Content>
-        <FooterTemplate>
-            <MudButton Color="Color.Success" StartIcon="fas fa-check" OnClick="DistributeOkBtnClick">تأیید</MudButton>
-        </FooterTemplate>
-    </DialogTemplates>
-</SfDialog>
-=======
-</MudCard>
->>>>>>> be697d2bb4241c75660036950b79ee7e3dfb1f26

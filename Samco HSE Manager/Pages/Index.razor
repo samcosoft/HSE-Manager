@@ -24,7 +24,8 @@
                         <h2 class="mt-2">آمار سیستم</h2>
                     </MudCardHeader>
                     <MudCardContent>
-                       
+                        <DxDashboard @bind-DashboardId="@_dashboardId" WorkingMode="WorkingMode.ViewerOnly"
+                                     Endpoint="api/dashboard" style="width: 100%; height: 800px;" />
                     </MudCardContent>
                 </MudCard>
             </Animation>

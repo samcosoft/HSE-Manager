@@ -1,30 +1,30 @@
-﻿using Microsoft.AspNetCore.Components;
-using Stimulsoft.Report;
+﻿using DevExpress.Xpo;
+using DevExpress.Xpo.Metadata;
+using Microsoft.AspNetCore.Components;
 
 namespace Samco_HSE_Manager.Pages.Admin;
 
 public partial class ReportDesign
 {
-    [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
+    [Inject] private IDataLayer DataLayer { get; set; } = null!;
 
-    private List<string>? _reportList;
-
-    private StiReport? _report;
-
+    private Session? Session1 { get; set; }
+    private readonly Dictionary<string, object> _hseDataSources = new();
     protected override void OnInitialized()
     {
-        //Stimulsoft.Base.StiLicense.LoadFromFile(Path.Combine(HostEnvironment.WebRootPath, "stimulsoft", "license.key"));
+        Session1 = new Session(DataLayer);
+        foreach (XPClassInfo info in Session1.Dictionary.Classes)
+        {
+            if (info.IsPersistent && info.IsVisibleInDesignTime)
+            {
+                var dataSource = new XPObjectSource
+                {
+                    ConnectionStringName = "MainDatabase"
+                };
+                dataSource.SetEntityType(info.ClassType);
+                _hseDataSources.Add(info.TableName, dataSource); ;
+            }
+        }
 
-        _reportList =
-            Directory.GetFiles(Path.Combine(HostEnvironment.ContentRootPath, "Data", "Reports")).Select(x => x.Split("\\").Last()).ToList();
-
-        base.OnInitialized();
-    }
-
-    private void OpenReport(string reportName)
-    {
-        var report = new StiReport();
-
-        _report = report.Load(Path.Combine(HostEnvironment.ContentRootPath, "Data", "Reports", reportName));
     }
 }
