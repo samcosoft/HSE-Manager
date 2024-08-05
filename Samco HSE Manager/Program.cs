@@ -1,14 +1,10 @@
 ﻿using Blazored.LocalStorage;
-using DevExpress.Blazor.Reporting;
 using DevExpress.DashboardAspNetCore;
-using DevExpress.DashboardCommon;
 using DevExpress.DashboardWeb;
 using DevExpress.Xpo.DB;
-using DevExpress.XtraReports.Web.Extensions;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 using MudBlazor.Services;
-using Samco_HSE.HSEData;
 using Samco_HSE_Manager;
 using Samco_HSE_Manager.Authentication;
 using Syncfusion.Blazor;
@@ -44,7 +40,7 @@ builder.Services.AddMudServices(config =>
     config.SnackbarConfiguration.ShowCloseIcon = false;
     config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
 });
-builder.Services.AddDevExpressBlazorReporting();
+//builder.Services.AddDevExpressBlazorReporting();
 builder.Services.AddScoped(_ =>
 {
     var configurator = new DashboardConfigurator();
@@ -72,7 +68,7 @@ builder.Services.AddSyncfusionBlazor(options =>
     options.EnableRippleEffect = true;
 });
 SamcoSoftShared.Lic = SamcoSoftShared.CreateLicense(Path.Combine(builder.Environment.WebRootPath, "Samco_HSE.lic"));
-builder.Services.AddScoped<ReportStorageWebExtension, CustomReportStorageWebExtension>();
+//builder.Services.AddScoped<ReportStorageWebExtension, CustomReportStorageWebExtension>();
 builder.WebHost.UseWebRoot("wwwroot");
 builder.WebHost.UseStaticWebAssets();
 
@@ -97,7 +93,7 @@ app.UseRequestLocalization(new RequestLocalizationOptions()
     .AddSupportedCultures("en-US")
     .AddSupportedUICultures("en-US"));
 
-app.UseDevExpressBlazorReporting();
+//app.UseDevExpressBlazorReporting();
 app.MapDashboardRoute("api/dashboard", "DefaultDashboard");
 app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 

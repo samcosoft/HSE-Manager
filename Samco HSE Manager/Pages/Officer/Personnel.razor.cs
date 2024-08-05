@@ -165,7 +165,7 @@ public partial class Personnel : IDisposable
             return;
         }
         await DialogService.ShowAsync<PersonnelIncentive>($"ثبت تشویق برای {SelPersonnel.PersonnelName}",
-            new DialogParameters { { "PersonId", SelPersonnel.Oid } }, new DialogOptions(){ClassBackground = "safe-item"});
+            new DialogParameters { { "PersonId", SelPersonnel.Oid } }, new DialogOptions{BackgroundClass = "safe-item"});
     }
 
     private async Task OpenWarningDialog()
@@ -182,7 +182,7 @@ public partial class Personnel : IDisposable
             return;
         }
         await DialogService.ShowAsync<PersonnelWarning>($"ثبت اخطار برای {SelPersonnel.PersonnelName}",
-            new DialogParameters { { "PersonId", SelPersonnel.Oid } }, new DialogOptions(){ClassBackground = "danger-item"});
+            new DialogParameters { { "PersonId", SelPersonnel.Oid } }, new DialogOptions{ BackgroundClass = "danger-item"});
     }
 
     private async Task OpenEquipmentDialog()
@@ -200,6 +200,6 @@ public partial class Personnel : IDisposable
         }
         
         await DialogService.ShowAsync<EquipmentSelector>($"تحویل تجهیزات به {SelPersonnel.PersonnelName}",
-            new DialogParameters { { "PersonId", SelPersonnel.Oid } }, new DialogOptions(){ClassBackground = "danger-item"});
+            new DialogParameters { { "PersonId", SelPersonnel.Oid } }, new DialogOptions{ BackgroundClass = "danger-item" });
     }
 }

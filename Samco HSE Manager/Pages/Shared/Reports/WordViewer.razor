@@ -11,15 +11,15 @@
     <DialogContent>
         <MudCard>
             <MudCardContent>
-                <SfDocumentEditorContainer @ref="_container" EnableToolbar="true">
+                <SfDocumentEditorContainer @ref="_container" EnableToolbar="true" Height="100vh" DocumentEditorSettings="_settings">
                     <DocumentEditorContainerEvents Created="OnCreated"></DocumentEditorContainerEvents>
                 </SfDocumentEditorContainer>
             </MudCardContent>
         </MudCard>
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Success" Variant="Variant.Filled" StartIcon="fas fa-trash" OnClick="SaveDocument">ذخیره گزارش</MudButton>
-        <MudButton Color="Color.Error" Variant="Variant.Filled" StartIcon="fas fa-trash" OnClick="CancelButton">انصراف</MudButton>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" StartIcon="fas fa-check" OnClick="SaveDocument">ذخیره گزارش</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" StartIcon="fas fa-xmark" OnClick="CancelButton">انصراف</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -36,35 +36,33 @@
 
     private Session? _session1;
     private SfDocumentEditorContainer? _container;
+    private readonly DocumentEditorSettingsModel _settings = new() { FontFamilies = ["Tahoma", "Calibri", "B Nazanin", "B Titr", "IranYekanRd"] };
     private Report? _selReport;
-    private string? _loadedDocument;
 
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
+        base.OnInitialized();
         _session1 = new Session(DataLayer);
-        _selReport = _session1.FindObject<Report>(ReportId);
-
-        if (string.IsNullOrEmpty(DocumentPath)) return;
-
-        var fileStream = new FileStream(DocumentPath, FileMode.Open, FileAccess.Read);
-        var stream = new MemoryStream();
-        await fileStream.CopyToAsync(stream);
-        // var byteArray = stream.ToArray();
-        // var webClient = new HttpClient();
-        // var byteArray = await webClient.GetByteArrayAsync(path);
-        // Stream stream = new MemoryStream(byteArray);
-        var document = WordDocument.Load(stream, ImportFormatType.Docx);
-        await stream.DisposeAsync();
-        _loadedDocument = JsonSerializer.Serialize(document);
-        document.Dispose();
+        _selReport = _session1.GetObjectByKey<Report>(ReportId);
     }
 
     private async void OnCreated(object obj)
     {
+        if (string.IsNullOrEmpty(DocumentPath)) return;
+
+        await using var fileStream = new FileStream(DocumentPath, FileMode.Open, FileAccess.Read);
+        var document = WordDocument.Load(fileStream, DocumentPath.Split(".").Last() == "docx" ? ImportFormatType.Docx : ImportFormatType.Doc);
+        var json = JsonSerializer.Serialize(document);
+        document.Dispose();
+        //To observe the memory go down, null out the reference of document variable.
+        // ReSharper disable once RedundantAssignment
+        document = null;
         var editor = _container!.DocumentEditor;
-        await editor.OpenAsync(_loadedDocument);
-        _loadedDocument = null;
+        await editor.OpenAsync(json);
+        //To observe the memory go down, null out the reference of json variable.
+        // ReSharper disable once RedundantAssignment
+        json = null;
     }
 
     private async void SaveDocument()
@@ -78,8 +76,7 @@
         //Word document file stream
         Stream stream = new MemoryStream(data);
         //To observe the memory go down, null out the reference of data variable.
-        await using (var fileStream = new FileStream(Path.Combine(HostEnvironment.WebRootPath, "upload", "UserReports",
-                             _selReport!.Oid.ToString()) + $".{_selReport.Form.FormType}", FileMode.Create, FileAccess.Write))
+        await using (var fileStream = new FileStream(DocumentPath!, FileMode.Create, FileAccess.Write))
         {
             //Saving the new file in root path of application
             await stream.CopyToAsync(fileStream);
@@ -88,9 +85,10 @@
         stream.Close();
 
         //Update file info
-        _selReport.SubDate = DateTime.Now;
+        _selReport!.SubDate = DateTime.Now;
         _selReport.Save();
         Snackbar.Add("گزارش با موفقیت ذخیره شد.", Severity.Success);
+        MudDialog.Close(DialogResult.Ok(true));
     }
 
     private void CancelButton() => MudDialog.Cancel();

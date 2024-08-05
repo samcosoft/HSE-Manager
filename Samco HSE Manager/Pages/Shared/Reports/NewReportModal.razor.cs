@@ -9,9 +9,7 @@ namespace Samco_HSE_Manager.Pages.Shared.Reports;
 public partial class NewReportModal
 {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
-
-    [Parameter] public int SelFormId { get; set; }
-    [Parameter] public int UserId { get; set; }
+    public int SelFormId { get; set; }
     private Session Session1 { get; set; } = null!;
     private IEnumerable<HSEForm>? FormCollection { get; set; }
     private IEnumerable<Rig>? Rigs { get; set; }
@@ -33,7 +31,7 @@ public partial class NewReportModal
             //Owner
             FormCollection = new XPCollection<HSEForm>(Session1);
             Rigs = await Session1.Query<Rig>().ToListAsync();
-            FormCollection = new XPCollection<HSEForm>(Session1);
+            FormCollection = new XPCollection<HSEForm>(Session1, new BinaryOperator("Disabled", false));
         }
     }
 
@@ -46,10 +44,29 @@ public partial class NewReportModal
             return;
         }
 
-        //Get User
+        if (_selRig.WellWorks.FirstOrDefault(x => x.IsActive) == null)
+        {
+            Snackbar.Add("محل انتخاب شده در هیچ پروژه‌ای فعال نیست.", Severity.Error);
+            return;
+        }
+
+        //Check for file
+        var selForm = await Session1.GetObjectByKeyAsync<HSEForm>(SelFormId);
+        if (selForm == null)
+        {
+            Snackbar.Add("فرم انتخاب شده یافت نشد.", Severity.Error);
+            return;
+        }
+        var origPath = Path.Combine(HostEnvironment.ContentRootPath, "Data", "Forms", $"{selForm.Oid}.{selForm.FormType}");
+        if (!File.Exists(origPath))
+        {
+            Snackbar.Add("فایل فرم یافت نشد.", Severity.Error);
+            return;
+        }
+
         var newReport = new Report(Session1)
         {
-            Form = await Session1.FindObjectAsync<HSEForm>(SelFormId),
+            Form = selForm,
             SubDate = DateTime.Now,
             UserName = await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId)),
             WorkID = _selRig.WellWorks.FirstOrDefault(x => x.IsActive)
@@ -58,16 +75,14 @@ public partial class NewReportModal
         Snackbar.Add("اطلاعات با موفقیت ثبت شد.", Severity.Success);
 
         //Copy report file to user report
-        var origPath = Path.Combine(HostEnvironment.ContentRootPath, "Data", "Forms", $"{newReport.Form.Oid}.{newReport.Form.FormType}");
-
-        var destPath = Path.Combine(HostEnvironment.WebRootPath, "upload", "UserReports", UserId.ToString());
+        var destPath = Path.Combine(HostEnvironment.WebRootPath, "upload", "UserReports", SamcoSoftShared.CurrentUserId.ToString());
         if (!Directory.Exists(destPath))
             Directory.CreateDirectory(destPath);
-        destPath = Path.Combine(destPath, $"{newReport.Oid}.{newReport.Form.FormType}");
+        destPath = Path.Combine(destPath, $"{newReport.Oid}.{selForm.FormType}");
         File.Copy(origPath, destPath);
 
         //Open report for editing
-        switch (newReport.Form.FormType.ToLower())
+        switch (selForm.FormType.ToLower())
         {
             case "pdf":
                 var parameter1 = new DialogParameters<PDFViewer>
@@ -77,7 +92,8 @@ public partial class NewReportModal
                 };
                 await DialogService.ShowAsync<PDFViewer>($"گزارش {newReport.Form.Title}", parameter1, new DialogOptions { FullScreen = true });
                 break;
-            case "doc": case "docx":
+            case "doc":
+            case "docx":
                 var parameter2 = new DialogParameters<WordViewer>
                 {
                     { x => x.DocumentPath, destPath },

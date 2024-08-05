@@ -14,7 +14,6 @@ public partial class ReportsView
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
-
     [Inject] private IDialogService DialogService { get; set; } = null!;
 
     private Session Session1 { get; set; } = null!;
@@ -65,7 +64,7 @@ public partial class ReportsView
 
     private async Task OnAddBtnClick(MouseEventArgs obj)
     {
-        await DialogService.ShowAsync<NewReportModal>("افزودن گزارش جدید");
+        await DialogService.ShowAsync<NewReportModal>("افزودن گزارش جدید", new DialogOptions { FullWidth = true });
     }
 
     private async Task OnEditBtnClick(MouseEventArgs obj)
@@ -78,6 +77,11 @@ public partial class ReportsView
 
         var newReport = ReportGrid!.SelectedRecords[0];
         var destPath = Path.Combine(HostEnvironment.WebRootPath, "upload", "UserReports", SamcoSoftShared.CurrentUserId.ToString(), $"{newReport.Oid}.{newReport.Form.FormType}");
+        if (!File.Exists(destPath))
+        {
+            Snackbar.Add("فایل فرم یافت نشد.", Severity.Error);
+            return;
+        }
         //Open report for editing
         switch (newReport.Form.FormType.ToLower())
         {
@@ -96,7 +100,7 @@ public partial class ReportsView
                     { x => x.DocumentPath, destPath },
                     { x => x.ReportId, newReport.Oid }
                 };
-                await DialogService.ShowAsync<PDFViewer>($"گزارش {newReport.Form.Title}", parameter2, new DialogOptions { FullScreen = true });
+                await DialogService.ShowAsync<WordViewer>($"گزارش {newReport.Form.Title}", parameter2, new DialogOptions { FullScreen = true });
                 break;
         }
     }

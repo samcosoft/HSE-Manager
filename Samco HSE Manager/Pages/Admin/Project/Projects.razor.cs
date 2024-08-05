@@ -42,8 +42,10 @@ public partial class Projects : IDisposable
         DrillProjects = new XPCollection<Samco_HSE.HSEData.Project>(Session1);
         _rigs = new XPCollection<Rig>(Session1);
         WellWorks = new XPCollection<WellWork>(Session1);
-        _selRigOid = null;
-        _selWellOid = null;
+        if (_selProjectOid != null)
+        {
+            _wells = new XPCollection<Well>(Session1, CriteriaOperator.Parse("[ProjectName.Oid] = ?", _selProjectOid.FirstOrDefault()));
+        }
         _selRigOid = null;
         _selWellOid = null;
     }
@@ -248,6 +250,25 @@ public partial class Projects : IDisposable
                         return;
                     }
 
+                    if (editModel is { EndDate: not null, IsActive: true })
+                    {
+                        Snackbar.Add("در صورت ثبت تاریخ پایان، امکان فعال بودن پروژه وجود ندارد.", Severity.Error);
+                        e.Cancel = true;
+                        return;
+                    }
+
+                    var otherRigIsActive = Session1.Query<WellWork>().Where(x => x.WellNo.Oid == _selProjectWell.Oid &&
+                                                                                 x.RigNo.Oid != editModel.RigNo.Oid &&
+                                                                                 x.IsActive).ToList();
+                    if (otherRigIsActive.Any())
+                    {
+                        Snackbar.Add($"در حال حاضر دکل {otherRigIsActive.First().RigNo.Name} بر روی این چاه و پروژه در حال فعالیت است.", Severity.Error);
+                        e.Cancel = true;
+                        return;
+                    }
+
+                    editModel.WellNo = await Session1.GetObjectByKeyAsync<Well>(_selProjectWell.Oid, true);
+
                     //Check project date
                     if (editModel.StartDate < editModel.WellNo.ProjectName.StartDate)
                     {
@@ -264,17 +285,6 @@ public partial class Projects : IDisposable
                         return;
                     }
 
-                    var otherRigIsActive = Session1.Query<WellWork>().Where(x => x.WellNo.Oid == _selProjectWell.Oid &&
-                                                                                 x.RigNo.Oid != editModel.RigNo.Oid &&
-                                                                                 x.IsActive).ToList();
-                    if (otherRigIsActive.Any())
-                    {
-                        Snackbar.Add($"در حال حاضر دکل {otherRigIsActive.First().RigNo.Name} بر روی این چاه و پروژه در حال فعالیت است.", Severity.Error);
-                        e.Cancel = true;
-                        return;
-                    }
-
-                    editModel.WellNo = await Session1.GetObjectByKeyAsync<Well>(_selProjectWell.Oid, true);
                     if (editModel.IsActive)
                     {
                         var prevWork = await Session1.Query<WellWork>()

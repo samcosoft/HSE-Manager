@@ -1,7 +1,7 @@
 ﻿<MudDialog>
     <DialogContent>
         <MudField Label="تاریخ ثبت:" Underline="false">
-            <SamcoDateSelector @bind-DateNotNull="@SelWarning.IssueDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
+            <SamcoDateSelector @bind-DateNull="@SelWarning.IssueDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
         </MudField>
         <MudTextField @bind-Value="@(SelWarning.Reason)" Label="شرح اخطار:" Variant="Variant.Text" Adornment="Adornment.Start" 
                       Placeholder="الزامی"/>

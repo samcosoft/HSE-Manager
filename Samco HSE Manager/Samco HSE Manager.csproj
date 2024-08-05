@@ -44,11 +44,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="LicenseValidator.cs" />
+    <Compile Remove="Models\CustomReportStorageWebExtension.cs" />
+    <Compile Remove="Pages\Admin\ReportDesign.razor.cs" />
     <Compile Remove="Pages\Officer\PersonnelInfos.razor.cs" />
+    <Compile Remove="Pages\Shared\ReportViewer.razor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="Pages\Admin\ReportDesign.razor" />
     <Content Remove="Pages\Officer\PersonnelInfos.razor" />
+    <Content Remove="Pages\Shared\ReportViewer.razor" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="HSEME.ico" />
