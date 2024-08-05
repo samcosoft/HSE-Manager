@@ -91,7 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="LogicNP.CryptoLicensing.NetCore">
-      <HintPath>D:\Program Files (x86)\LogicNP Software\CryptoLicensing For .Net 2020\LogicNP.CryptoLicensing.NetCore.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\LogicNP Software\CryptoLicensing For .Net 2020\LogicNP.CryptoLicensing.NetCore.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
