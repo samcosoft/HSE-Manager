@@ -13,7 +13,7 @@
 <div class="d-flex gap-1">
     @{
         <div class="d-inline-flex w-100">
-            <MudDatePicker @bind-Date="@Date" Label="@DisplayText"  PickerVariant="PickerVariant.Dialog" DisableToolbar="true" Rounded="true" Class="@(DisplayText == null ? "calendarStyle" : "")"
+            <MudDatePicker @bind-Date="@Date" Label="@DisplayText"  PickerVariant="PickerVariant.Dialog" ShowToolbar="false" Rounded="true" Class="@(DisplayText == null ? "calendarStyle" : "")"
                            Culture="@GetPersianCulture()" IconSize="Size.Small" MinDate="@DateTime.Parse("1900/01/01")" Variant="Variant.Outlined"
                            Clearable="true"/>
         </div>

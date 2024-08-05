@@ -4,8 +4,8 @@
 
 <SfUploader AutoUpload="true" AllowMultiple="@AllowMultiple" SequentialUpload="true" MaxFileSize="5242880"
             AllowedExtensions="@_allowedExtensions">
-    <UploaderFiles @ref="_uploader"/>
-    <UploaderEvents BeforeUpload="@BeforeStart" ValueChange="OnChange" OnRemove="OnRemove"/>
+    <UploaderFiles @ref="_uploader" />
+    <UploaderEvents BeforeUpload="@BeforeStart" ValueChange="OnChange" OnRemove="OnRemove" />
 </SfUploader>
 
 @code {
@@ -30,7 +30,8 @@
     [Inject]
     IWebHostEnvironment HostEnvironment { get; set; } = null!;
 
-    public List<Syncfusion.Blazor.Inputs.FileInfo> FileList { get; set; } = [];
+    //File list = file info, filepath
+    public Dictionary<string, string> FileList { get; set; } = [];
 
     private string _rootPath = null!;
     private string _allowedExtensions = null!;
@@ -46,6 +47,7 @@
 
     protected override void OnInitialized()
     {
+        base.OnInitialized();
         _rootPath = SavePath switch
         {
             SamcoSoftShared.UploadFolders.StopCards => Path.Combine(HostEnvironment.WebRootPath, "upload", "STOPCards"),
@@ -63,24 +65,25 @@
         };
         if (!Directory.Exists(_rootPath))
             Directory.CreateDirectory(_rootPath);
+    }
 
-        //Check for previous files
-        if (DoNotCreateDirectory)
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender)
         {
-            var fileList = Directory.GetFiles(_rootPath, $"{DataId}.*");
+            //Check for previous files
+            var fileList = DoNotCreateDirectory ? Directory.GetFiles(_rootPath, $"{DataId}.*") : Directory.GetFiles(Path.Combine(_rootPath, DataId!), "*.*");
             foreach (var file in fileList)
             {
-                _uploader!.Files.Add(new UploaderUploadedFiles { Name = Path.GetFileName(file), 
-                    Size = new FileInfo(file).Length, Type = new FileInfo(file).Extension });
-            }
-        }
-        else
-        {
-            var fileList = Directory.GetFiles(Path.Combine(_rootPath, DataId!),"*.*");
-            foreach (var file in fileList)
-            {
-                _uploader!.Files.Add(new UploaderUploadedFiles { Name = Path.GetFileName(file), 
-                    Size = new FileInfo(file).Length, Type = new FileInfo(file).Extension });
+                var fileInfo = new UploaderUploadedFiles
+                    {
+                        Name = Path.GetFileNameWithoutExtension(file),
+                        Size = new FileInfo(file).Length,
+                        Type = new FileInfo(file).Extension
+                    };
+                _uploader?.Files.Add(fileInfo);
+                FileList.Add(fileInfo.Name + fileInfo.Type, file);
             }
         }
     }
@@ -93,10 +96,11 @@
             {
                 foreach (var file in args.Files)
                 {
-                    var path = Path.Combine(_rootPath, DataId! + file.FileInfo.Type);
+                    var path = Path.Combine(_rootPath, DataId! + "." + file.FileInfo.Type);
                     var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write);
                     await file.File.OpenReadStream(5242880).CopyToAsync(fileStream);
                     fileStream.Close();
+                    FileList.Add(file.FileInfo.Name, path);
                 }
             }
             else
@@ -111,11 +115,11 @@
                     var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write);
                     await file.File.OpenReadStream(5242880).CopyToAsync(fileStream);
                     fileStream.Close();
+                    FileList.Add(file.FileInfo.Name, path);
                 }
             }
-            FileList.AddRange(args.Files.Select(x=>x.FileInfo));
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Console.WriteLine(e.Message);
         }
@@ -126,24 +130,14 @@
     {
         try
         {
-            if (DoNotCreateDirectory)
+            foreach (var itm in args.FilesData.Where(x => File.Exists(FileList[x.Name])))
             {
-                foreach (var removeFile in args.FilesData.Where(removeFile => removeFile != null && File.Exists(Path.Combine(_rootPath, removeFile.Name))))
-                {
-                    File.Delete(Path.Combine(_rootPath, DataId!, removeFile.Name));
-                }
-            }
-            else
-            {
-                foreach (var removeFile in args.FilesData.Where(removeFile => removeFile != null && File.Exists(Path.Combine(_rootPath, DataId!, removeFile.Name))))
-                {
-                    File.Delete(Path.Combine(_rootPath, DataId!, removeFile.Name));
-                }
+                File.Delete(FileList[itm.Name]);
             }
 
             foreach (var itm in args.FilesData)
             {
-                FileList.Remove(itm);
+                FileList.Remove(itm.Name);
             }
         }
         catch (Exception e)

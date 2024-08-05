@@ -1,6 +1,6 @@
 ﻿<MudDialog>
     <DialogContent>
-        <MudField Label="تاریخ ثبت:" DisableUnderLine="true">
+        <MudField Label="تاریخ ثبت:" Underline="false">
             <SamcoDateSelector @bind-Date="@SelIncentive.IssueDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
         </MudField>
         <MudTextField @bind-Value="@(SelIncentive.Reason)" Label="شرح تشویق:" Variant="Variant.Text" Adornment="Adornment.Start" 

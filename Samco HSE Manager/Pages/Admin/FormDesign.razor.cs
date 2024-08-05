@@ -3,6 +3,7 @@ using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Samco_HSE.HSEData;
+using Samco_HSE_Manager.Pages.Admin.FormModals;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Popups;
 using Action = Syncfusion.Blazor.Grids.Action;
@@ -12,23 +13,29 @@ namespace Samco_HSE_Manager.Pages.Admin;
 public partial class FormDesign
 {
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
-    [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
-    [Inject] private SfDialogService DialogService { get; set; }=null!;
+    [Inject] private SfDialogService DialogService { get; set; } = null!;
+    [Inject] private IDialogService MudDialogService { get; set; } = null!;
 
     private Session Session1 { get; set; } = null!;
     private XPCollection<HSEForm>? HseForms { get; set; }
     private IEnumerable<string>? RigRoles { get; set; }
     private IEnumerable<string>? Keywords { get; set; }
+
     private string[]? _accessGroup, _formKeywords;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         Session1 = new Session(DataLayer);
-        RigRoles = await File.ReadAllLinesAsync(Path.Combine(HostEnvironment.WebRootPath, "content", "RigRoles.txt"));
+        RigRoles = SamcoSoftShared.Roles.Values;
         HseForms = new XPCollection<HSEForm>(Session1);
-        Keywords = HseForms.SelectMany(x => x.Keywords.Split("|")).Distinct().ToList();
 
+        var keywords = HseForms.Select(x => x.Keywords).ToList();
+        if (keywords.Any())
+        {
+            Keywords = keywords.Where(x => x != null).SelectMany(x => x.Split("|")).Distinct().ToList();
+        }
+        base.OnInitialized();
     }
 
     private SfGrid<HSEForm>? FormGrid { get; set; }
@@ -39,17 +46,20 @@ public partial class FormDesign
         switch (e.RequestType)
         {
             case Action.Add:
+                _accessGroup = null;
                 e.Data = new HSEForm(Session1) { RevDate = DateTime.Today };
                 break;
             case Action.BeginEdit:
+                _accessGroup = null;
                 e.Data = await Session1.GetObjectByKeyAsync<HSEForm>(e.RowData.Oid);
+                if (e.Data.AccessGroup != null) _accessGroup = e.Data.AccessGroup.Split("|");
                 break;
             case Action.Save:
                 {
                     var editModel = e.Data;
                     //Validation
                     if (string.IsNullOrEmpty(editModel.Title) || string.IsNullOrEmpty(editModel.Code) ||
-                        editModel.Revision == 0)
+                        editModel.Revision == 0 || _accessGroup == null)
                     {
                         Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
                         e.Cancel = true;
@@ -58,7 +68,7 @@ public partial class FormDesign
 
                     //check for previous code
                     var prevForm = Session1.FindObject<HSEForm>(new BinaryOperator(nameof(HSEForm.Code), editModel.Code));
-                    if (prevForm != null && prevForm.Revision == editModel.Revision && (editModel.Oid < 0|| prevForm.Oid != editModel.Oid))
+                    if (prevForm != null && prevForm.Revision == editModel.Revision && (editModel.Oid < 0 || prevForm.Oid != editModel.Oid))
                     {
                         Snackbar.Add(
                             "یک فرم با همین کد و شماره نسخه در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.",
@@ -67,6 +77,7 @@ public partial class FormDesign
                         return;
                     }
 
+                    if (_accessGroup != null) editModel.AccessGroup = string.Join('|', _accessGroup);
                     editModel.Save();
                     break;
                 }
@@ -100,6 +111,12 @@ public partial class FormDesign
 
     private async Task AttachFile()
     {
-
+        if (FormGrid!.SelectedRecords.Count == 0)
+        {
+            Snackbar.Add("لطفاً یک فرم را از لیست زیر انتخاب کنید.", Severity.Warning);
+            return;
+        }
+        await MudDialogService.ShowAsync<FormFileModal>("افزودن فایل فرم",
+            new DialogParameters { { "SelFormId", FormGrid.SelectedRecords.First().Oid } });
     }
 }

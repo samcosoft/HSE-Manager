@@ -1,12 +1,14 @@
 ﻿using Blazored.LocalStorage;
 using DevExpress.Blazor.Reporting;
 using DevExpress.DashboardAspNetCore;
+using DevExpress.DashboardCommon;
 using DevExpress.DashboardWeb;
 using DevExpress.Xpo.DB;
 using DevExpress.XtraReports.Web.Extensions;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 using MudBlazor.Services;
+using Samco_HSE.HSEData;
 using Samco_HSE_Manager;
 using Samco_HSE_Manager.Authentication;
 using Samco_HSE_Manager.Models;
@@ -17,7 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
+builder.Services.AddServerSideBlazor().AddHubOptions(o => { o.MaximumReceiveMessageSize = 102400000; });
 builder.Services.AddTransient<ITokenManager, TokenManager>(_ => new TokenManager(builder.Configuration["Jwt:SecretKey"]!,
     builder.Configuration["Jwt:Issuer"]!, builder.Configuration["Jwt:Audience"]!));
 
@@ -37,7 +39,7 @@ builder.Services.AddLocalization();
 builder.Services.AddCors(options => options.AddPolicy("AllowOrigin", builders => builders.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 builder.Services.AddMudServices(config =>
 {
-    config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.TopCenter;
+    config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.TopRight;
     config.SnackbarConfiguration.PreventDuplicates = true;
     config.SnackbarConfiguration.NewestOnTop = false;
     config.SnackbarConfiguration.ShowCloseIcon = false;
@@ -50,7 +52,15 @@ builder.Services.AddScoped(_ =>
     var fileProvider = builder.Environment.ContentRootFileProvider;
     configurator.SetDashboardStorage(
         new DashboardFileStorage(fileProvider.GetFileInfo("Data/Dashboards").PhysicalPath));
+
     var dataSourceStorage = new DataSourceInMemoryStorage();
+
+    //var xpoDataSource = new DashboardXpoDataSource("XPO Data Source");
+    //xpoDataSource.ConnectionStringName = builder.Environment.IsDevelopment()
+    //    ? "LocalDatabase" : "MainDatabase";
+    //xpoDataSource.SetEntityType(typeof(Rig));
+    //dataSourceStorage.RegisterDataSource("xpoDataSource", xpoDataSource.SaveToXml());
+
     configurator.SetDataSourceStorage(dataSourceStorage);
     configurator.SetConnectionStringsProvider(new DashboardConnectionStringsProvider(builder.Configuration));
     return configurator;
@@ -70,7 +80,7 @@ builder.WebHost.UseStaticWebAssets();
 var app = builder.Build();
 
 //Register Syncfusion license
-//Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("YOUR LICENSE KEY");
+//Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MTMxM0AzMjM1MkUzMTJFMzlKK2QyalU0d1EyVUgxN0FFdUVENGdDYmY4UWEyZ2poeEhoSWlUcmFSd2JjPQ==");
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

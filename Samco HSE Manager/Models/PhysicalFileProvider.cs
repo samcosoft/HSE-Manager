@@ -1,6 +1,7 @@
 ﻿using System.IO.Compression;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -1433,14 +1434,14 @@ namespace Samco_HSE_Manager
 
         private FileStreamResult fileStreamResult;
 
-        private FileStreamResult DownloadFile(string path, string[] names = null)
+        private FileStreamResult DownloadFile(string? path, string[] names)
         {
             try
             {
                 path = Path.GetDirectoryName(path);
                 var tempPath = Path.Combine(Path.GetTempPath(), "temp.zip");
-                String fullPath;
-                if (names == null || names.Length == 0)
+                string fullPath;
+                if (names.IsNullOrEmpty() || names.Length == 0)
                 {
                     fullPath = (contentRootPath + path);
                     fullPath = fullPath.Replace("../", "");
@@ -1448,66 +1449,74 @@ namespace Samco_HSE_Manager
                     var fileStreamInput = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
                     fileStreamResult = new FileStreamResult(fileStreamInput, "APPLICATION/octet-stream");
                 }
-                else if (names.Length == 1)
+                else switch (names.Length)
                 {
-                    fullPath = Path.Combine(contentRootPath + path, names[0]);
-                    fullPath = fullPath.Replace("../", "");
-                    var fileStreamInput = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
-                    fileStreamResult = new FileStreamResult(fileStreamInput, "APPLICATION/octet-stream");
-                    fileStreamResult.FileDownloadName = names[0];
-                }
-                else if (names.Length > 1)
-                {
-                    var fileName = Guid.NewGuid().ToString() + "temp.zip";
-                    var newFileName = fileName.Substring(36);
-                    tempPath = Path.Combine(Path.GetTempPath(), newFileName);
-                    tempPath = tempPath.Replace("../", "");
-                    if (File.Exists(tempPath))
+                    case 1:
                     {
-                        File.Delete(tempPath);
-                    }
-                    string currentDirectory;
-                    ZipArchiveEntry zipEntry;
-                    ZipArchive archive;
-                    for (var i = 0; i < names.Count(); i++)
-                    {
-                        fullPath = Path.Combine((contentRootPath + path), names[i]);
+                        fullPath = Path.Combine(contentRootPath + path, names[0]);
                         fullPath = fullPath.Replace("../", "");
-                        if (!string.IsNullOrEmpty(fullPath))
+                        var fileStreamInput = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
+                        fileStreamResult = new FileStreamResult(fileStreamInput, "APPLICATION/octet-stream")
                         {
-                            try
+                            FileDownloadName = names[0]
+                        };
+                        break;
+                    }
+                    case > 1:
+                    {
+                        var fileName = Guid.NewGuid().ToString() + "temp.zip";
+                        var newFileName = fileName.Substring(36);
+                        tempPath = Path.Combine(Path.GetTempPath(), newFileName);
+                        tempPath = tempPath.Replace("../", "");
+                        if (File.Exists(tempPath))
+                        {
+                            File.Delete(tempPath);
+                        }
+                        string currentDirectory;
+                        ZipArchiveEntry zipEntry;
+                        ZipArchive archive;
+                        for (var i = 0; i < names.Count(); i++)
+                        {
+                            fullPath = Path.Combine((contentRootPath + path), names[i]);
+                            fullPath = fullPath.Replace("../", "");
+                            if (!string.IsNullOrEmpty(fullPath))
                             {
-                                using (archive = ZipFile.Open(tempPath, ZipArchiveMode.Update))
+                                try
                                 {
-                                    currentDirectory = Path.Combine((contentRootPath + path), names[i]);
-                                    currentDirectory = currentDirectory.Replace("../", "");
+                                    using (archive = ZipFile.Open(tempPath, ZipArchiveMode.Update))
+                                    {
+                                        currentDirectory = Path.Combine((contentRootPath + path), names[i]);
+                                        currentDirectory = currentDirectory.Replace("../", "");
 
 #if SyncfusionFramework4_5
                                     zipEntry = archive.CreateEntryFromFile(Path.Combine(this.contentRootPath, currentDirectory), names[i]);
 #else
-                                    zipEntry = archive.CreateEntryFromFile(Path.Combine(contentRootPath, currentDirectory), names[i], CompressionLevel.Fastest);
+                                        zipEntry = archive.CreateEntryFromFile(Path.Combine(contentRootPath, currentDirectory), names[i], CompressionLevel.Fastest);
 #endif
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    return null;
                                 }
                             }
-                            catch (Exception)
+                            else
                             {
-                                return null;
+                                throw new ArgumentNullException("name should not be null");
                             }
                         }
-                        else
+                        try
                         {
-                            throw new ArgumentNullException("name should not be null");
+                            var fileStreamInput = new FileStream(tempPath, FileMode.Open, FileAccess.Read, FileShare.Delete);
+                            fileStreamResult = new FileStreamResult(fileStreamInput, "APPLICATION/octet-stream");
+                            fileStreamResult.FileDownloadName = "files.zip";
                         }
-                    }
-                    try
-                    {
-                        var fileStreamInput = new FileStream(tempPath, FileMode.Open, FileAccess.Read, FileShare.Delete);
-                        fileStreamResult = new FileStreamResult(fileStreamInput, "APPLICATION/octet-stream");
-                        fileStreamResult.FileDownloadName = "files.zip";
-                    }
-                    catch (Exception)
-                    {
-                        return null;
+                        catch (Exception)
+                        {
+                            return null;
+                        }
+
+                        break;
                     }
                 }
                 if (File.Exists(tempPath))

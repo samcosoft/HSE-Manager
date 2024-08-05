@@ -1,5 +1,5 @@
 ﻿<MudNavMenu Style="height: auto">
-    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">داشبورد</MudNavLink>
+    <MudNavLink Href="home" Icon="@Icons.Material.Filled.Dashboard">داشبورد</MudNavLink>
     <AuthorizeView Roles="Admin,Owner">
         <Authorized>
             <MudNavGroup Title="مدیریت" Icon="@Icons.Material.Filled.ManageAccounts" Expanded="true">
@@ -7,6 +7,7 @@
                 <MudNavLink Href="users" Icon="fas fa-user">کاربران</MudNavLink>
                 <MudNavLink Href="dashboard" Icon="fas fa-gauge">تنظیمات داشبوردها</MudNavLink>
                 <MudNavLink Href="reportdesigner" Icon="fa-solid fa-file-chart-pie">تنظیمات گزارش‌ها</MudNavLink>
+                <MudNavLink Href="formdesign" Icon="fa-solid fa-folder">تنظیمات فرم‌ها</MudNavLink>
             </MudNavGroup>
         </Authorized>
     </AuthorizeView>
@@ -21,6 +22,7 @@
             <MudNavGroup Title="گزارشات" Icon="@Icons.Material.Filled.ContentPaste">
                 <MudNavLink Href="permit" Icon="fas fa-hand">مجوز کار ایمن</MudNavLink>
                 <MudNavLink Href="stopcard" Icon="@Icons.Material.Filled.StopCircle">STOP Cards</MudNavLink>
+                <MudNavLink Href="reports" Icon="fas fa-file-spreadsheet">ارسال گزارش</MudNavLink>
             </MudNavGroup>
         </Authorized>
     </AuthorizeView>

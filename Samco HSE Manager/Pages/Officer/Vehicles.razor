@@ -51,12 +51,12 @@
                     <MudRTLProvider RightToLeft="true">
                         <MudGrid>
                             <MudItem md="4" sm="12">
-                                <MudField Label="محل فعالیت:" DisableUnderLine="true">
+                                <MudField Label="محل فعالیت:" Underline="false">
                                     <SamcoRigSelector @bind-SelectedRig="@vehicle.RigNo" DataSource="Rigs"/>
                                 </MudField>
                             </MudItem>
                             <MudItem md="4" sm="12">
-                                <MudField Label="نوع وسیله:" DisableUnderLine="true">
+                                <MudField Label="نوع وسیله:" Underline="false">
                                     <SfComboBox TItem="string" TValue="string" Placeholder="الزامی" AllowFiltering="true"
                                                 FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
                                                 DataSource="@_category" @bind-Value="@vehicle.Name">
@@ -71,17 +71,17 @@
                                                  Min="1340" Max="2100" Step="1"/>
                             </MudItem>
                             <MudItem md="4" sm="12">
-                                <MudField Label="راننده:" DisableUnderLine="true">
+                                <MudField Label="راننده:" Underline="false">
                                     <SamcoPersonnelSelector DataSource="DriverList" @bind-SelectedPersonnel="@vehicle.Driver" Session="Session1"/>
                                 </MudField>
                             </MudItem>
                             <MudItem md="4" sm="12">
-                                <MudField Label="تاریخ اعتبار معاینه فنی:" DisableUnderLine="true">
+                                <MudField Label="تاریخ اعتبار معاینه فنی:" Underline="false">
                                     <SamcoDateSelector @bind-Date="@vehicle.LastCheckDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
                                 </MudField>
                             </MudItem>
                             <MudItem md="4" sm="12">
-                                <MudField Label="تاریخ اعتبار بیمه:" DisableUnderLine="true">
+                                <MudField Label="تاریخ اعتبار بیمه:" Underline="false">
                                     <SamcoDateSelector @bind-Date="@vehicle.InsuranceDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
                                 </MudField>
                             </MudItem>

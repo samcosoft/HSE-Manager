@@ -1,6 +1,76 @@
-﻿@page "/PDFViewer"
-<h3>PDFViewer</h3>
+﻿@inject IDataLayer DataLayer
+@inject ISnackbar Snackbar
+@inject SfDialogService DialogService
+@using Samco_HSE.HSEData
+@using Syncfusion.Blazor.Popups
+@implements IDisposable
+
+<MudDialog>
+    <DialogContent>
+        <MudCard>
+            <MudCardContent>
+                <SfPdfViewer2 @ref="_viewer" DocumentPath="DocumentPath" Height="100%" Width="100%">
+                </SfPdfViewer2>
+            </MudCardContent>
+        </MudCard>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" StartIcon="fas fa-trash" OnClick="SaveDocument">ذخیره گزارش</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" StartIcon="fas fa-trash" OnClick="Cancel">انصراف</MudButton>
+    </DialogActions>
+</MudDialog>
 
 @code {
-    
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public string? DocumentPath { get; set; }
+
+    [Parameter]
+    public int ReportId { get; set; }
+
+    private Session? _session1;
+    private Report _selReport = null!;
+
+    private SfPdfViewer2? _viewer;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _session1 = new Session(DataLayer);
+        _selReport = _session1.FindObject<Report>(ReportId);
+    }
+
+    private async void SaveDocument()
+    {
+        if (_viewer == null) return;
+        if (await DialogService.ConfirmAsync("آیا از ذخیره گزارش مطمئنید؟", "ذخیره گزارش") == false) return;
+        var data = await _viewer.GetDocumentAsync();
+        //To observe the memory go down, null out the reference of base64Data variable.
+        //Word document file stream
+        Stream stream = new MemoryStream(data);
+        //To observe the memory go down, null out the reference of data variable.
+        await using (var fileStream = new FileStream(DocumentPath!, FileMode.Create, FileAccess.Write))
+        {
+            //Saving the new file in root path of application
+            await stream.CopyToAsync(fileStream);
+            fileStream.Close();
+        }
+        stream.Close();
+
+        //Update file info
+        _selReport.SubDate = DateTime.Now;
+        _selReport.Save();
+        Snackbar.Add("گزارش با موفقیت ذخیره شد.", Severity.Success);
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    public void Dispose()
+    {
+        _session1?.Dispose();
+        ((IDisposable)_viewer!).Dispose();
+    }
 }

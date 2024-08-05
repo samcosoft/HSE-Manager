@@ -152,7 +152,7 @@ public partial class Projects : IDisposable
         }
 
         var result = await dialog.Result;
-        if (!result.Canceled)
+        if (!result!.Canceled)
         {
             ReloadInformation();
         }
@@ -244,6 +244,22 @@ public partial class Projects : IDisposable
                     if (editModel.EndDate != null && editModel.EndDate < editModel.StartDate)
                     {
                         Snackbar.Add("تاریخ پایان عملیات باید از شروع آن بزرگتر باشد.", Severity.Error);
+                        e.Cancel = true;
+                        return;
+                    }
+
+                    //Check project date
+                    if (editModel.StartDate < editModel.WellNo.ProjectName.StartDate)
+                    {
+                        Snackbar.Add("تاریخ شروع عملیات باید بعد از شروع پروژه باشد.", Severity.Error);
+                        e.Cancel = true;
+                        return;
+                    }
+
+                    if (editModel.EndDate != null && editModel.WellNo.ProjectName.EndDate != null &&
+                        editModel.EndDate > editModel.WellNo.ProjectName.EndDate)
+                    {
+                        Snackbar.Add("تاریخ پایان عملیات باید قبل از پایان پروژه باشد.", Severity.Error);
                         e.Cancel = true;
                         return;
                     }

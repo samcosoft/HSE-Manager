@@ -11,30 +11,45 @@
     <Description>A web-based application for managing HSE datas on oil rigs.</Description>
     <PackageProjectUrl>https://samcosoft.ir</PackageProjectUrl>
     <PackageIcon>HSE.png</PackageIcon>
-    <AssemblyVersion>1.3.438.24140</AssemblyVersion>
-    <FileVersion>1.3.438.24140</FileVersion>
+    <AssemblyVersion>1.3.458.24142</AssemblyVersion>
+    <FileVersion>1.3.458.24142</FileVersion>
     <Copyright>Copyright $(Company) 2020 - 2024. All rights reserved.</Copyright>
     <Version>1.3.215.23114</Version>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Data\Reports\**" />
+    <Compile Remove="Reports\**" />
     <Compile Remove="wwwroot\upload\medical\**" />
     <Compile Remove="wwwroot\upload\profile\**" />
     <Compile Remove="wwwroot\upload\STOPCards\**" />
+    <Compile Remove="wwwroot\upload\UserReports\**" />
+    <Content Remove="Data\Reports\**" />
+    <Content Remove="Reports\**" />
     <Content Remove="wwwroot\upload\medical\**" />
     <Content Remove="wwwroot\upload\profile\**" />
     <Content Remove="wwwroot\upload\STOPCards\**" />
+    <Content Remove="wwwroot\upload\UserReports\**" />
+    <EmbeddedResource Remove="Data\Reports\**" />
+    <EmbeddedResource Remove="Reports\**" />
     <EmbeddedResource Remove="wwwroot\upload\medical\**" />
     <EmbeddedResource Remove="wwwroot\upload\profile\**" />
     <EmbeddedResource Remove="wwwroot\upload\STOPCards\**" />
+    <EmbeddedResource Remove="wwwroot\upload\UserReports\**" />
+    <None Remove="Data\Reports\**" />
+    <None Remove="Reports\**" />
     <None Remove="wwwroot\upload\medical\**" />
     <None Remove="wwwroot\upload\profile\**" />
     <None Remove="wwwroot\upload\STOPCards\**" />
+    <None Remove="wwwroot\upload\UserReports\**" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Controllers\ReportingControllers.cs" />
     <Compile Remove="LicenseValidator.cs" />
+    <Compile Remove="Pages\Admin\ReportDesign.razor.cs" />
     <Compile Remove="Pages\Officer\PersonnelInfos.razor.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Remove="Pages\Admin\ReportDesign.razor" />
     <Content Remove="Pages\Officer\PersonnelInfos.razor" />
   </ItemGroup>
   <ItemGroup>
@@ -45,26 +60,25 @@
     <PackageReference Include="BlazorAnimation" Version="2.2.0" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="Brushtail.FontAwesome.Blazor" Version="1.0.19" />
-    <PackageReference Include="DevExpress.AspNetCore.Dashboard" Version="23.2.5" />
-    <PackageReference Include="DevExpress.AspNetCore.Reporting" Version="23.2.5" />
-    <PackageReference Include="DevExpress.Blazor" Version="23.2.5" />
-    <PackageReference Include="DevExpress.Blazor.Dashboard" Version="23.2.5" />
-    <PackageReference Include="DevExpress.Blazor.Reporting.JSBasedControls" Version="23.2.5" />
-    <PackageReference Include="DevExpress.Data" Version="23.2.5" />
-    <PackageReference Include="DevExpress.Xpo" Version="23.2.5" />
-    <PackageReference Include="DeviceId" Version="6.6.0" />
+    <PackageReference Include="DevExpress.AspNetCore.Dashboard" Version="24.1.4" />
+    <PackageReference Include="DevExpress.Blazor" Version="24.1.4" />
+    <PackageReference Include="DevExpress.Blazor.Dashboard" Version="24.1.4" />
+    <PackageReference Include="DeviceId" Version="6.7.0" />
     <PackageReference Include="DeviceId.Linux" Version="6.4.0" />
     <PackageReference Include="DeviceId.Windows.Wmi" Version="6.6.0" />
-    <PackageReference Include="MudBlazor" Version="6.19.1" />
+    <PackageReference Include="MudBlazor" Version="7.5.0" />
     <PackageReference Include="Otp.NET" Version="1.4.0" />
     <PackageReference Include="SQLite" Version="3.13.0" />
-    <PackageReference Include="Syncfusion.Blazor" Version="25.1.35" />
+    <PackageReference Include="Syncfusion.Blazor.FileManager" Version="26.1.35" />
+    <PackageReference Include="Syncfusion.Blazor.Grid" Version="26.1.35" />
+    <PackageReference Include="Syncfusion.Blazor.ImageEditor" Version="26.1.35" />
+    <PackageReference Include="Syncfusion.Blazor.SfPdfViewer" Version="26.1.35" />
+    <PackageReference Include="Syncfusion.Blazor.WordProcessor" Version="26.1.35" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.7" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\Forms\" />
-    <Folder Include="Reports\" />
     <Folder Include="wwwroot\fonts\" />
     <Folder Include="wwwroot\images\filterIcons\" />
     <Folder Include="wwwroot\js\" />
@@ -79,7 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="LogicNP.CryptoLicensing.NetCore">
-      <HintPath>D:\Program Files (x86)\LogicNP Software\CryptoLicensing For .Net 2020\LogicNP.CryptoLicensing.NetCore.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\LogicNP Software\CryptoLicensing For .Net 2020\LogicNP.CryptoLicensing.NetCore.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

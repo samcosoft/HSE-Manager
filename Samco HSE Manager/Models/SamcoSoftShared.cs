@@ -51,7 +51,7 @@ public static class SamcoSoftShared
         {
             status = Lic.Status;
             if (isDevelopment && status == LicenseStatus.DebuggerDetected) return true;
-            return status is LicenseStatus.Valid or LicenseStatus.GenericFailure ;
+            return status is LicenseStatus.Valid or LicenseStatus.GenericFailure;
         }
         catch (Exception)
         {
@@ -154,7 +154,7 @@ public static class SamcoSoftShared
             default:
                 return string.Empty;
         }
-                return string.Empty;
+        return string.Empty;
     }
 
     public static string GetDeviceId()
@@ -252,6 +252,21 @@ public static class SamcoSoftShared
                 englishNumbers += input[i].ToString();
 
         return englishNumbers;
+    }
+
+    public static readonly Dictionary<string, string> Roles = new()
+    {
+        { "Admin", "مدیر ایمنی" },
+        { "Officer", "افسر ایمنی" },
+        { "Supervisor", "ناظر ایمنی" },
+        { "Medic", "پزشک" },
+        { "Teacher", "مدرس ایمنی" },
+        { "Disabled", "غیر فعال" }
+    };
+
+    public static string GetPersianRole(string englishRole)
+    {
+        return Roles[englishRole];
     }
 
     #endregion

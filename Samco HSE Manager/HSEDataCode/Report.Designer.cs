@@ -18,12 +18,6 @@ namespace Samco_HSE.HSEData
 
     public partial class Report : XPObject
     {
-        string fSubject;
-        public string Subject
-        {
-            get { return fSubject; }
-            set { SetPropertyValue<string>(nameof(Subject), ref fSubject, value); }
-        }
         DateTime fSubDate;
         public DateTime SubDate
         {
@@ -36,12 +30,6 @@ namespace Samco_HSE.HSEData
         {
             get { return fForm; }
             set { SetPropertyValue<HSEForm>(nameof(Form), ref fForm, value); }
-        }
-        string fFileName;
-        public string FileName
-        {
-            get { return fFileName; }
-            set { SetPropertyValue<string>(nameof(FileName), ref fFileName, value); }
         }
         User fUserName;
         [Association(@"ReportReferencesUser2")]
@@ -56,6 +44,12 @@ namespace Samco_HSE.HSEData
         {
             get { return fWorkID; }
             set { SetPropertyValue<WellWork>(nameof(WorkID), ref fWorkID, value); }
+        }
+        bool fApproved;
+        public bool Approved
+        {
+            get { return fApproved; }
+            set { SetPropertyValue<bool>(nameof(Approved), ref fApproved, value); }
         }
         [Association(@"ReportReferencesPatient")]
         public XPCollection<MedicalVisit> Visits { get { return GetCollection<MedicalVisit>(nameof(Visits)); } }

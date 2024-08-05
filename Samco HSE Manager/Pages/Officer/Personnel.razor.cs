@@ -38,7 +38,7 @@ public partial class Personnel : IDisposable
 
     private async Task LoadInformation()
     {
-        if (SamcoSoftShared.CurrentUserRole != SamcoSoftShared.SiteRoles.Owner)
+        if (SamcoSoftShared.CurrentUserRole > SamcoSoftShared.SiteRoles.Admin)
         {
             var loggedUser =
                 await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));

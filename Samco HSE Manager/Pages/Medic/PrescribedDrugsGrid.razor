@@ -11,7 +11,7 @@
         <MudRTLProvider RightToLeft="true">
             <MudGrid>
                 <MudItem md="6" sm="12">
-                    <MudField Label="دارو / تجهیز" Class="ltr" DisableUnderLine="true">
+                    <MudField Label="دارو / تجهیز" Class="ltr" Underline="false">
                         <SfComboBox TValue="string" TItem="Medication" Placeholder="الزامی" DataSource="_medicationList" @bind-Value="@_selMedicineOid"
                                     AllowFiltering="true">
                             <ComboBoxTemplates TItem="Medication">

@@ -72,6 +72,12 @@ namespace Samco_HSE.HSEData
             get { return fAccessGroup; }
             set { SetPropertyValue<string>(nameof(AccessGroup), ref fAccessGroup, value); }
         }
+        bool fDisabled;
+        public bool Disabled
+        {
+            get { return fDisabled; }
+            set { SetPropertyValue<bool>(nameof(Disabled), ref fDisabled, value); }
+        }
         [Association(@"ReportReferencesHSEForm"), Aggregated]
         public XPCollection<Report> Reports { get { return GetCollection<Report>(nameof(Reports)); } }
     }

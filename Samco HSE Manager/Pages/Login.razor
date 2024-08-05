@@ -13,22 +13,22 @@
 <PageTitle>ورود به ناحیه کاربری</PageTitle>
 
 <MudGrid>
-    <MudItem md="3" sm="1"/>
+    <MudItem md="3" sm="1" />
     <MudItem md="6" sm="10">
         <EditForm Model="_loginData" OnValidSubmit="@LoginUser">
             <MudCard Class="animate__animated animate__headShake" Outlined="true">
-                <MudCardHeader Style="@($"background-color:{Colors.BlueGrey.Lighten5};")">
-                    <img src="images/logo.svg" alt="Samco HSE" class="mx-auto" style="width: 30%"/>
+                <MudCardHeader Style="@($"background-color:{Colors.BlueGray.Lighten5};")">
+                    <img src="images/logo.svg" alt="Samco HSE" class="mx-auto" style="width: 30%" />
                 </MudCardHeader>
                 <MudCardContent>
                     <MudTabs @bind-ActivePanelIndex="@_activePanel">
                         <MudTabPanel Text="ورود کارمندان">
                             <div>
-                                <DataAnnotationsValidator/>
-                                <ValidationSummary/>
+                                <DataAnnotationsValidator />
+                                <ValidationSummary />
                             </div>
-                            <MudTextField @bind-Value="_loginData.Username" Label="نام کاربری" Class="mt-6"/>
-                            <MudTextField @bind-Value="_loginData.Password" Label="کلمه عبور" InputType="InputType.Password"/>
+                            <MudTextField @bind-Value="_loginData.Username" Label="نام کاربری" Class="mt-6" />
+                            <MudTextField @bind-Value="_loginData.Password" Label="کلمه عبور" InputType="InputType.Password" />
                             @{
                                 if (Configuration["IsDemo"] == "true")
                                 {
@@ -40,11 +40,11 @@
                         </MudTabPanel>
                         <MudTabPanel Text="ورود کارکنان">
                             <div>
-                                <DataAnnotationsValidator/>
-                                <ValidationSummary/>
+                                <DataAnnotationsValidator />
+                                <ValidationSummary />
                             </div>
-                            <MudTextField @bind-Value="_loginData.Username" Label="کد ملی" Class="mt-6"/>
-                            <MudTextField @bind-Value="_loginData.Password" Label="شماره پرسنلی" InputType="InputType.Password"/>
+                            <MudTextField @bind-Value="_loginData.Username" Label="کد ملی" Class="mt-6" />
+                            <MudTextField @bind-Value="_loginData.Password" Label="شماره پرسنلی" InputType="InputType.Password" />
                         </MudTabPanel>
                     </MudTabs>
                 </MudCardContent>
@@ -57,7 +57,7 @@
             </MudCard>
         </EditForm>
     </MudItem>
-    <MudItem md="3" sm="1"/>
+    <MudItem md="3" sm="1" />
 </MudGrid>
 
 
@@ -117,7 +117,7 @@
                 return;
             }
 
-            NavigationManager.NavigateTo("");
+            NavigationManager.NavigateTo("", true);
         }
         else
         {
@@ -133,7 +133,7 @@
         {
             if (selUser != null && _loginData.Password == selUser.PersonnelNum)
             {
-    //Login user
+                //Login user
                 TokenManager.Authenticate(selUser, DataLayer, out var token, out _, out _);
                 await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsAuthenticated(token);
                 SamcoSoftShared.CurrentUserId = selUser.Oid;
@@ -147,11 +147,11 @@
         }
         catch (Exception)
         {
-    //_loggedUser = new User(session1);
+            //_loggedUser = new User(session1);
             return;
         }
 
-        NavigationManager.NavigateTo("/personnelHome");
+        NavigationManager.NavigateTo("/personnelHome", true);
     }
 
     public class LoginModel

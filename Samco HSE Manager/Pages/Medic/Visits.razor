@@ -61,17 +61,17 @@
                             <MudRTLProvider RightToLeft="true">
                                 <MudGrid>
                                     <MudItem md="6" sm="12">
-                                        <MudField Label="نام بیمار:" DisableUnderLine="true">
+                                        <MudField Label="نام بیمار:" Underline="false">
                                             <SamcoPersonnelSelector Session="Session1" DataSource="PersonnelList" @bind-SelectedPersonnel="@visit.Patient" />
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="6" sm="12">
-                                        <MudField Label="تاریخ ویزیت:" DisableUnderLine="true">
+                                        <MudField Label="تاریخ ویزیت:" Underline="false">
                                             <SamcoDateSelector @bind-DateNotNull="@visit!.VisitDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="نوع ویزیت:" DisableUnderLine="true">
+                                        <MudField Label="نوع ویزیت:" Underline="false">
                                             <SfComboBox TValue="string" TItem="KeyValuePair<string, string>" DataSource="@_visitType" Placeholder="الزامی"
                                                         @bind-Value="@visit!.VisitType" AllowFiltering="true">
                                                 <ComboBoxEvents TItem="KeyValuePair<string, string>" TValue="string" />
@@ -80,7 +80,7 @@
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="دسته بندی بیماری:" DisableUnderLine="true">
+                                        <MudField Label="دسته بندی بیماری:" Underline="false">
                                             <SfComboBox TValue="string" TItem="string" Placeholder="الزامی" DataSource="@_category"
                                                         @bind-Value="@visit!.Category"
                                                         AllowFiltering="true">
@@ -160,7 +160,7 @@
                             }
                             <MudGrid>
                                 <MudItem md="4" sm="12">
-                                    <MudField Label="تخصص:" DisableUnderLine="true">
+                                    <MudField Label="تخصص:" Underline="false">
                                         <SfComboBox TValue="string" TItem="string" Placeholder="الزامی" DataSource="@_specialistList"
                                                     @bind-Value="@refer!.Specialist"
                                                     AllowFiltering="true" CssClass="ltr">
@@ -168,7 +168,7 @@
                                     </MudField>
                                 </MudItem>
                                 <MudItem md="4" sm="12">
-                                    <MudField Label="وضعیت:" DisableUnderLine="true">
+                                    <MudField Label="وضعیت:" Underline="false">
                                         <SfComboBox TValue="string" TItem="string" Placeholder="الزامی" DataSource="@_status"
                                                     @bind-Value="@refer!.Status"
                                                     AllowFiltering="true">
@@ -176,7 +176,7 @@
                                     </MudField>
                                 </MudItem>
                                 <MudItem md="4" sm="12">
-                                    <MudField Label="تاریخ بازگشت به کار:" DisableUnderLine="true">
+                                    <MudField Label="تاریخ بازگشت به کار:" Underline="false">
                                         <SamcoDateSelector @bind-Date="refer!.ReturnDate" />
                                     </MudField>
                                 </MudItem>

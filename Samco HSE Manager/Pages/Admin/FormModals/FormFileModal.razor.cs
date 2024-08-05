@@ -6,9 +6,9 @@ using Samco_HSE_Manager.Pages.Shared;
 
 namespace Samco_HSE_Manager.Pages.Admin.FormModals
 {
-    public partial class FormFileModal:IDisposable
+    public partial class FormFileModal : IDisposable
     {
-        
+
         [Inject] private IDataLayer DataLayer { get; set; } = null!;
         [Inject] private ISnackbar Snackbar { get; set; } = null!;
 
@@ -27,11 +27,11 @@ namespace Samco_HSE_Manager.Pages.Admin.FormModals
 
         private void Submit()
         {
-            if (!(_uploader?.FileList.Count > 0)) return;
-            //update file database
             var selForm = Session1.GetObjectByKey<HSEForm>(SelFormId);
-            selForm.FormType = _uploader.FileList.First().Type;
+            //update file database
+            selForm.FormType = _uploader?.FileList.Count > 0 ? _uploader?.FileList.First().Key.Split('.').Last() : null;
             selForm.Save();
+            MudDialog.Close(DialogResult.Ok(true));
         }
 
         private void Cancel() => MudDialog.Cancel();

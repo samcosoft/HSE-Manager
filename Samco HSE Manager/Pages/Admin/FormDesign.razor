@@ -5,7 +5,7 @@
 
 <PageTitle>مدیریت فرم‌ها</PageTitle>
 
-<MudCard Style="h-100">
+<MudCard Class="h-100">
     <MudCardHeader>
         <MudPaper Elevation="3" Width="100%" Class="pa-3">
             <MudGrid>
@@ -13,7 +13,7 @@
                     <MudText Typo="Typo.h5">مدیریت فرم‌ها</MudText>
                 </MudItem>
                 <MudItem>
-                    <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="fas fa-plus" OnClick="AttachFile">افزودن فایل</MudButton>
+                    <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="fas fa-files" OnClick="AttachFile">مدیریت فایل</MudButton>
                 </MudItem>
             </MudGrid>
         </MudPaper>
@@ -33,6 +33,7 @@
                 <GridColumn HeaderText="نسخه" Field="Revision" AutoFit="true" />
                 <GridColumn HeaderText="تاریخ بازبینی" Field="Code" AutoFit="true" />
                 <GridColumn HeaderText="دسترسی‌ها" Field="AccessGroup" AutoFit="true" />
+                <GridColumn HeaderText="غیر فعال" Field="Disabled" AutoFit="true" />
             </GridColumns>
             <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" AllowEditOnDblClick="true" Mode="EditMode.Dialog"
                               ShowDeleteConfirmDialog="true" Dialog="@SamcoSoftShared.GeneralGridEditOption">
@@ -48,18 +49,18 @@
                             <MudTextField Label="عنوان فرم:" @bind-Value="@form!.Title" Variant="Variant.Text" Placeholder="الزامی" />
                         </MudItem>
                         <MudItem md="4" sm="12">
-                            <MudTextField Label=":کد فرم" @bind-Value="@form!.Title" Variant="Variant.Text" Placeholder="الزامی" Class="ltr" />
+                            <MudTextField Label=":کد فرم" @bind-Value="@form!.Code" Variant="Variant.Text" Placeholder="الزامی" Class="ltr" />
                         </MudItem>
                         <MudItem md="4" sm="12">
-                            <MudNumericField Label="نسخه فرم:" T="short" Min="1" Max="255" />
+                            <MudNumericField Label="نسخه فرم:" T="short" @bind-Value="@form!.Revision" Min="1" Max="255" />
                         </MudItem>
                         <MudItem md="4" sm="12">
-                            <MudField Label="تاریخ بازبینی:" DisableUnderLine="true">
+                            <MudField Label="تاریخ بازبینی:" Underline="false">
                                 <SamcoDateSelector @bind-DateNotNull="@form!.RevDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
                             </MudField>
                         </MudItem>
                         <MudItem md="4" sm="12">
-                            <MudField Label="استفاده کنندگان:" DisableUnderLine="true">
+                            <MudField Label="استفاده کنندگان:" Underline="false">
                                 <SfMultiSelect TItem="string" TValue="string[]" DataSource="@RigRoles"
                                                @bind-Value="@_accessGroup" Placeholder="الزامی" Mode="VisualMode.CheckBox"
                                                AllowFiltering="true" FilterBarPlaceholder="برای جستجو تایپ کنید..." FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
@@ -67,13 +68,18 @@
                                                UnSelectAllText="حذف همه" />
                             </MudField>
                         </MudItem>
-                        <MudField Label="کلمات کلیدی:" DisableUnderLine="true">
-                            <SfMultiSelect TItem="string" TValue="string[]" DataSource="@Keywords"
-                                           @bind-Value="@_formKeywords" Mode="VisualMode.CheckBox"
-                                           AllowFiltering="true" FilterBarPlaceholder="برای جستجو تایپ کنید..." FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                           ShowClearButton="true" SelectAllText="انتخاب همه" ShowSelectAll="true"
-                                           UnSelectAllText="حذف همه" />
-                        </MudField>
+                        <MudItem md="4" sm="12">
+                            <MudField Label="کلمات کلیدی:" Underline="false">
+                                <SfMultiSelect TItem="string" TValue="string[]" DataSource="@Keywords"
+                                               @bind-Value="@_formKeywords" Mode="VisualMode.CheckBox" AllowCustomValue="true"
+                                               AllowFiltering="true" FilterBarPlaceholder="برای جستجو تایپ کنید..." FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                               ShowClearButton="true" SelectAllText="انتخاب همه" ShowSelectAll="true"
+                                               UnSelectAllText="حذف همه" />
+                            </MudField>
+                        </MudItem>
+                        <MudItem md="4" sm="12">
+                            <MudCheckBox @bind-Value="@form!.Disabled" Label="غیر فعالسازی"/>
+                        </MudItem>
                     </MudGrid>
                 </Template>
             </GridEditSettings>

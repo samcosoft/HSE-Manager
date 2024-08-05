@@ -14,7 +14,7 @@
                 <MudItem>
                     <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
                         <MudButton StartIcon="fas fa-suitcase-medical" IconColor="Color.Success" OnClick="OnSetNumberBtnClick">تنظیم موجودی</MudButton>
-                        <MudButton StartIcon="fas fa-truck-medical" IconColor="Color.Info" OnClick="OnDrugRequestBtnClick">درخواست دارو / تجهیزات</MudButton>
+                        @* <MudButton StartIcon="fas fa-truck-medical" IconColor="Color.Info" OnClick="OnDrugRequestBtnClick">درخواست دارو / تجهیزات</MudButton> *@
                         <MudButton StartIcon="fas fa-prescription-bottle-medical" IconColor="Color.Warning" OnClick="OnDrugDiscardBtnClick">دور انداختن دارو / تجهیزات</MudButton>
                     </MudButtonGroup>
                 </MudItem>
@@ -78,12 +78,12 @@
                                                       Adornment="Adornment.Start" Placeholder="الزامی - مثال: 100mg یا 5% ..." Class="ltr" />
                                     </MudItem>
                                     <MudItem md="6" sm="12">
-                                        <MudField Label="فرم دارویی:" DisableUnderLine="true">
+                                        <MudField Label="فرم دارویی:" Underline="false">
                                             <SfComboBox TItem="string" TValue="string" DataSource="@_drugFormList" @bind-Value="@drug.DrugForm" Placeholder="الزامی" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains" AllowFiltering="true" />
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="6" sm="12">
-                                        <MudField Label="دسته بندی:" DisableUnderLine="true">
+                                        <MudField Label="دسته بندی:" Underline="false">
                                             <SfComboBox TItem="string" TValue="string" DataSource="@_category" @bind-Value="@drug.Category" Placeholder="الزامی" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains" AllowFiltering="true" />
                                         </MudField>
                                     </MudItem>

@@ -169,7 +169,7 @@ public partial class Drugs : IDisposable
         var dialog = await DialogService.ShowAsync<NumberModal>($"ثبت موجودی برای {selMedicine.Name}",
             new DialogParameters { { "SelMedicationId", selMedicine.Oid } });
         var result = await dialog.Result;
-        if (!result.Canceled)
+        if (!result!.Canceled)
             StateHasChanged();
     }
 
@@ -194,7 +194,7 @@ public partial class Drugs : IDisposable
     {
         var dialog = await DialogService.ShowAsync<MedicationDiscardModal>("دور انداختن دارو / تجهیزات");
         var result = await dialog.Result;
-        if (!result.Canceled)
+        if (!result!.Canceled)
         {
             DiscardList!.Reload();
         }

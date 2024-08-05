@@ -1,5 +1,44 @@
-﻿<h3>NewReportModal</h3>
+﻿@using FilterType = Syncfusion.Blazor.DropDowns.FilterType
+@using Samco_HSE.HSEData
+@inject IDataLayer DataLayer;
+@inject ISnackbar Snackbar;
+@inject DialogService DialogService;
+@inject IWebHostEnvironment HostEnvironment;
 
-@code {
-    
-}
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.FilePresent" Class="me-3 mb-1" />
+            گزارش جدید
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudGrid>
+            <MudItem lg="6" md="12">
+                <MudField Label="نام دکل / دفتر:" Underline="false">
+                    <SamcoRigSelector DataSource="Rigs" @bind-SelectedRig="_selRig" />
+                </MudField>
+            </MudItem>
+            <MudItem lg="6" md="12">
+                <SfDropDownList TValue="int" TItem="HSEForm" Placeholder="یک فرم را انتخاب کنید" CssClass="e-multi-column"
+                                DataSource="@FormCollection" PopupHeight="300px" Width="350px" AllowFiltering="true"
+                                bind-Value="SelFormId"
+                                FilterType="FilterType.Contains">
+                    <DropDownListTemplates TItem="HSEForm">
+                        <ItemTemplate>
+                            <table><tbody><tr><td class="e-text-center column-width">@context.Title</td><td>@context.Code</td><td>@context.Revision</td></tr> </tbody></table>
+                        </ItemTemplate>
+                        <ValueTemplate>
+                            <span class="ms-2" style="vertical-align: sub">@context.Title</span>
+                        </ValueTemplate>
+                    </DropDownListTemplates>
+                    <DropDownListFieldSettings Value="Oid" Text="Title" />
+                </SfDropDownList>
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">انصراف</MudButton>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" StartIcon="fas fa-check" OnClick="Submit">انتخاب</MudButton>
+    </DialogActions>
+</MudDialog>

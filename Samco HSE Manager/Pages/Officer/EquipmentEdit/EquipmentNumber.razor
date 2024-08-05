@@ -5,7 +5,7 @@
                 <MudTextField T="string" Label="نام تجهیز:" Text="@_selEquipmentStock!.EquipmentName.Name" ReadOnly="true"/>
             </MudItem>
             <MudItem md="4" sm="12">
-                <MudField Label="نام دکل / دفتر:" DisableUnderLine="true">
+                <MudField Label="نام دکل / دفتر:" Underline="false">
                     <SamcoRigSelector DataSource="Rigs" SelectedRig="_selRig" SelectedRigChanged="RigSelectionChanged"
                                       Session="Session1"/>
                 </MudField>

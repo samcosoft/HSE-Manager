@@ -1,6 +1,7 @@
 ﻿using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 using Samco_HSE.HSEData;
 using Syncfusion.Blazor.Grids;
@@ -14,28 +15,25 @@ public partial class ReportsView
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
 
+    [Inject] private IDialogService DialogService { get; set; } = null!;
+
     private Session Session1 { get; set; } = null!;
-    private IEnumerable<Rig>? Rigs { get; set; }
     private XPCollection<Report>? ReportList { get; set; }
-    private XPCollection<HSEForm>? FormCollection { get; set; }
     private SfGrid<Report>? ReportGrid { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Session1 = new Session(DataLayer);
-        if (SamcoSoftShared.CurrentUserRole == SamcoSoftShared.SiteRoles.Admin)
+        if (SamcoSoftShared.CurrentUserRole > SamcoSoftShared.SiteRoles.Admin)
         {
             var loggedUser =
                 await Session1.FindObjectAsync<User>(new BinaryOperator("Oid", SamcoSoftShared.CurrentUserId));
-            Rigs = loggedUser.Rigs;
             ReportList = loggedUser.Reports;
         }
         else
         {
             //Owner
-            FormCollection = new XPCollection<HSEForm>(Session1);
             ReportList = new XPCollection<Report>(Session1);
-            Rigs = await Session1.Query<Rig>().ToListAsync();
         }
     }
 
@@ -51,7 +49,7 @@ public partial class ReportsView
                 }
         }
     }
-    
+
     private async Task ToolbarClickHandler(Syncfusion.Blazor.Navigations.ClickEventArgs args)
     {
         if (args.Item.Id == "reportGrid_Excel Export")
@@ -65,5 +63,41 @@ public partial class ReportsView
         }
     }
 
+    private async Task OnAddBtnClick(MouseEventArgs obj)
+    {
+        await DialogService.ShowAsync<NewReportModal>("افزودن گزارش جدید");
+    }
 
+    private async Task OnEditBtnClick(MouseEventArgs obj)
+    {
+        if (ReportGrid!.SelectedRecords.Count == 0)
+        {
+            Snackbar.Add("لطفاً یک گزارش را انتخاب کنید.", Severity.Error);
+            return;
+        }
+
+        var newReport = ReportGrid!.SelectedRecords[0];
+        var destPath = Path.Combine(HostEnvironment.WebRootPath, "upload", "UserReports", SamcoSoftShared.CurrentUserId.ToString(), $"{newReport.Oid}.{newReport.Form.FormType}");
+        //Open report for editing
+        switch (newReport.Form.FormType.ToLower())
+        {
+            case "pdf":
+                var parameter1 = new DialogParameters<PDFViewer>
+                {
+                    { x => x.DocumentPath, destPath },
+                    { x => x.ReportId, newReport.Oid }
+                };
+                await DialogService.ShowAsync<PDFViewer>($"گزارش {newReport.Form.Title}", parameter1, new DialogOptions { FullScreen = true });
+                break;
+            case "doc":
+            case "docx":
+                var parameter2 = new DialogParameters<WordViewer>
+                {
+                    { x => x.DocumentPath, destPath },
+                    { x => x.ReportId, newReport.Oid }
+                };
+                await DialogService.ShowAsync<PDFViewer>($"گزارش {newReport.Form.Title}", parameter2, new DialogOptions { FullScreen = true });
+                break;
+        }
+    }
 }

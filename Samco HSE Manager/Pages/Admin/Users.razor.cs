@@ -24,15 +24,7 @@ public partial class Users : IDisposable
     private IEnumerable<string>? RigRoles { get; set; }
     private IEnumerable<string>? Dashboards { get; set; }
 
-    private readonly Dictionary<string, string> _roles = new()
-    {
-        { "Admin", "مدیر ایمنی" },
-        { "Officer", "افسر ایمنی" },
-        { "Supervisor", "ناظر ایمنی" },
-        { "Medic", "پزشک" },
-        { "Teacher", "مدرس ایمنی" },
-        { "Disabled", "غیر فعال" },
-    };
+    private readonly Dictionary<string, string> _roles = SamcoSoftShared.Roles;
 
     private readonly IEnumerable<string> _status = new List<string>
     {

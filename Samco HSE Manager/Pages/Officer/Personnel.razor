@@ -126,7 +126,7 @@
                     }
                     <MudRTLProvider RightToLeft="true">
                         <MudExpansionPanels MultiExpansion="true">
-                            <MudExpansionPanel Text="اطلاعات شخصی" IsInitiallyExpanded="true">
+                            <MudExpansionPanel Text="اطلاعات شخصی" Expanded="true">
                                 <MudGrid>
                                     <MudItem md="4" sm="12">
                                         <MudTextField @bind-Value="@user.PersonnelName" Label="نام و نام خانوادگی:" Variant="Variant.Text" Placeholder="الزامی" />
@@ -138,13 +138,13 @@
                                         <MudTextField @bind-Value="@user.NationalID" Label=":کد ملی" Variant="Variant.Text" Mask="@(new PatternMask("0000000000"))" Placeholder="الزامی" Class="ltr" />
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="تاریخ تولد:" DisableUnderLine="true">
+                                        <MudField Label="تاریخ تولد:" Underline="false">
                                             <SamcoDateSelector @bind-Date="@user.BirthDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="وضعیت تأهل:" DisableUnderLine="true">
-                                            <MudCheckBox @bind-Checked="@user.Marriage" Label="متأهل" />
+                                        <MudField Label="وضعیت تأهل:" Underline="false">
+                                            <MudCheckBox @bind-Value="@user.Marriage" Label="متأهل" />
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
@@ -157,26 +157,26 @@
                                         <MudTextField @bind-Value="@user.InsuranceNum" Label=":شماره بیمه" Variant="Variant.Text" Adornment="Adornment.Start" Class="ltr" />
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="تاریخ انقضا گواهینامه:" DisableUnderLine="true">
+                                        <MudField Label="تاریخ انقضا گواهینامه:" Underline="false">
                                             <SamcoDateSelector @bind-Date="@user.LicenseDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
                                         </MudField>
                                     </MudItem>
                                 </MudGrid>
                             </MudExpansionPanel>
-                            <MudExpansionPanel Text="اطلاعات شغلی" IsInitiallyExpanded="true">
+                            <MudExpansionPanel Text="اطلاعات شغلی" Expanded="true">
                                 <MudGrid>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="نام دکل / محل فعالیت:" DisableUnderLine="true">
+                                        <MudField Label="نام دکل / محل فعالیت:" Underline="false">
                                             <SamcoRigSelector DataSource="Rigs" @bind-SelectedRig="@user.ActiveRig"/>
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="تاریخ استخدام:" DisableUnderLine="true">
+                                        <MudField Label="تاریخ استخدام:" Underline="false">
                                             <SamcoDateSelector @bind-Date="@user.EmpDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="سمت فعلی:" DisableUnderLine="true">
+                                        <MudField Label="سمت فعلی:" Underline="false">
                                             <SfComboBox TItem="string" TValue="string" DataSource="@RigRoles" Placeholder="الزامی"
                                             @bind-Value="@user.CurrentRole">
                                             </SfComboBox>
@@ -186,7 +186,7 @@
                                         <MudTextField Label=":شماره پرسنلی" @bind-Value="@user.PersonnelNum" Variant="Variant.Text" Placeholder="الزامی" Class="ltr" />
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="وضعیت:" DisableUnderLine="true">
+                                        <MudField Label="وضعیت:" Underline="false">
                                             <SfComboBox TItem="string" TValue="string" DataSource="@_status" Placeholder="الزامی"
                                             @bind-Value="@user.Status">
                                             </SfComboBox>
@@ -197,14 +197,14 @@
                                                       Mask="@(RegexMask.Email())" Class="ltr" InputMode="InputMode.email" Adornment="Adornment.Start" />
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="سمت قبلی:" DisableUnderLine="true">
+                                        <MudField Label="سمت قبلی:" Underline="false">
                                             <SfComboBox TItem="string" TValue="string" DataSource="@RigRoles"
                                             @bind-Value="@user.PreviousRole">
                                             </SfComboBox>
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="تاریخ آخرین ارتقا:" DisableUnderLine="true">
+                                        <MudField Label="تاریخ آخرین ارتقا:" Underline="false">
                                             <SamcoDateSelector @bind-Date="@user.LastUpgradeDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
                                         </MudField>
                                     </MudItem>

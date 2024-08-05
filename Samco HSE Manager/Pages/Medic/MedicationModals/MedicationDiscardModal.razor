@@ -14,12 +14,12 @@
     <DialogContent>
         <MudGrid>
             <MudItem lg="12">
-                <MudField Label="نام دکل / دفتر" DisableUnderLine="true">
+                <MudField Label="نام دکل / دفتر" Underline="false">
                     <SamcoRigSelector DataSource="Rigs" SelectedRigChanged="RigSelectionChanged" />
                 </MudField>
             </MudItem>
             <MudItem md="6" sm="12">
-                <MudField Label="نام دارو / تجهیز" DisableUnderLine="true">
+                <MudField Label="نام دارو / تجهیز" Underline="false">
                     <SfComboBox TItem="Medication" TValue="int?" DataSource="MedicationList" @bind-Value="_selMedication" AllowFiltering="true"
                                 FilterType="FilterType.Contains" AllowCustom="false" Placeholder="">
                         <ComboBoxFieldSettings Text="Name" Value="Oid" />

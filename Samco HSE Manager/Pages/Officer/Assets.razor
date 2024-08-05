@@ -47,12 +47,12 @@
                                 <MudTextField Label="نام تجهیز:" AutoFocus="true" @bind-Value="@(asset.Name)" Placeholder="الزامی"/>
                             </MudItem>
                             <MudItem md="4" sm="12">
-                                <MudField Label="نام دکل / پالایشگاه:" DisableUnderLine="true">
+                                <MudField Label="نام دکل / پالایشگاه:" Underline="false">
                                     <SamcoRigSelector DataSource="Rigs" @bind-SelectedRig="@asset.RigNo"/>
                                 </MudField>
                             </MudItem>
                             <MudItem md="4" sm="12">
-                                <MudField Label="مالکیت:" DisableUnderLine="true">
+                                <MudField Label="مالکیت:" Underline="false">
                                     <SfComboBox TItem="string" TValue="string" Placeholder="الزامی"
                                                 DataSource="@_owners" @bind-Value="@asset.Owner">
                                     </SfComboBox>
@@ -65,7 +65,7 @@
                                 <MudTextField Label="محل نصب یا قرارگیری:" @bind-Value="@(asset.Position)"/>
                             </MudItem>
                             <MudItem md="4" sm="12">
-                                <MudField Label="وضعیت:" DisableUnderLine="true">
+                                <MudField Label="وضعیت:" Underline="false">
                                     <SfComboBox TItem="string" TValue="string"
                                                 DataSource="@_status" Placeholder="الزامی"
                                                 @bind-Value="@asset.Status">
@@ -73,7 +73,7 @@
                                 </MudField>
                             </MudItem>
                             <MudItem md="4" sm="12">
-                                <MudField Label="انقضای گواهی:" DisableUnderLine="true">
+                                <MudField Label="انقضای گواهی:" Underline="false">
                                     <SamcoDateSelector @bind-Date="@asset.ExpireDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
                                 </MudField>
                             </MudItem>

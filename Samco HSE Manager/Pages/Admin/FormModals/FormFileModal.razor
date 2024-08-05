@@ -11,7 +11,7 @@
             <MudItem lg="12">
                 <FileUploader @ref="_uploader" AllowedExtension="FileUploader.AllowedFileExtensions.DocumentsOnly"
                               DataId="@SelFormId.ToString()" SavePath="SamcoSoftShared.UploadFolders.Forms"
-                              DoNotCreateDirectory="true"/>
+                              DoNotCreateDirectory="true" AllowMultiple="false"/>
             </MudItem>
         </MudGrid>
     </DialogContent>

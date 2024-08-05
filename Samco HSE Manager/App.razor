@@ -37,7 +37,9 @@
         var usr = session1.FindObject<User>(new BinaryOperator("Username", "admin"));
         if (usr == null)
         {
-            var adminUser = new User(session1) { Username = "admin", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("admin"), SiteRole = "Owner", PersonnelName = "مدیر سیستم" };
+            var adminUser = new User(session1) { Username = "admin", 
+                Password = BCrypt.Net.BCrypt.EnhancedHashPassword("admin"), 
+                SiteRole = "Owner", PersonnelName = "مدیر سیستم", DashboardId = "Admin"};
             adminUser.Save();
         }
     }

@@ -16,7 +16,7 @@
     </TitleContent>
     <DialogContent>
         <MudAlert Severity="Severity.Info" Icon="fas fa-info" Elevation="3">درخواست داروها بر اساس حداقل تعداد دارو / تجهیز تنظیم می‌شود. شما می‌توانید پس از دریافت فایل درخواست مقادیر آن‌ها را تغییر دهید.</MudAlert>
-        <MudField Label="نام دکل / دفتر:" DisableUnderLine="true">
+        <MudField Label="نام دکل / دفتر:" Underline="false">
             <SamcoRigSelector @ref="_rigBox" DataSource="Rigs" @bind-SelectedRig="_selRig" />
         </MudField>
     </DialogContent>
@@ -70,7 +70,7 @@
 
         var parameter =
             $"ReportName=MedicineRequest&Parameters=RigId--{_selRig.Oid}|Title--شرکت {Configuration["CompanyInfo:Name"]} - دکل {_selRig.Name}";
-        NavigationManager.NavigateTo("report?" + parameter);
+        // NavigationManager.NavigateTo("report?" + parameter);
         Snackbar.Add("اطلاعات با موفقیت ثبت شد.", Severity.Success);
         MudDialog.Close(DialogResult.Ok(true));
     }

@@ -13,9 +13,10 @@
 <div class="page">
     <MudRTLProvider RightToLeft="true">
         <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_samcoTheme" />
-        <MudDialogProvider Position="DialogPosition.Center" CloseButton="true" CloseOnEscapeKey="true"/>
-        <MudSnackbarProvider />
+        <MudPopoverProvider />
         <Syncfusion.Blazor.Popups.SfDialogProvider />
+        <MudDialogProvider Position="DialogPosition.Center" CloseButton="true" CloseOnEscapeKey="true" />
+        <MudSnackbarProvider />
         <MudLayout id="mainWindow">
             <Header @bind-ToggleOn="@IsSidebarExpanded" DarkMode="_isDarkMode" DarkModeChanged="SetTheme"></Header>
             <MudDrawerContainer Style="height: 100%; min-height: 700px">
@@ -26,12 +27,12 @@
                             <MudDrawerHeader Style="@DisplayProfile">
                                 <MudStack Spacing="0" AlignItems="AlignItems.Center">
                                     <MudAvatar Elevation="2" Rounded="true" Size="Size.Large" Class="mb-4">@_avatarSrc</MudAvatar>
-                                    <MudChip Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Medium">@_userName</MudChip>
-                                    <MudChip Color="Color.Secondary" Size="Size.Small">@_userRole</MudChip>
+                                    <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Medium">@_userName</MudChip>
+                                    <MudChip T="string" Color="Color.Secondary" Size="Size.Small">@_userRole</MudChip>
                                     @{
                                         if (!string.IsNullOrEmpty(_location))
                                         {
-                                            <MudChip Color="Color.Tertiary" Size="Size.Small">@_location</MudChip>
+                                            <MudChip T="string" Color="Color.Tertiary" Size="Size.Small">@_location</MudChip>
                                         }
                                     }
                                 </MudStack>

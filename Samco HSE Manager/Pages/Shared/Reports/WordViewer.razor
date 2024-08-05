@@ -1,46 +1,38 @@
-﻿@page "/wordeditor"
-@attribute [Authorize]
-@inject IDataLayer DataLayer
+﻿@inject IDataLayer DataLayer
 @inject IWebHostEnvironment HostEnvironment
 @inject ISnackbar Snackbar
-@inject IJSRuntime Js;
 @inject SfDialogService DialogService
 @using System.Text.Json
 @using Samco_HSE.HSEData
 @using Syncfusion.Blazor.Popups
 @implements IDisposable
 
-<PageTitle>@Title</PageTitle>
-<MudCard>
-    <MudCardHeader>
-        <MudPaper Elevation="3" Width="100%" Class="pa-3">
-            <MudGrid>
-                <MudItem>
-                    <MudText Typo="Typo.h5">@Title</MudText>
-                </MudItem>
-                <MudItem>
-                    <MudButton Color="Color.Success" Variant="Variant.Filled" StartIcon="fas fa-trash" OnClick="SaveDocument">ذخیره گزارش</MudButton>
-                </MudItem>
-                <MudItem>
-                    <MudButton Color="Color.Error" Variant="Variant.Filled" StartIcon="fas fa-trash" OnClick="CancelButton">انصراف</MudButton>
-                </MudItem>
-            </MudGrid>
-        </MudPaper>
-    </MudCardHeader>
-    <MudCardContent>
-        <SfDocumentEditorContainer @ref="_container" EnableToolbar="true">
-            <DocumentEditorContainerEvents Created="OnCreated"></DocumentEditorContainerEvents>
-        </SfDocumentEditorContainer>
-    </MudCardContent>
-</MudCard>
+<MudDialog>
+    <DialogContent>
+        <MudCard>
+            <MudCardContent>
+                <SfDocumentEditorContainer @ref="_container" EnableToolbar="true">
+                    <DocumentEditorContainerEvents Created="OnCreated"></DocumentEditorContainerEvents>
+                </SfDocumentEditorContainer>
+            </MudCardContent>
+        </MudCard>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" StartIcon="fas fa-trash" OnClick="SaveDocument">ذخیره گزارش</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" StartIcon="fas fa-trash" OnClick="CancelButton">انصراف</MudButton>
+    </DialogActions>
+</MudDialog>
+
 @code {
-    [Parameter]
-    [SupplyParameterFromQuery]
-    public string? DocumentId { get; set; }
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter]
-    [SupplyParameterFromQuery]
-    public string? Title { get; set; }
+    public string? DocumentPath { get; set; }
+
+    [Parameter]
+    public int ReportId { get; set; }
+
 
     private Session? _session1;
     private SfDocumentEditorContainer? _container;
@@ -51,18 +43,17 @@
     protected override async Task OnInitializedAsync()
     {
         _session1 = new Session(DataLayer);
+        _selReport = _session1.FindObject<Report>(ReportId);
 
-        if (string.IsNullOrEmpty(DocumentId)) return;
+        if (string.IsNullOrEmpty(DocumentPath)) return;
 
-        // var path = Edit.GetValueOrDefault(false) ? Path.Combine(HostEnvironment.WebRootPath, "upload", "UserReports", _session1.GetObjectByKey<Report>(DocumentId).FileName) :
-        //     Path.Combine(HostEnvironment.ContentRootPath, "Data", "Forms", DocumentId!);
-        _selReport = _session1.GetObjectByKey<Report>(DocumentId);
-        var path = Path.Combine(HostEnvironment.WebRootPath, "upload", "UserReports",
-                _selReport.Oid.ToString()) + $".{_selReport.Form.FormType}";
-
-        var webClient = new HttpClient();
-        var byteArray = await webClient.GetByteArrayAsync(path);
-        Stream stream = new MemoryStream(byteArray);
+        var fileStream = new FileStream(DocumentPath, FileMode.Open, FileAccess.Read);
+        var stream = new MemoryStream();
+        await fileStream.CopyToAsync(stream);
+        // var byteArray = stream.ToArray();
+        // var webClient = new HttpClient();
+        // var byteArray = await webClient.GetByteArrayAsync(path);
+        // Stream stream = new MemoryStream(byteArray);
         var document = WordDocument.Load(stream, ImportFormatType.Docx);
         await stream.DisposeAsync();
         _loadedDocument = JsonSerializer.Serialize(document);
@@ -102,17 +93,11 @@
         Snackbar.Add("گزارش با موفقیت ذخیره شد.", Severity.Success);
     }
 
-    private void CancelButton()
-    {
-        Js.InvokeVoidAsync("window.close");
-    }
+    private void CancelButton() => MudDialog.Cancel();
 
     public void Dispose()
     {
         _session1?.Dispose();
         ((IDisposable)_container!).Dispose();
-        DataLayer?.Dispose();
-        Snackbar?.Dispose();
     }
-
 }

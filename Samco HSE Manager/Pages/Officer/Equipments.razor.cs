@@ -170,7 +170,7 @@ public partial class Equipments : IDisposable
         var dialog = await DialogService.ShowAsync<EquipmentNumberModal>("تنظیم تعداد تجهیزات",
             new DialogParameters { { "SelEquipmentId", EquipmentGrid.SelectedRecords.First().Oid } });
         var result = await dialog.Result;
-        if (!result.Canceled)
+        if (!result!.Canceled)
         {
             EquipmentsList!.Reload();
         }
@@ -191,7 +191,7 @@ public partial class Equipments : IDisposable
         var dialog = await DialogService.ShowAsync<EquipmentDistributeModal>("توزیع تجهیزات",
             new DialogParameters { { "SelEquipmentId", EquipmentGrid.SelectedRecords.First().Oid } });
         var result = await dialog.Result;
-        if (!result.Canceled)
+        if (!result!.Canceled)
         {
             EquipmentsList!.Reload();
         }

@@ -27,7 +27,7 @@
             <MudRTLProvider RightToLeft="true">
                 <MudGrid>
                     <MudItem md="6" sm="12">
-                        <MudField Label="تخصص:" DisableUnderLine="true">
+                        <MudField Label="تخصص:" Underline="false">
                             <SfComboBox TValue="string" TItem="string" Placeholder="الزامی" DataSource="@_specialistList" @bind-Value="@refer!.Specialist"
                                         AllowFiltering="true" CssClass="ltr">
                             </SfComboBox>

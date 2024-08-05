@@ -76,14 +76,14 @@
                                               Adornment="Adornment.Start"/>
                             </MudItem>
                             <MudItem md="6" sm="12">
-                                <MudField Label="نوع تجهیز:" DisableUnderLine="true">
+                                <MudField Label="نوع تجهیز:" Underline="false">
                                     <SfComboBox TValue="string" TItem="string" DataSource="@_ppeKind" Placeholder="الزامی"
                                                 @bind-Value="@equipment.EquipType" AllowFiltering="true">
                                     </SfComboBox>
                                 </MudField>
                             </MudItem>
                             <MudItem md="6" sm="12">
-                                <MudField Label="استفاده کنندگان:" DisableUnderLine="true">
+                                <MudField Label="استفاده کنندگان:" Underline="false">
                                     <SfMultiSelect TItem="string" TValue="string[]" DataSource="@RigRoles"
                                                    @bind-Value="@Consumers" Placeholder="الزامی" Mode="VisualMode.CheckBox"
                                                    AllowFiltering="true" FilterBarPlaceholder="برای جستجو تایپ کنید..." FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"

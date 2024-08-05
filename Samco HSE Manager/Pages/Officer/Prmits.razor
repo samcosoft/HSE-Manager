@@ -69,7 +69,7 @@
                     <MudRTLProvider RightToLeft="true">
                         <MudGrid>
                             <MudItem md="4" sm="12">
-                                <MudField Label="دکل / دفتر:" DisableUnderLine="true">
+                                <MudField Label="دکل / دفتر:" Underline="false">
                                     <SamcoRigSelector @bind-SelectedRig="_selRig" DataSource="Rigs"/>
                                 </MudField>
                             </MudItem>
@@ -77,7 +77,7 @@
                                 <MudTextField Label="شماره سریال:" @bind-Value="@(permit.ArchiveNo)" Placeholder="الزامی"/>
                             </MudItem>
                             <MudItem md="4" sm="12">
-                                <MudField Label="تاریخ شروع:" DisableUnderLine="true">
+                                <MudField Label="تاریخ شروع:" Underline="false">
                                     <SamcoDateSelector @bind-DateNotNull="@permit.StartTime" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
                                 </MudField>
                             </MudItem>
@@ -85,7 +85,7 @@
                                 <MudTimePicker @bind-Time="@_startTime" Label="ساعت شروع"/>
                             </MudItem>
                             <MudItem md="4" sm="12">
-                                <MudField Label="تاریخ پایان:" DisableUnderLine="true">
+                                <MudField Label="تاریخ پایان:" Underline="false">
                                     <SamcoDateSelector @bind-Date="@permit.EndTime" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
                                 </MudField>
                             </MudItem>
@@ -93,7 +93,7 @@
                                 <MudTimePicker @bind-Time="@_endTime" Label="ساعت پایان"/>
                             </MudItem>
                             <MudItem md="4" sm="12">
-                                <MudField Label="نوع کار:" DisableUnderLine="true">
+                                <MudField Label="نوع کار:" Underline="false">
                                     <SfComboBox TItem="string" TValue="string" Placeholder="الزامی" AllowFiltering="true"
                                                 FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
                                                 DataSource="@_permitType" @bind-Value="@permit.PermitType">
@@ -101,7 +101,7 @@
                                 </MudField>
                             </MudItem>
                             <MudItem md="4" sm="12">
-                                <MudField Label="محل:" DisableUnderLine="true">
+                                <MudField Label="محل:" Underline="false">
                                     <SfComboBox TItem="string" TValue="string" Placeholder="الزامی" AllowFiltering="true"
                                                 FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
                                                 DataSource="@_location" @bind-Value="@permit.Location">
@@ -112,17 +112,17 @@
                                 <MudTextField Label="شرح کار:" @bind-Value="@(permit.Description)" Placeholder="الزامی"/>
                             </MudItem>
                             <MudItem md="4" sm="12">
-                                <MudField Label="دریافت کننده:" DisableUnderLine="true">
+                                <MudField Label="دریافت کننده:" Underline="false">
                                     <SamcoPersonnelSelector DataSource="PersonnelList" @bind-SelectedPersonnel="@permit.Holder" Session="Session1"/>
                                 </MudField>
                             </MudItem>
                             <MudItem md="4" sm="12">
-                                <MudField Label="مسئول کار:" DisableUnderLine="true">
+                                <MudField Label="مسئول کار:" Underline="false">
                                     <SamcoPersonnelSelector DataSource="PersonnelList" @bind-SelectedPersonnel="@permit.Responsible" Session="Session1"/>
                                 </MudField>
                             </MudItem>
                             <MudItem md="4" sm="12">
-                                <MudField Label="تأیید کننده:" DisableUnderLine="true">
+                                <MudField Label="تأیید کننده:" Underline="false">
                                     <SamcoPersonnelSelector DataSource="PersonnelList" @bind-SelectedPersonnel="@permit.Approver" Session="Session1"/>
                                 </MudField>
                             </MudItem>
