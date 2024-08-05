@@ -165,6 +165,41 @@ public partial class Personnel : IDisposable
             return;
         }
         await DialogService.ShowAsync<PersonnelIncentive>($"ثبت تشویق برای {SelPersonnel.PersonnelName}",
-            new DialogParameters { { "PersonId", SelPersonnel.Oid } });
+            new DialogParameters { { "PersonId", SelPersonnel.Oid } }, new DialogOptions(){ClassBackground = "safe-item"});
+    }
+
+    private async Task OpenWarningDialog()
+    {
+        if (SelPersonnel == null)
+        {
+            Snackbar.Add("لطفاً یک نفر را از لیست انتخاب کنید.", Severity.Error);
+            return;
+        }
+
+        if (SelPersonnel.ActiveRig.WellWorks.FirstOrDefault(x => x.IsActive) == null)
+        {
+            Snackbar.Add("پرسنل انتخاب شده در هیچ پروژه فعالی قرار ندارد.", Severity.Error);
+            return;
+        }
+        await DialogService.ShowAsync<PersonnelWarning>($"ثبت اخطار برای {SelPersonnel.PersonnelName}",
+            new DialogParameters { { "PersonId", SelPersonnel.Oid } }, new DialogOptions(){ClassBackground = "danger-item"});
+    }
+
+    private async Task OpenEquipmentDialog()
+    {
+        if (SelPersonnel == null)
+        {
+            Snackbar.Add("لطفاً یک نفر را از لیست انتخاب کنید.", Severity.Error);
+            return;
+        }
+
+        if (SelPersonnel.ActiveRig.WellWorks.FirstOrDefault(x => x.IsActive) == null)
+        {
+            Snackbar.Add("پرسنل انتخاب شده در هیچ پروژه فعالی قرار ندارد.", Severity.Error);
+            return;
+        }
+        
+        await DialogService.ShowAsync<EquipmentSelector>($"تحویل تجهیزات به {SelPersonnel.PersonnelName}",
+            new DialogParameters { { "PersonId", SelPersonnel.Oid } }, new DialogOptions(){ClassBackground = "danger-item"});
     }
 }

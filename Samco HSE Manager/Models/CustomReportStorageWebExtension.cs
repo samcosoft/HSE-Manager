@@ -1,9 +1,7 @@
-﻿// ReSharper disable once CheckNamespace
-namespace Samco_HSE_Manager.Models;
+﻿namespace Samco_HSE_Manager;
 
 using DevExpress.XtraReports.UI;
 using System.ServiceModel;
-using System.Web;
 
 public class CustomReportStorageWebExtension : DevExpress.XtraReports.Web.Extensions.ReportStorageWebExtension
 {
@@ -21,14 +19,14 @@ public class CustomReportStorageWebExtension : DevExpress.XtraReports.Web.Extens
     {
         var rootDirectory = new DirectoryInfo(folder);
         var fileInfo = new FileInfo(Path.Combine(folder, url));
-        return fileInfo.Directory!.FullName.ToLower().StartsWith(rootDirectory.FullName.ToLower());
+        return fileInfo.Directory != null && fileInfo.Directory.FullName.ToLower().StartsWith(rootDirectory.FullName.ToLower());
     }
 
     public override bool CanSetData(string url)
     {
         // Determines whether a report with the specified URL can be saved.
         // Add custom logic that returns **false** for reports that should be read-only.
-        // Return **true** if no validation is required.
+        // Return **true** if no valdation is required.
         // This method is called only for valid URLs (if the **IsValidUrl** method returns **true**).
 
         return true;
@@ -45,57 +43,22 @@ public class CustomReportStorageWebExtension : DevExpress.XtraReports.Web.Extens
 
     public override byte[] GetData(string url)
     {
+        // Uses a specified URL to return report layout data stored within a report storage medium.
+        // This method is called if the **IsValidUrl** method returns **true**.
+        // You can use the **GetData** method to process report parameters sent from the client
+        // if the parameters are included in the report URL's query string.
         try
         {
-            // Parse the string with the report name and parameter values.
-            var parts = url.Split('?');
-            var reportName = parts[0];
-            var parametersQueryString = parts.Length > 1 ? parts[1] : string.Empty;
-
-            // Create a report instance.
-            XtraReport? report = null;
-
-            if (Directory.EnumerateFiles(ReportDirectory).
-                Select(Path.GetFileNameWithoutExtension).Contains(reportName))
+            if (Directory.EnumerateFiles(ReportDirectory).Select(Path.GetFileNameWithoutExtension).Contains(url))
             {
-                var reportBytes = File.ReadAllBytes(Path.Combine(ReportDirectory, reportName + FileExtension));
-                using var ms = new MemoryStream(reportBytes);
-                report = XtraReport.FromStream(ms);
-            }
-
-            if (report != null)
-            {
-                // Apply the parameter values to the report.
-                var parameters = HttpUtility.ParseQueryString(parametersQueryString);
-
-                foreach (var parameterName in parameters.AllKeys)
-                {
-                    report.Parameters[parameterName].Value = Convert.ChangeType(
-                        parameters.Get(parameterName), report.Parameters[parameterName].Type);
-                }
-
-                // Disable the Visible property for all report parameters
-                // to hide the Parameters Panel in the viewer.
-                foreach (var parameter in report.Parameters)
-                {
-                    parameter.Visible = false;
-                }
-
-                // If you do not hide the panel, disable the report's RequestParameters property.
-                // report.RequestParameters = false;
-
-                using var ms = new MemoryStream();
-                report.SaveLayoutToXml(ms);
-                return ms.ToArray();
+                return File.ReadAllBytes(Path.Combine(ReportDirectory, url + FileExtension));
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            throw new DevExpress.XtraReports.Web.ClientControls.FaultException(
-                "Could not get report data.", ex);
+            throw new FaultException(new FaultReason("Could not get report data."), new FaultCode("Server"), "GetData");
         }
-        throw new DevExpress.XtraReports.Web.ClientControls.FaultException(
-            $"Could not find report '{url}'.");
+        throw new FaultException(new FaultReason(string.Format("Could not find report '{0}'.", url)), new FaultCode("Server"), "GetData");
     }
 
     public override Dictionary<string, string> GetUrls()
@@ -103,10 +66,8 @@ public class CustomReportStorageWebExtension : DevExpress.XtraReports.Web.Extens
         // Returns a dictionary that contains the report names (URLs) and display names. 
         // The Report Designer uses this method to populate the Open Report and Save Report dialogs.
 
-#pragma warning disable CS8619
         return Directory.GetFiles(ReportDirectory, "*" + FileExtension)
             .ToDictionary(Path.GetFileNameWithoutExtension);
-#pragma warning restore CS8619
     }
 
     public override void SetData(XtraReport report, string url)

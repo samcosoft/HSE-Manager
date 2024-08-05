@@ -11,7 +11,6 @@ using MudBlazor.Services;
 using Samco_HSE.HSEData;
 using Samco_HSE_Manager;
 using Samco_HSE_Manager.Authentication;
-using Samco_HSE_Manager.Models;
 using Syncfusion.Blazor;
 using Syncfusion.Blazor.Popups;
 

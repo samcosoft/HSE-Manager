@@ -25,11 +25,11 @@ namespace Samco_HSE.HSEData
             get { return fPersonnelName; }
             set { SetPropertyValue<Personnel>(nameof(PersonnelName), ref fPersonnelName, value); }
         }
-        DateTime fIssueDate;
-        public DateTime IssueDate
+        DateTime? fIssueDate;
+        public DateTime? IssueDate
         {
             get { return fIssueDate; }
-            set { SetPropertyValue<DateTime>(nameof(IssueDate), ref fIssueDate, value); }
+            set { SetPropertyValue<DateTime?>(nameof(IssueDate), ref fIssueDate, value); }
         }
         string fReason;
         public string Reason

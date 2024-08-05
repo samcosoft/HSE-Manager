@@ -15,7 +15,6 @@ public partial class Users : IDisposable
 {
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
-    [Inject] private DashboardConfigurator DashboardConfigurator { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
 
     private Session Session1 { get; set; } = null!;
@@ -38,7 +37,6 @@ public partial class Users : IDisposable
     {
         Session1 = new Session(DataLayer);
         RigRoles = await File.ReadAllLinesAsync(Path.Combine(HostEnvironment.WebRootPath, "content", "RigRoles.txt"));
-        Dashboards = DashboardConfigurator.DashboardStorage.GetAvailableDashboardsInfo().Select(x => x.ID).ToList();
         if (SamcoSoftShared.CurrentUserRole == SamcoSoftShared.SiteRoles.Admin)
         {
             //Admin

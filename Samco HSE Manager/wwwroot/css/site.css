@@ -368,9 +368,12 @@ blockquote {
     z-index: 1;
 }
 
-.danger-item, .expired-item, .expired-item > td {
-    background-color: #cc2200;
-    background-color: rgba(204, 34, 0, 0.5);
+/*.danger-item, .expired-item, .expired-item > td {*/
+/*    background-color: #cc2200;*/
+/*    background-color: rgba(204, 34, 0, 0.5);*/
+/*}*/
+.mud-dialog-background{
+    backdrop-filter: blur(10px);
 }
 
 .warning-item {
