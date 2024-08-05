@@ -1,0 +1,118 @@
+﻿@page "/wordeditor"
+@attribute [Authorize]
+@inject IDataLayer DataLayer
+@inject IWebHostEnvironment HostEnvironment
+@inject ISnackbar Snackbar
+@inject IJSRuntime Js;
+@inject SfDialogService DialogService
+@using System.Text.Json
+@using Samco_HSE.HSEData
+@using Syncfusion.Blazor.Popups
+@implements IDisposable
+
+<PageTitle>@Title</PageTitle>
+<MudCard>
+    <MudCardHeader>
+        <MudPaper Elevation="3" Width="100%" Class="pa-3">
+            <MudGrid>
+                <MudItem>
+                    <MudText Typo="Typo.h5">@Title</MudText>
+                </MudItem>
+                <MudItem>
+                    <MudButton Color="Color.Success" Variant="Variant.Filled" StartIcon="fas fa-trash" OnClick="SaveDocument">ذخیره گزارش</MudButton>
+                </MudItem>
+                <MudItem>
+                    <MudButton Color="Color.Error" Variant="Variant.Filled" StartIcon="fas fa-trash" OnClick="CancelButton">انصراف</MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </MudCardHeader>
+    <MudCardContent>
+        <SfDocumentEditorContainer @ref="_container" EnableToolbar="true">
+            <DocumentEditorContainerEvents Created="OnCreated"></DocumentEditorContainerEvents>
+        </SfDocumentEditorContainer>
+    </MudCardContent>
+</MudCard>
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? DocumentId { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? Title { get; set; }
+
+    private Session? _session1;
+    private SfDocumentEditorContainer? _container;
+    private Report? _selReport;
+    private string? _loadedDocument;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _session1 = new Session(DataLayer);
+
+        if (string.IsNullOrEmpty(DocumentId)) return;
+
+        // var path = Edit.GetValueOrDefault(false) ? Path.Combine(HostEnvironment.WebRootPath, "upload", "UserReports", _session1.GetObjectByKey<Report>(DocumentId).FileName) :
+        //     Path.Combine(HostEnvironment.ContentRootPath, "Data", "Forms", DocumentId!);
+        _selReport = _session1.GetObjectByKey<Report>(DocumentId);
+        var path = Path.Combine(HostEnvironment.WebRootPath, "upload", "UserReports",
+                _selReport.Oid.ToString()) + $".{_selReport.Form.FormType}";
+
+        var webClient = new HttpClient();
+        var byteArray = await webClient.GetByteArrayAsync(path);
+        Stream stream = new MemoryStream(byteArray);
+        var document = WordDocument.Load(stream, ImportFormatType.Docx);
+        await stream.DisposeAsync();
+        _loadedDocument = JsonSerializer.Serialize(document);
+        document.Dispose();
+    }
+
+    private async void OnCreated(object obj)
+    {
+        var editor = _container!.DocumentEditor;
+        await editor.OpenAsync(_loadedDocument);
+        _loadedDocument = null;
+    }
+
+    private async void SaveDocument()
+    {
+        if (await DialogService.ConfirmAsync("آیا از ذخیره گزارش مطمئنید؟", "ذخیره گزارش") == false) return;
+
+        var editor = _container!.DocumentEditor;
+        var base64Data = await editor.SaveAsBlobAsync(FormatType.Docx);
+        var data = Convert.FromBase64String(base64Data);
+        //To observe the memory go down, null out the reference of base64Data variable.
+        //Word document file stream
+        Stream stream = new MemoryStream(data);
+        //To observe the memory go down, null out the reference of data variable.
+        await using (var fileStream = new FileStream(Path.Combine(HostEnvironment.WebRootPath, "upload", "UserReports",
+                             _selReport!.Oid.ToString()) + $".{_selReport.Form.FormType}", FileMode.Create, FileAccess.Write))
+        {
+            //Saving the new file in root path of application
+            await stream.CopyToAsync(fileStream);
+            fileStream.Close();
+        }
+        stream.Close();
+
+        //Update file info
+        _selReport.SubDate = DateTime.Now;
+        _selReport.Save();
+        Snackbar.Add("گزارش با موفقیت ذخیره شد.", Severity.Success);
+    }
+
+    private void CancelButton()
+    {
+        Js.InvokeVoidAsync("window.close");
+    }
+
+    public void Dispose()
+    {
+        _session1?.Dispose();
+        ((IDisposable)_container!).Dispose();
+        DataLayer?.Dispose();
+        Snackbar?.Dispose();
+    }
+
+}

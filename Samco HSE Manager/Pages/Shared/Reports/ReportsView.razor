@@ -1,0 +1,47 @@
+﻿@page "/reports"
+@using Samco_HSE.HSEData
+@using SortDirection = Syncfusion.Blazor.Grids.SortDirection
+@using FilterType = Syncfusion.Blazor.Grids.FilterType
+@attribute [Authorize]
+<PageTitle>گزارشات ایمنی</PageTitle>
+<MudCard>
+    <MudCardHeader>
+        <MudPaper Elevation="3" Width="100%" Class="pa-3">
+            <MudGrid>
+                <MudItem>
+                    <MudText Typo="Typo.h5">مدیریت گزارشات</MudText>
+                </MudItem>
+                <MudItem>
+                    <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
+                        <MudButton StartIcon="fas fa-plus" IconColor="Color.Primary" OnClick="OnAddBtnClick">گزارش جدید</MudButton>
+                        <MudButton StartIcon="fas fa-pen" IconColor="Color.Tertiary" OnClick="OnEditBtnClick">ویرایش گزارش</MudButton>
+                    </MudButtonGroup>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </MudCardHeader>
+    <MudCardContent>
+        <SfGrid @ref="ReportGrid" ID="reportGrid" DataSource="@ReportList" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
+                AllowGrouping="true" Toolbar="@(new[] { "Delete", "Excel Export", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
+                AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
+                AllowExcelExport="true" Width="100%" EnablePersistence="true">
+            <GridEvents TValue="Report" OnActionBegin="ReportGrid_Action"
+                        OnToolbarClick="ToolbarClickHandler"/>
+            <GridFilterSettings Type="FilterType.Excel"/>
+            <GridSortSettings>
+                <GridSortColumns>
+                    <GridSortColumn Field="SubDate" Direction="SortDirection.Descending"></GridSortColumn>
+                </GridSortColumns>
+            </GridSortSettings>
+            <GridColumns>
+                <GridColumn HeaderText="ردیف" Field="Oid" IsIdentity="true" IsPrimaryKey="true" Visible="false"/>
+                <GridColumn HeaderText="دکل / دفتر" Field="WorkID.RigNo.Name"/>
+                <GridColumn HeaderText="عنوان گزارش" Field="Form.Title"/>
+                <GridColumn HeaderText="تاریخ ارسال" Field="SubDate"/>
+                <GridColumn HeaderText="ارسال کننده" Field="UserName.RealName"/>
+                <GridColumn HeaderText="تأیید شده" Field="Approved" AutoFit="true" DisplayAsCheckBox="true"/>
+            </GridColumns>
+            <GridEditSettings AllowDeleting="true" ShowDeleteConfirmDialog="true" Dialog="@SamcoSoftShared.GeneralGridEditOption"/>
+        </SfGrid>
+    </MudCardContent>
+</MudCard>
