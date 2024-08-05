@@ -362,3 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /Samco HSE Manager/wwwroot/upload/STOPCards/639
+/Samco HSE Manager/wwwroot/upload/UserReports/1/2.docx
+/Samco HSE Manager/Data/Forms/2.docx
