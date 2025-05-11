@@ -13,7 +13,7 @@ public partial class EquipmentNumber
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
 
-    [CascadingParameter] public MudDialogInstance MudDialogParent { get; set; } = null!;
+    [CascadingParameter] public IMudDialogInstance MudDialogParent { get; set; } = null!;
     [Parameter] public int? EquipmentId { get; set; }
     private EquipmentStock? _selEquipmentStock;
     private IEnumerable<Rig>? Rigs { get; set; }

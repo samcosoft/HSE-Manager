@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Samco_HSE_Manager</RootNamespace>
@@ -62,22 +62,24 @@
     <PackageReference Include="BlazorAnimation" Version="2.2.0" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="Brushtail.FontAwesome.Blazor" Version="1.0.19" />
-    <PackageReference Include="DevExpress.AspNetCore.Dashboard" Version="24.1.4" />
-    <PackageReference Include="DevExpress.Blazor" Version="24.1.4" />
-    <PackageReference Include="DevExpress.Blazor.Dashboard" Version="24.1.4" />
-    <PackageReference Include="DeviceId" Version="6.7.0" />
-    <PackageReference Include="DeviceId.Linux" Version="6.4.0" />
-    <PackageReference Include="DeviceId.Windows.Wmi" Version="6.6.0" />
-    <PackageReference Include="MudBlazor" Version="7.5.0" />
+    <PackageReference Include="DevExpress.AspNetCore.Dashboard" Version="24.2.5" />
+    <PackageReference Include="DevExpress.Blazor" Version="24.2.5" />
+    <PackageReference Include="DevExpress.Blazor.Dashboard" Version="24.2.5" />
+    <PackageReference Include="DevExpress.Data" Version="24.2.5" />
+    <PackageReference Include="DevExpress.Xpo" Version="24.2.5" />
+    <PackageReference Include="DeviceId" Version="6.9.0" />
+    <PackageReference Include="DeviceId.Linux" Version="6.9.0" />
+    <PackageReference Include="DeviceId.Windows.Wmi" Version="6.9.0" />
+    <PackageReference Include="MudBlazor" Version="8.6.0" />
     <PackageReference Include="Otp.NET" Version="1.4.0" />
     <PackageReference Include="SQLite" Version="3.13.0" />
-    <PackageReference Include="Syncfusion.Blazor.FileManager" Version="26.1.35" />
-    <PackageReference Include="Syncfusion.Blazor.Grid" Version="26.1.35" />
-    <PackageReference Include="Syncfusion.Blazor.ImageEditor" Version="26.1.35" />
-    <PackageReference Include="Syncfusion.Blazor.SfPdfViewer" Version="26.1.35" />
-    <PackageReference Include="Syncfusion.Blazor.WordProcessor" Version="26.1.35" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.7" />
+    <PackageReference Include="Syncfusion.Blazor.FileManager" Version="28.1.33" />
+    <PackageReference Include="Syncfusion.Blazor.Grid" Version="28.1.33" />
+    <PackageReference Include="Syncfusion.Blazor.ImageEditor" Version="28.1.33" />
+    <PackageReference Include="Syncfusion.Blazor.SfPdfViewer" Version="28.1.33" />
+    <PackageReference Include="Syncfusion.Blazor.WordProcessor" Version="28.1.33" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\Forms\" />

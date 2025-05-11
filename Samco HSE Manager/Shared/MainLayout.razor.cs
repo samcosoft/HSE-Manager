@@ -81,13 +81,13 @@ public partial class MainLayout : IDisposable
     {
         Typography = new Typography
         {
-            Default = new Default { FontFamily = new[] { "IranSansX", "Tahoma", "Arial" } },
-            H1 = new H1 { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = 600 },
-            H2 = new H2 { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = 600 },
-            H3 = new H3 { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = 600 },
-            H4 = new H4 { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = 600 },
-            H5 = new H5 { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = 600 },
-            H6 = new H6 { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = 600 }
+            Default = new DefaultTypography { FontFamily = new[] { "IranSansX", "Tahoma", "Arial" } },
+            H1 = new H1Typography { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = "600" },
+            H2 = new H2Typography { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = "600" },
+            H3 = new H3Typography { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = "600" },
+            H4 = new H4Typography { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = "600" },
+            H5 = new H5Typography { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = "600" },
+            H6 = new H6Typography { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = "600" }
         }
     };
 

@@ -7,7 +7,7 @@ namespace Samco_HSE_Manager.Pages.Officer.PersonnelEdit;
 
 public partial class PersonnelIncentive
 {
-    [CascadingParameter] private MudDialogInstance IncentiveDialog { get; set; } = null!;
+    [CascadingParameter] private IMudDialogInstance IncentiveDialog { get; set; } = null!;
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
     [Parameter] public int PersonId { get; set; }

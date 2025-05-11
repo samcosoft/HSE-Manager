@@ -8,7 +8,7 @@ namespace Samco_HSE_Manager.Pages.Shared.Reports;
 
 public partial class NewReportModal
 {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
     public int SelFormId { get; set; }
     private Session Session1 { get; set; } = null!;
     private IEnumerable<HSEForm>? FormCollection { get; set; }

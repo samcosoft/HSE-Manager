@@ -8,7 +8,7 @@ namespace Samco_HSE_Manager.Pages.Medic.MedicationModals;
 public partial class MedicationDiscardModal
 {
     [CascadingParameter]
-    MudDialogInstance MudDialog { get; set; } = null!;
+    IMudDialogInstance MudDialog { get; set; } = null!;
 
     private Session Session1 { get; set; } = null!;
     private IEnumerable<Rig> Rigs { get; set; } = null!;

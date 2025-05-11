@@ -1441,7 +1441,7 @@ namespace Samco_HSE_Manager
                 path = Path.GetDirectoryName(path);
                 var tempPath = Path.Combine(Path.GetTempPath(), "temp.zip");
                 string fullPath;
-                if (names.IsNullOrEmpty() || names.Length == 0)
+                if (names.Length == 0)
                 {
                     fullPath = (contentRootPath + path);
                     fullPath = fullPath.Replace("../", "");

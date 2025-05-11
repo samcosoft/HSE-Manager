@@ -12,7 +12,7 @@ namespace Samco_HSE_Manager.Pages.Admin.FormModals
         [Inject] private IDataLayer DataLayer { get; set; } = null!;
         [Inject] private ISnackbar Snackbar { get; set; } = null!;
 
-        [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
+        [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = null!;
 
         [Parameter] public int SelFormId { get; set; }
         private Session Session1 { get; set; } = null!;

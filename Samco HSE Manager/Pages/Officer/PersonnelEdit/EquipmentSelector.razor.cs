@@ -10,7 +10,7 @@ namespace Samco_HSE_Manager.Pages.Officer.PersonnelEdit;
 
 public partial class EquipmentSelector : IDisposable
 {
-    [CascadingParameter] public MudDialogInstance MudDialogParent { get; set; } = null!;
+    [CascadingParameter] public IMudDialogInstance MudDialogParent { get; set; } = null!;
     [Parameter] public int? PersonId { get; set; }
     private Samco_HSE.HSEData.Personnel? SelPersonnel { get; set; }
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
