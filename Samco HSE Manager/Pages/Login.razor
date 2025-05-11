@@ -1,4 +1,5 @@
-﻿@using System.Security.Claims
+﻿@page "/login"
+@using System.Security.Claims
 @using System.ComponentModel.DataAnnotations
 @using DevExpress.Data.Filtering
 @using Samco_HSE.HSEData
@@ -71,13 +72,17 @@
     [CascadingParameter]
     private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
 
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string? ReturnUrl { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         _claimsPrincipal = (await AuthenticationStateTask).User;
 
         if (_claimsPrincipal.Identity is { IsAuthenticated: true })
         {
-            NavigationManager.NavigateTo("");
+            NavigationManager.NavigateTo(ReturnUrl ?? "", true);
         }
     }
 
@@ -116,8 +121,7 @@
             {
                 return;
             }
-
-            NavigationManager.NavigateTo("", true);
+            NavigationManager.NavigateTo(ReturnUrl ?? "", true);
         }
         else
         {

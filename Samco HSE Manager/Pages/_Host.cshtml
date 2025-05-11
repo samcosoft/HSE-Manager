@@ -55,8 +55,14 @@
     <script src="_content/BlazorAnimation/blazorAnimationInterop.js"></script>
     <script src="_framework/blazor.server.js"></script>
     <script type="text/javascript">
-        function redirect() {
-            setTimeout(function () { window.location.href = "login" }, 2000);
+         function redirectToLogin(returnUrl) {
+            var loginUrl = '';
+            if (returnUrl) {
+                loginUrl = '/login?ReturnUrl=' + encodeURIComponent(returnUrl);
+            } else {
+                loginUrl = '/login';
+            }
+            window.location.replace(loginUrl);
         }
     </script>
 </body>

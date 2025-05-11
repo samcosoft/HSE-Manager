@@ -1,5 +1,6 @@
 ﻿@using Samco_HSE.HSEData
 @using DevExpress.Data.Filtering
+@using Samco_HSE_Manager.Pages
 @inject IDataLayer DataLayer
 
 <CascadingAuthenticationState>
@@ -17,7 +18,8 @@
                     </MudCard>
                 </Authorizing>
                 <NotAuthorized>
-                    <MudAlert Variant="Variant.Filled" Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Right">با عرض پوزش، شما اجازه دسترسی به این صفحه را ندارید.</MudAlert>
+                    @*  <MudAlert Variant="Variant.Filled" Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Right">با عرض پوزش، شما اجازه دسترسی به این صفحه را ندارید.</MudAlert> *@
+                   <LoginRedirect />
                 </NotAuthorized>
             </AuthorizeRouteView>
         </Found>

@@ -67,7 +67,6 @@
     private async void LogOut_Click()
     {
         await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsLoggedOut();
-        NavigationManager.NavigateTo("/");
     }
 
     // private void LogIn_Click()

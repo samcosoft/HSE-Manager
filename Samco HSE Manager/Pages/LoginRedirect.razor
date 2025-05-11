@@ -1,7 +1,28 @@
-﻿@inject IJSRuntime Js
+﻿@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+
+<MudAlert Variant="Variant.Filled" Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Right">با عرض پوزش، شما اجازه دسترسی به این صفحه را ندارید.</MudAlert>
+
 @code {
-    protected override async Task OnInitializedAsync()
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await Js.InvokeVoidAsync("redirect");
+        var authState = await AuthenticationStateTask;
+        if (authState.User.Identity is null || !authState.User.Identity.IsAuthenticated)
+        {
+            var returnUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+            try
+            {
+                await Task.Delay(1000);
+                // NavigationManager.NavigateTo(string.IsNullOrWhiteSpace(returnUrl) ? "/login" : $"/login?ReturnUrl={returnUrl}");
+                await JsRuntime.InvokeVoidAsync("redirectToLogin", returnUrl);
+            }
+            catch (NavigationException e)
+            {
+                Console.WriteLine(e);
+            }
+        }
     }
 }
