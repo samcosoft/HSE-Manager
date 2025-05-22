@@ -58,9 +58,9 @@
          function redirectToLogin(returnUrl) {
             var loginUrl = '';
             if (returnUrl) {
-                loginUrl = '/login?ReturnUrl=' + encodeURIComponent(returnUrl);
+                loginUrl = './login?ReturnUrl=' + encodeURIComponent(returnUrl);
             } else {
-                loginUrl = '/login';
+                loginUrl = './login';
             }
             window.location.replace(loginUrl);
         }

@@ -41,6 +41,7 @@ builder.Services.AddMudServices(config =>
     config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
 });
 //builder.Services.AddDevExpressBlazorReporting();
+
 builder.Services.AddScoped(_ =>
 {
     var configurator = new DashboardConfigurator();
@@ -60,6 +61,7 @@ builder.Services.AddScoped(_ =>
     configurator.SetConnectionStringsProvider(new DashboardConnectionStringsProvider(builder.Configuration));
     return configurator;
 });
+
 builder.Services.AddScoped<SfDialogService>();
 builder.Services.AddSyncfusionBlazor(options =>
 {
@@ -74,6 +76,7 @@ builder.WebHost.UseStaticWebAssets();
 
 var app = builder.Build();
 
+//app.UsePathBase("/hse");
 //Register Syncfusion license
 //Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MTMxM0AzMjM1MkUzMTJFMzlKK2QyalU0d1EyVUgxN0FFdUVENGdDYmY4UWEyZ2poeEhoSWlUcmFSd2JjPQ==");
 

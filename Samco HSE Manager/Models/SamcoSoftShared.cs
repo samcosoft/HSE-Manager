@@ -165,9 +165,6 @@ public static class SamcoSoftShared
             .OnWindows(windows => windows
                 .AddProcessorId()
                 .AddMotherboardSerialNumber())
-            .OnLinux(linux => linux
-                .AddMotherboardSerialNumber()
-                .AddSystemDriveSerialNumber())
             .ToString();
     }
     #endregion
