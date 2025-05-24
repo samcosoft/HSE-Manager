@@ -3,8 +3,12 @@ using DevExpress.Xpo;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.Extensions.Localization;
+using Microsoft.JSInterop;
 using MudBlazor;
 using Samco_HSE.HSEData;
+using Samco_HSE_Manager.Locales;
+using System.Globalization;
 using System.Reflection;
 
 namespace Samco_HSE_Manager.Shared;
@@ -12,20 +16,21 @@ namespace Samco_HSE_Manager.Shared;
 public partial class MainLayout : IDisposable
 {
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
+    [Inject] private IStringLocalizer<Resource> L { get; set; } = null!;
     [Inject] private IHostEnvironment HostEnvironment { get; set; } = null!;
     [Inject] private IConfiguration Configuration { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
+    [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
 
+    private bool IsRightToLeft { get; set; }
     private bool IsSidebarExpanded { get; set; } = true;
-
     private string DisplayProfile => "align-self: center; min-height: 170px; display:" + (IsSidebarExpanded ? "block" : "none");
 
     private bool _isValid;
     protected override async Task OnInitializedAsync()
     {
         var session1 = new Session(DataLayer);
-        //SamcoSoftShared.CurrentUser = new User(session1);
         try
         {
             var authStat = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -48,11 +53,11 @@ public partial class MainLayout : IDisposable
             _isDarkMode = await _mudThemeProvider.GetSystemPreference();
             SetDevexpressTheme();
 
-            _location = SamcoSoftShared.CurrentUser?.ActiveRig?.Name;
+            _location = SamcoSoftShared.CurrentUser.ActiveRig?.Name;
             // _avatarSrc = Path.Combine(HostEnvironment.WebRootPath, "upload", "profile", $"{SamcoSoftShared.CurrentUser?.Oid.ToString() ?? string.Empty}.png");
-            _avatarSrc = SamcoSoftShared.CurrentUser?.PersonnelName?[..1];
-            _userName = SamcoSoftShared.CurrentUser?.PersonnelName ?? "مهمان";
-            _userRole =SamcoSoftShared.GetPersianRoleName(SamcoSoftShared.CurrentUserRole);
+            _avatarSrc = SamcoSoftShared.CurrentUser.PersonnelName?[..1];
+            _userName = SamcoSoftShared.CurrentUser.PersonnelName ?? L["GuestText"];
+            _userRole = SamcoSoftShared.GetRoleName(SamcoSoftShared.CurrentUserRole);
         }
         catch (Exception)
         {
@@ -69,6 +74,44 @@ public partial class MainLayout : IDisposable
         {
             NavigationManager.NavigateTo("personnelHome");
         }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender)
+        {
+            var culture = CultureInfo.CurrentCulture.Name;
+            SetLanguage(culture);
+            switch (culture)
+            {
+                case "fa-IR":
+                    IsRightToLeft = true;
+                    //Set right to left page direction
+                    SetDirection("rtl");
+                    break;
+                default:
+                    IsRightToLeft = false;
+                    SetDirection("ltr");
+                    break;
+            }
+        }
+    }
+
+    private void SetLanguage(string cultureName)
+    {
+        if (JsRuntime is IJSInProcessRuntime sr)
+            sr.InvokeVoid("document.body.setAttribute", "lang", cultureName);
+        else
+            JsRuntime.InvokeVoidAsync("document.body.setAttribute", "lang", cultureName);
+    }
+
+    private void SetDirection(string direction)
+    {
+        if (JsRuntime is IJSInProcessRuntime sr)
+            sr.InvokeVoid("changeDirection", direction);
+        else
+            JsRuntime.InvokeVoidAsync("changeDirection", direction);
     }
 
     #region Theme

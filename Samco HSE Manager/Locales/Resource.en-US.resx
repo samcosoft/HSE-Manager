@@ -1,0 +1,324 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SamcoDateSelector.Gregorian" xml:space="preserve">
+    <value>Gregorian Calendar</value>
+  </data>
+  <data name="SamcoDateSelector.Shamsi" xml:space="preserve">
+    <value>Shamsi Calendar</value>
+  </data>
+  <data name="SamcoPersonnelSelector.Name" xml:space="preserve">
+    <value>Fullname</value>
+  </data>
+  <data name="SamcoPersonnelSelector.Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="SamcoPersonnelSelector.Location" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="SamcosoftShared.NoInternet" xml:space="preserve">
+    <value>There is no connection with the Internet.</value>
+  </data>
+  <data name="SamcoSoftShared_ActivateLicense_Activated" xml:space="preserve">
+    <value>The activation was successful.</value>
+  </data>
+  <data name="SamcoSoftShared_ActivateLicense_NoSuccess" xml:space="preserve">
+    <value>Activation was unsuccessful.</value>
+  </data>
+  <data name="SamcoSoftShared_ActivateLicense_SerialWrong" xml:space="preserve">
+    <value>The serial number is wrong.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_NotChecked" xml:space="preserve">
+    <value>The permit has not been reviewed.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_SerialInvalid" xml:space="preserve">
+    <value>The series is invalid.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_SignatureInvalid" xml:space="preserve">
+    <value>The signing of the permission is invalid.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_MachineCodeInvalid" xml:space="preserve">
+    <value>The device code is invalid.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_Expired" xml:space="preserve">
+    <value>The license has been canceled.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_ActivationFailed" xml:space="preserve">
+    <value>Activation was unsuccessful.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_UsageDaysExceeded" xml:space="preserve">
+    <value>The number of days of use is over.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_UniqueUsageDaysExceeded" xml:space="preserve">
+    <value>The number of days of use is over.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_ExecutionsExceeded" xml:space="preserve">
+    <value>The number of times the run is over.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_EvaluationTampered" xml:space="preserve">
+    <value>The program license has been manipulated.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_GenericFailure" xml:space="preserve">
+    <value>Error in software lock system.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_RunTimeExceeded" xml:space="preserve">
+    <value>The running time is over.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_ServiceNotificationFailed" xml:space="preserve">
+    <value>Error communicating with central server.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_Deactivated" xml:space="preserve">
+    <value>The system has been disabled.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_DebuggerDetected" xml:space="preserve">
+    <value>Identify the troubleshooting system.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_DomainInvalid" xml:space="preserve">
+    <value>The domain name is unauthorized.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_DateRollbackDetected" xml:space="preserve">
+    <value>The system date has been manipulated.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_LocalTimeInvalid" xml:space="preserve">
+    <value>The system clock is wrong.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_CryptoLicensingModuleTampered" xml:space="preserve">
+    <value>Crypto's permission module has been manipulated.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_RemoteSessionDetected" xml:space="preserve">
+    <value>A remote meeting was diagnosed.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_LicenseServerMachineCodeInvalid" xml:space="preserve">
+    <value>The License Server Code Code is Invalid.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_EvaluationDataLoadSaveFailed" xml:space="preserve">
+    <value>Loading/storing evaluation data failed.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_InValid" xml:space="preserve">
+    <value>The application license is not valid.</value>
+  </data>
+  <data name="SamcoSoftShared_LicenseStatusMessage_EvaluationExpired" xml:space="preserve">
+    <value>The system test time is over.</value>
+  </data>
+  <data name="SamcoSoftShared_ValidEmailChecker_RateLimitExceeded" xml:space="preserve">
+    <value>The enrollment capacity is over.</value>
+  </data>
+  <data name="SamcoSoftShared_ValidEmailChecker_DisposableEmail" xml:space="preserve">
+    <value>The email entered is a disposable type and its use is contrary to system rules.</value>
+  </data>
+  <data name="AdminText" xml:space="preserve">
+    <value>Administrator</value>
+  </data>
+  <data name="OfficerText" xml:space="preserve">
+    <value>Safety Officer</value>
+  </data>
+  <data name="SupervisorText" xml:space="preserve">
+    <value>Safety Supervisor</value>
+  </data>
+  <data name="MedicText" xml:space="preserve">
+    <value>Medic</value>
+  </data>
+  <data name="TeacherText" xml:space="preserve">
+    <value>Teacher</value>
+  </data>
+  <data name="DisabledText" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="OwnerText" xml:space="preserve">
+    <value>Owner</value>
+  </data>
+  <data name="PersonnelText" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="SamcoSoftShared_GetPersonnelStatus_Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="SamcoSoftShared_GetPersonnelStatus_Inactive" xml:space="preserve">
+    <value>Termination of cooperation</value>
+  </data>
+  <data name="SamcoSoftShared_GetPersonnelStatus_Transferred" xml:space="preserve">
+    <value>Transfer to other companies</value>
+  </data>
+  <data name="GuestText" xml:space="preserve">
+    <value>Guest</value>
+  </data>
+  <data name="ApplicationTitle" xml:space="preserve">
+    <value>Health, Safety, Environment Management System</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="NavMenu_Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="NavMenu_Management" xml:space="preserve">
+    <value>Management</value>
+  </data>
+  <data name="NavMenu_Project" xml:space="preserve">
+    <value>Project Management and Operations</value>
+  </data>
+  <data name="NavMenu_Users" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="NavMenu_DashboardSettings" xml:space="preserve">
+    <value>Dashboard settings</value>
+  </data>
+  <data name="NavMenu_ReportSettings" xml:space="preserve">
+    <value>Report settings</value>
+  </data>
+  <data name="NavMenu_FormSettings" xml:space="preserve">
+    <value>Form settings</value>
+  </data>
+  <data name="NavMenu_Personnel" xml:space="preserve">
+    <value>Employees</value>
+  </data>
+  <data name="NavMenu_PersonalProtectiveEquipment" xml:space="preserve">
+    <value>Personal Protection Equipment</value>
+  </data>
+  <data name="NavMenu_PropertyEquipment" xml:space="preserve">
+    <value>Civilian equipment</value>
+  </data>
+  <data name="NavMenu_Vehicles" xml:space="preserve">
+    <value>Machinery</value>
+  </data>
+  <data name="NavMenu_Information" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="NavMenu_Reports" xml:space="preserve">
+    <value>Reports</value>
+  </data>
+  <data name="NavMenu_SafeWorkPermit" xml:space="preserve">
+    <value>Secure work permit</value>
+  </data>
+  <data name="NavMenu_STOPCards" xml:space="preserve">
+    <value>STOP Cards</value>
+  </data>
+  <data name="NavMenu_SendReport" xml:space="preserve">
+    <value>Submit report</value>
+  </data>
+  <data name="NavMenu_Clinic" xml:space="preserve">
+    <value>Clinic</value>
+  </data>
+  <data name="NavMenu_VisitPatient" xml:space="preserve">
+    <value>Patient visit</value>
+  </data>
+  <data name="NavMenu_ManageMedications" xml:space="preserve">
+    <value>Medication Management</value>
+  </data>
+</root>

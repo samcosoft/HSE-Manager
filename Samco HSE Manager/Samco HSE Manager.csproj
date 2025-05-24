@@ -70,6 +70,7 @@
 		<PackageReference Include="DeviceId" Version="6.9.0" />
 		<PackageReference Include="DeviceId.Windows.Wmi" Version="6.9.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.16" />
+		<PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.16" />
 		<PackageReference Include="MudBlazor" Version="8.6.0" />
 		<PackageReference Include="Otp.NET" Version="1.4.0" />
 		<PackageReference Include="SQLite" Version="3.13.0" />
@@ -98,6 +99,19 @@
 		<Reference Include="LogicNP.CryptoLicensing.NetCore">
 			<HintPath>..\..\..\..\..\..\Program Files (x86)\LogicNP Software\CryptoLicensing For .Net 2020\LogicNP.CryptoLicensing.NetCore.dll</HintPath>
 		</Reference>
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="Locales\Resource.en-US.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resource.en-US.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Update="Locales\Resource.en-US.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resource.en-US.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="HSEData.xpo.diagram">

@@ -1,0 +1,73 @@
+﻿@using System.Globalization
+@inject NavigationManager NavigationManager
+
+@* <SfComboBox @bind-Value="Culture" TValue="string" TItem="CultureList" DataSource="_cultureList"
+            Width="130px">
+    <ComboBoxFieldSettings Value="Value" Text="Text" />
+</SfComboBox> *@
+<MudSelect @bind-Value="Culture" Variant="Variant.Outlined" FitContent="true" Margin="Margin.Dense">
+    @foreach (var culture in _cultureList)
+    {
+        <MudSelectItem Value="@culture.Value">
+            <img src="@culture.Flag" height="16" class="ms-1" /> @culture.Text
+        </MudSelectItem>
+    }
+</MudSelect>
+
+@code {
+    [Parameter]
+    public string? Culture
+    {
+        get => _culture;
+        set
+        {
+            if (string.IsNullOrEmpty(value) || value == _culture) return;
+            _culture = value;
+            CultureChanged.InvokeAsync(value);
+            var redirect = new Uri(NavigationManager.Uri).GetComponents(UriComponents.PathAndQuery | UriComponents.Fragment, UriFormat.UriEscaped);
+
+            var query = $"?culture={Uri.EscapeDataString(value)}&redirectUri={redirect}";
+
+            NavigationManager.NavigateTo("Culture/SetCulture" + query, forceLoad: true);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string?> CultureChanged { get; set; }
+
+    private string? _culture;
+
+    private readonly List<CultureList> _cultureList =
+    [
+        new("English", "en-US", "flags/Flag_of_the_United_Kingdom.svg"),
+        new("Deutsch", "de-DE", "flags/Flag_of_Germany.svg"),
+        new("فارسی", "fa-IR", "flags/Flag_of_Iran.svg")
+    ];
+
+    protected override void OnInitialized()
+    {
+        _culture = CultureInfo.CurrentCulture.Name;
+    }
+
+
+    private class CultureList(string text, string value, string flag)
+    {
+
+        public string Text { get; set; } = text;
+        public string Value { get; set; } = value;
+        public string Flag { get; set; } = flag;
+    }
+
+    // private void CultureIsChanged(string newCulture)
+    // {
+    //     Culture = newCulture;
+    //     CultureChanged.InvokeAsync(newCulture);
+
+    //     var redirect = new Uri(NavigationManager.Uri).GetComponents(UriComponents.PathAndQuery | UriComponents.Fragment, UriFormat.UriEscaped);
+
+    //     var query = $"?culture={Uri.EscapeDataString(newCulture)}&redirectUri={redirect}";
+
+    //     NavigationManager.NavigateTo("Culture/SetCulture" + query, forceLoad: true);
+    // }
+
+}

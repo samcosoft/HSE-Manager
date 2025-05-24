@@ -9,6 +9,7 @@ using Samco_HSE_Manager;
 using Samco_HSE_Manager.Authentication;
 using Syncfusion.Blazor;
 using Syncfusion.Blazor.Popups;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,13 +51,6 @@ builder.Services.AddScoped(_ =>
         new DashboardFileStorage(fileProvider.GetFileInfo("Data/Dashboards").PhysicalPath));
 
     var dataSourceStorage = new DataSourceInMemoryStorage();
-
-    //var xpoDataSource = new DashboardXpoDataSource("XPO Data Source");
-    //xpoDataSource.ConnectionStringName = builder.Environment.IsDevelopment()
-    //    ? "LocalDatabase" : "MainDatabase";
-    //xpoDataSource.SetEntityType(typeof(Rig));
-    //dataSourceStorage.RegisterDataSource("xpoDataSource", xpoDataSource.SaveToXml());
-
     configurator.SetDataSourceStorage(dataSourceStorage);
     configurator.SetConnectionStringsProvider(new DashboardConnectionStringsProvider(builder.Configuration));
     return configurator;
@@ -71,13 +65,13 @@ builder.Services.AddSyncfusionBlazor(options =>
 });
 SamcoSoftShared.Lic = SamcoSoftShared.CreateLicense(Path.Combine(builder.Environment.WebRootPath, "Samco_HSE.lic"));
 //builder.Services.AddScoped<ReportStorageWebExtension, CustomReportStorageWebExtension>();
+builder.Services.AddLocalization(); 
+
 builder.WebHost.UseWebRoot("wwwroot");
 builder.WebHost.UseStaticWebAssets();
 
 var app = builder.Build();
 
-//app.UsePathBase("/hse");
-//Register Syncfusion license
 //Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MTMxM0AzMjM1MkUzMTJFMzlKK2QyalU0d1EyVUgxN0FFdUVENGdDYmY4UWEyZ2poeEhoSWlUcmFSd2JjPQ==");
 
 // Configure the HTTP request pipeline.
@@ -92,9 +86,7 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseRouting();
-app.UseRequestLocalization(new RequestLocalizationOptions()
-    .AddSupportedCultures("en-US")
-    .AddSupportedUICultures("en-US"));
+app.UseRequestLocalization(options => options.AddSupportedCultures("en-US", "de-DE", "fa-IR").AddSupportedUICultures("en-US", "de-DE", "fa-IR").SetDefaultCulture("en"));
 
 //app.UseDevExpressBlazorReporting();
 app.MapDashboardRoute("api/dashboard", "DefaultDashboard");
@@ -105,6 +97,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
+app.UseAntiforgery();
+
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 app.MapControllers();

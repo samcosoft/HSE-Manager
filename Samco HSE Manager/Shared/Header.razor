@@ -1,19 +1,21 @@
 ﻿@using Samco_HSE_Manager.Authentication
+@inject IStringLocalizer<Resource> L
 
 <MudAppBar Color="Color.Dark" Fixed="true" Elevation="3">
-    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="OnToggleClick"/>
-    <MudSpacer/>
-    <img style="margin-right: auto" src="images/logo.svg" alt="logo" height="40">
+    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="OnToggleClick" />
+    <MudSpacer />
+    <img class="ms-auto" src="images/logo.svg" alt="logo" height="40">
     <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
-        <MudText Typo="Typo.h6">سامانه مدیریت ایمنی، بهداشت و محیط زیست</MudText>
+        <MudText Typo="Typo.h6">@L["ApplicationTitle"]</MudText>
     </MudHidden>
-    <MudSpacer/>
+    <MudSpacer />
+    <CulturePicker/>
     <MudToggleIconButton @bind-Toggled="@DarkMode" Variant="Variant.Filled" Class="mx-3"
                          Icon="@Icons.Material.Filled.DarkMode" ToggledIcon="@Icons.Material.Filled.LightMode"
-                         Color="Color.Secondary" ToggledColor="Color.Secondary"/>
+                         Color="Color.Secondary" ToggledColor="Color.Secondary" />
     <AuthorizeView>
         <Authorized>
-            <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="LogOut_Click">خروج از سیستم</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="LogOut_Click">@L["LogOut"]</MudButton>
         </Authorized>
         @* <NotAuthorized>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LogIn_Click">ورود به سیستم</MudButton>
@@ -22,10 +24,7 @@
 </MudAppBar>
 
 @code {
-
-    [Parameter]
-    public bool ToggleOn { get; set; }
-
+    
     [Parameter]
     public bool DarkMode
     {
@@ -37,6 +36,9 @@
             DarkModeChanged.InvokeAsync(_darkMode);
         }
     }
+
+    [Parameter]
+    public bool ToggleOn { get; set; }
 
     [Parameter]
     public EventCallback<bool> ToggleOnChanged { get; set; }

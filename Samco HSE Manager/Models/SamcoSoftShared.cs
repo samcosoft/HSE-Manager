@@ -1,14 +1,15 @@
-﻿using System.Reflection;
-using System.Security.Cryptography;
-using System.Text.RegularExpressions;
-using DevExpress.Xpo.Metadata;
+﻿using DevExpress.Xpo.Metadata;
 using DeviceId;
 using LogicNP.CryptoLicensing;
 using Newtonsoft.Json.Linq;
 using OtpNet;
 using Samco_HSE.HSEData;
+using Samco_HSE_Manager.Locales;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Popups;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 namespace Samco_HSE_Manager;
 
@@ -64,7 +65,8 @@ public static class SamcoSoftShared
     {
         if (InternetCheck() == false)
         {
-            returnMsg = "ارتباط با اینترنت برقرار نیست.";
+            returnMsg = Resource.ResourceManager.GetString("SamcosoftShared.NoInternet")!;
+            //returnMsg = "ارتباط با اینترنت برقرار نیست.";
             return false;
         }
 
@@ -72,87 +74,85 @@ public static class SamcoSoftShared
         switch (res)
         {
             case SerialValidationResult.Success:
-                returnMsg = "فعالسازی موفق بود.";
+                returnMsg = Resource.ResourceManager.GetString("SamcoSoftShared_ActivateLicense_Activated")!;
                 Lic.Save();
                 return Lic.Status == LicenseStatus.Valid;
             case SerialValidationResult.Failed:
-                returnMsg = "فعالسازی ناموفق بود.";
+                returnMsg = Resource.ResourceManager.GetString("SamcoSoftShared_ActivateLicense_NoSuccess")!;
                 return false;
             case SerialValidationResult.NotASerial:
-                returnMsg = "شماره سریال اشتباه است.";
+                returnMsg = Resource.ResourceManager.GetString("SamcoSoftShared_ActivateLicense_SerialWrong")!;
                 return false;
             default:
-                returnMsg = "شماره سریال اشتباه است.";
+                returnMsg = Resource.ResourceManager.GetString("SamcoSoftShared_ActivateLicense_SerialWrong")!;
                 return false;
         }
     }
 
-    public static string LicenseStatusMessage(LicenseStatus status)
+    public static string? LicenseStatusMessage(LicenseStatus status)
     {
         switch (status)
         {
             case LicenseStatus.Valid:
                 break;
             case LicenseStatus.NotValidated:
-                return "مجوز بررسی نشده است.";
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_NotChecked");
             case LicenseStatus.SerialCodeInvalid:
-                return "سریال نامعتبر است.";
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_SerialInvalid");
             case LicenseStatus.SignatureInvalid:
-                return "امضای مجوز نامعتبر است.";
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_SignatureInvalid");
             case LicenseStatus.MachineCodeInvalid:
-                return "کد دستگاه نامعتبر است.";
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_MachineCodeInvalid");
             case LicenseStatus.Expired:
-                return "مجوز باطل شده است.";
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_Expired");
             case LicenseStatus.UsageModeInvalid:
                 break;
             case LicenseStatus.ActivationFailed:
-                return "فعالسازی مجوز ناموفق بود.";
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_ActivationFailed");
             case LicenseStatus.UsageDaysExceeded:
-                return "تعداد روزهای استفاده پایان یافته است.";
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_UsageDaysExceeded");
             case LicenseStatus.UniqueUsageDaysExceeded:
-                return "تعداد روزهای استفاده پایان یافته است.";
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_UniqueUsageDaysExceeded");
             case LicenseStatus.ExecutionsExceeded:
-                return "تعداد دفعات اجرا پایان یافته است.";
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_ExecutionsExceeded");
             case LicenseStatus.EvaluationlTampered:
-                return "مجوز برنامه دستکاری شده است.";
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_EvaluationTampered");
             case LicenseStatus.GenericFailure:
-                return "خطا در سیستم قفل نرم افزار.";
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_GenericFailure");
             case LicenseStatus.InstancesExceeded:
                 break;
             case LicenseStatus.RunTimeExceeded:
-                return "مدت زمان اجرای برنامه پایان یافته است.";
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_RunTimeExceeded");
             case LicenseStatus.CumulativeRunTimeExceeded:
                 break;
             case LicenseStatus.ServiceNotificationFailed:
-                return "خطا در برقراری ارتباط با سرور مرکزی.";
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_ServiceNotificationFailed");
             case LicenseStatus.HostAssemblyDifferent:
                 break;
             case LicenseStatus.StrongNameVerificationFailed:
                 break;
             case LicenseStatus.Deactivated:
-                return "سیستم غیرفعال شده است.";
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_Deactivated");
             case LicenseStatus.DebuggerDetected:
-                return "شناسایی سیستم عیب یابی.";
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_DebuggerDetected");
             case LicenseStatus.DomainInvalid:
-                return "نام دامنه غیر مجاز است.";
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_DomainInvalid");
             case LicenseStatus.DateRollbackDetected:
-                return "تاریخ سیستم دستکاری شده است.";
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_DateRollbackDetected");
             case LicenseStatus.LocalTimeInvalid:
-                return "ساعت سیستم اشتباه است.";
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_LocalTimeInvalid");
             case LicenseStatus.CryptoLicensingModuleTampered:
-                break;
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_CryptoLicensingModuleTampered");
             case LicenseStatus.RemoteSessionDetected:
-                break;
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_RemoteSessionDetected");
             case LicenseStatus.LicenseServerMachineCodeInvalid:
-                break;
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_LicenseServerMachineCodeInvalid");
             case LicenseStatus.EvaluationDataLoadSaveFailed:
-                break;
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_EvaluationDataLoadSaveFailed");
             case LicenseStatus.InValid:
-                return "مجوز برنامه معتبر نیست.";
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_InValid");
             case LicenseStatus.EvaluationExpired:
-                return "زمان آزمایش سیستم به پایان رسیده است.";
-            default:
-                return string.Empty;
+                return Resource.ResourceManager.GetString("SamcoSoftShared_LicenseStatusMessage_EvaluationExpired");
         }
         return string.Empty;
     }
@@ -210,7 +210,7 @@ public static class SamcoSoftShared
         return Regex.Match(emailAddress, regExPattern).Success;
     }
 
-    public static bool ValidEmailChecker(string emailAddress, out string message)
+    public static bool ValidEmailChecker(string emailAddress, out string? message)
     {
         message = string.Empty;
         var netClient = new HttpClient();
@@ -222,17 +222,17 @@ public static class SamcoSoftShared
             case 200:
                 if (emailRes.disposable)
                 {
-                    message = "ایمیل وارد شده از نوع یکبار مصرف است و استفاده از آن خلاف قوانین سیستم است.";
+                    message = Resource.ResourceManager.GetString("SamcoSoftShared_ValidEmailChecker_DisposableEmail");
                     return false;
                 }
 
                 return true;
             case 400:
                 message = "آدرس ایمیل معتبر نیست.";
-                return false;
+                break;
             case 429:
-                message = "ظرفیت ثبت نام به پایان رسیده است.";
-                return false;
+                message = Resource.ResourceManager.GetString("SamcoSoftShared_ValidEmailChecker_RateLimitExceeded");
+                break;
         }
 
         return false;
@@ -253,18 +253,13 @@ public static class SamcoSoftShared
 
     public static readonly Dictionary<string, string> Roles = new()
     {
-        { "Admin", "مدیر ایمنی" },
-        { "Officer", "افسر ایمنی" },
-        { "Supervisor", "ناظر ایمنی" },
-        { "Medic", "پزشک" },
-        { "Teacher", "مدرس ایمنی" },
-        { "Disabled", "غیر فعال" }
+        { "Admin", Resource.ResourceManager.GetString("AdminText")!},
+        { "Officer", Resource.ResourceManager.GetString("OfficerText")! },
+        { "Supervisor", Resource.ResourceManager.GetString("SupervisorText")! },
+        { "Medic", Resource.ResourceManager.GetString("MedicText")! },
+        { "Teacher", Resource.ResourceManager.GetString("TeacherText")! },
+        { "Disabled", Resource.ResourceManager.GetString("DisabledText")! }
     };
-
-    public static string GetPersianRole(string englishRole)
-    {
-        return Roles[englishRole];
-    }
 
     #endregion
 
@@ -281,18 +276,18 @@ public static class SamcoSoftShared
         Disabled
     }
 
-    public static string GetPersianRoleName(SiteRoles roles)
+    public static string GetRoleName(SiteRoles roles)
     {
         return roles switch
         {
-            SiteRoles.Owner => "مدیر سیستم",
-            SiteRoles.Admin => "مدیر ایمنی",
-            SiteRoles.Supervisor => "ناظر ایمنی",
-            SiteRoles.Officer => "افسر ایمنی",
-            SiteRoles.Medic => "پزشک",
-            SiteRoles.Teacher => "مدرس ایمنی",
-            SiteRoles.Personnel => "کارمند",
-            SiteRoles.Disabled => "کاربر غیر فعال",
+            SiteRoles.Owner => Resource.ResourceManager.GetString("OwnerText")!,
+            SiteRoles.Admin => Resource.ResourceManager.GetString("AdminText")!,
+            SiteRoles.Supervisor => Resource.ResourceManager.GetString("SupervisorText")!,
+            SiteRoles.Officer => Resource.ResourceManager.GetString("OfficerText")!,
+            SiteRoles.Medic => Resource.ResourceManager.GetString("MedicText")!,
+            SiteRoles.Teacher => Resource.ResourceManager.GetString("TeacherText")!,
+            SiteRoles.Personnel => Resource.ResourceManager.GetString("PersonnelText")!,
+            SiteRoles.Disabled => Resource.ResourceManager.GetString("DisabledText")!,
             _ => string.Empty
         };
     }
@@ -308,18 +303,12 @@ public static class SamcoSoftShared
     {
         return status switch
         {
-            PersonnelStatus.Active => "فعال",
-            PersonnelStatus.Inactive => "خاتمه همکاری",
-            PersonnelStatus.Transferred => "انتقال به سایر شرکت‌ها",
+            PersonnelStatus.Active => Resource.ResourceManager.GetString("SamcoSoftShared_GetPersonnelStatus_Active")!,
+            PersonnelStatus.Inactive => Resource.ResourceManager.GetString("SamcoSoftShared_GetPersonnelStatus_Inactive")!,
+            PersonnelStatus.Transferred => Resource.ResourceManager.GetString("SamcoSoftShared_GetPersonnelStatus_Transferred")!,
             _ => string.Empty
         };
     }
-
-    public static readonly Dictionary<string, bool> ComboboxBoolean = new()
-    {
-        { "بله", true },
-        { "خیر", false }
-    };
 
     public static readonly DialogSettings GeneralGridEditOption = new()
     {
@@ -369,43 +358,6 @@ public static class SamcoSoftShared
         }
     }
 
-    #endregion
-
-    #region GridCustomization
-    // public static void CustomizeSheet(GridExportCustomizeSheetEventArgs e)
-    // {
-    //     e.Sheet.ViewOptions.RightToLeft = true;
-    // }
-    // public static void CustomizeCell(GridExportCustomizeCellEventArgs e)
-    // {
-    //     e.Formatting.Font = new XlCellFont
-    //     {
-    //         Name = "Vazir",
-    //         Size = 14
-    //     };
-    //     e.Handled = true;
-    // }
-    // public static void CustomizeFooter(GridExportCustomizeSheetHeaderFooterEventArgs e)
-    // {
-    //     e.ExportContext.AddRow();
-    //
-    //     // Create a new row.
-    //     var firstRow = new CellObject
-    //     {
-    //         Value = "Powered by Samco HSE Manager"
-    //     };
-    //     var rowFormat = new XlFormattingObject
-    //     {
-    //         Font = new XlCellFont
-    //         {
-    //             Name = "Vazir",
-    //             Size = 12,
-    //             Bold = true
-    //         }
-    //     };
-    //     firstRow.Formatting = rowFormat;
-    //     e.ExportContext.AddRow(new[] { firstRow });
-    // }
     #endregion
 
     #region Encryption

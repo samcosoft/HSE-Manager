@@ -4,11 +4,11 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <!DOCTYPE html>
-<html lang="fa-IR" dir="rtl">
+<html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy"
+    @* <meta http-equiv="Content-Security-Policy"
           content="base-uri 'self';
     default-src 'self';
     img-src data: https: http:;
@@ -18,7 +18,7 @@
     font-src 'self' data:;
     worker-src 'self' blob:;
     frame-src 'self' blob:;
-    upgrade-insecure-requests;">
+    upgrade-insecure-requests;"> *@
     <base href="~/" />
 
     <link href="fontawesome/css/all.min.css" rel="stylesheet" />
@@ -63,6 +63,11 @@
                 loginUrl = './login';
             }
             window.location.replace(loginUrl);
+        }
+
+        function changeDirection(dir) {
+            var mainPage = document.getElementById('mainPage');
+            mainPage.setAttribute('dir', dir);
         }
     </script>
 </body>

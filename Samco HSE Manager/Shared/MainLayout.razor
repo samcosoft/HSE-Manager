@@ -10,8 +10,8 @@
     }
 </HeadContent>
 
-<div class="page">
-    <MudRTLProvider RightToLeft="true">
+<div id="mainPage" class="page">
+    <MudRTLProvider RightToLeft="@IsRightToLeft">
         <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_samcoTheme" />
         <MudPopoverProvider />
         <Syncfusion.Blazor.Popups.SfDialogProvider />

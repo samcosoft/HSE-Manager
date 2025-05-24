@@ -1,44 +1,46 @@
-﻿<MudNavMenu Style="min-height:1000px; height: auto">
-    <MudNavLink Href="home" Icon="@Icons.Material.Filled.Dashboard">داشبورد</MudNavLink>
+﻿@inject IStringLocalizer<Resource> L
+
+<MudNavMenu Style="min-height:1000px; height: auto">
+    <MudNavLink Href="home" Icon="@Icons.Material.Filled.Dashboard">@L["NavMenu_Dashboard"]</MudNavLink>
     <AuthorizeView Roles="Admin,Owner">
         <Authorized>
-            <MudNavGroup Title="مدیریت" Icon="@Icons.Material.Filled.ManageAccounts" Expanded="true">
-                <MudNavLink Href="projects" Icon="fas fa-oil-well">مدیریت پروژه و عملیات</MudNavLink>
-                <MudNavLink Href="users" Icon="fas fa-user">کاربران</MudNavLink>
-                <MudNavLink Href="dashboard" Icon="fas fa-gauge">تنظیمات داشبوردها</MudNavLink>
-                <MudNavLink Href="reportdesigner" Icon="fa-solid fa-file-chart-pie">تنظیمات گزارش‌ها</MudNavLink>
-                <MudNavLink Href="formdesign" Icon="fa-solid fa-folder">تنظیمات فرم‌ها</MudNavLink>
+            <MudNavGroup Title="@L["NavMenu_Management"]" Icon="@Icons.Material.Filled.ManageAccounts" Expanded="true">
+                <MudNavLink Href="projects" Icon="fas fa-oil-well">@L["NavMenu_Project"]</MudNavLink>
+                <MudNavLink Href="users" Icon="fas fa-user">@L["NavMenu_Users"]</MudNavLink>
+                <MudNavLink Href="dashboard" Icon="fas fa-gauge">@L["NavMenu_DashboardSettings"]</MudNavLink>
+                <MudNavLink Href="reportdesigner" Icon="fa-solid fa-file-chart-pie">@L["NavMenu_ReportSettings"]</MudNavLink>
+                <MudNavLink Href="formdesign" Icon="fa-solid fa-folder">@L["NavMenu_FormSettings"]</MudNavLink>
             </MudNavGroup>
         </Authorized>
     </AuthorizeView>
     <AuthorizeView Roles="Owner,Admin,Supervisor,Officer">
         <Authorized>
-            <MudNavGroup Title="اطلاعات" Icon="@Icons.Material.Filled.Info">
-                <MudNavLink Href="personnel" Icon="fas fa-people-group">کارکنان</MudNavLink>
-                <MudNavLink Href="equipment" Icon="fas fa-helmet-safety">تجهیزات حفاظت فردی</MudNavLink>
-                <MudNavLink Href="asset" Icon="fas fa-truck-ramp-box">تجهیزات ملکی</MudNavLink>
-                <MudNavLink Href="vehicle" Icon="fas fa-truck-front">ماشین آلات</MudNavLink>
+            <MudNavGroup Title="@L["NavMenu_Information"]" Icon="@Icons.Material.Filled.Info">
+                <MudNavLink Href="personnel" Icon="fas fa-people-group">@L["NavMenu_Personnel"]</MudNavLink>
+                <MudNavLink Href="equipment" Icon="fas fa-helmet-safety">@L["NavMenu_PersonalProtectiveEquipment"]</MudNavLink>
+                <MudNavLink Href="asset" Icon="fas fa-truck-ramp-box">@L["NavMenu_PropertyEquipment"]</MudNavLink>
+                <MudNavLink Href="vehicle" Icon="fas fa-truck-front">@L["NavMenu_Vehicles"]</MudNavLink>
             </MudNavGroup>
-            <MudNavGroup Title="گزارشات" Icon="@Icons.Material.Filled.ContentPaste">
-                <MudNavLink Href="permit" Icon="fas fa-hand">مجوز کار ایمن</MudNavLink>
-                <MudNavLink Href="stopcard" Icon="@Icons.Material.Filled.StopCircle">STOP Cards</MudNavLink>
-                <MudNavLink Href="reports" Icon="fas fa-file-spreadsheet">ارسال گزارش</MudNavLink>
+            <MudNavGroup Title="@L["NavMenu_Reports"]" Icon="@Icons.Material.Filled.ContentPaste">
+                <MudNavLink Href="permit" Icon="fas fa-hand">@L["NavMenu_SafeWorkPermit"]</MudNavLink>
+                <MudNavLink Href="stopcard" Icon="@Icons.Material.Filled.StopCircle">@L["NavMenu_STOPCards"]</MudNavLink>
+                <MudNavLink Href="reports" Icon="fas fa-file-spreadsheet">@L["NavMenu_SendReport"]</MudNavLink>
             </MudNavGroup>
         </Authorized>
     </AuthorizeView>
     <AuthorizeView Roles="Medic">
         <Authorized>
-            <MudNavGroup Title="اطلاعات" Icon="@Icons.Material.Filled.Info">
-                <MudNavLink Href="personnel" Icon="fas fa-people-group">کارکنان</MudNavLink>
-                <MudNavLink Href="asset" Icon="fas fa-truck-ramp-box">تجهیزات ملکی</MudNavLink>
+            <MudNavGroup Title="@L["NavMenu_Management"]" Icon="@Icons.Material.Filled.Info">
+                <MudNavLink Href="personnel" Icon="fas fa-people-group">@L["NavMenu_Personnel"]</MudNavLink>
+                <MudNavLink Href="asset" Icon="fas fa-truck-ramp-box">@L["NavMenu_PropertyEquipment"]</MudNavLink>
             </MudNavGroup>
         </Authorized>
     </AuthorizeView>
     <AuthorizeView Roles="Owner,Admin,Supervisor,Officer,Medic">
         <Authorized>
-            <MudNavGroup Title="درمانگاه" Icon="@Icons.Material.Filled.Medication">
-                <MudNavLink Href="visit" Icon="fas fa-prescription">ویزیت بیمار</MudNavLink>
-                <MudNavLink Href="medication" Icon="fas fa-pills">مدیریت داروها</MudNavLink>
+            <MudNavGroup Title="@L["NavMenu_Clinic"]" Icon="@Icons.Material.Filled.Medication">
+                <MudNavLink Href="visit" Icon="fas fa-prescription">@L["NavMenu_VisitPatient"]</MudNavLink>
+                <MudNavLink Href="medication" Icon="fas fa-pills">@L["NavMenu_ManageMedications"]</MudNavLink>
             </MudNavGroup>
         </Authorized>
     </AuthorizeView>

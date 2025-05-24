@@ -1,5 +1,6 @@
 ﻿@using System.Globalization
 @using System.Reflection
+@inject IStringLocalizer<Resource> D
 
 <style>
     .calendarStyle .mud-input-control, .mud-input {
@@ -18,7 +19,7 @@
                            Clearable="true"/>
         </div>
         <div class="d-inline-flex @(DisplayText == null ? "" : "pt-2")">
-            <MudTooltip Text="@(_shamsiVisible ? "تقویم شمسی" : "تقویم میلادی")">
+            <MudTooltip Text="@(_shamsiVisible? @D["SamcoDateSelector.Shamsi"] : @D["SamcoDateSelector.Gregorian"])">
                 <MudIconButton Color="Color.Primary" Size="Size.Small" Class="h-100" Icon="@GetIcon()" Variant="Variant.Filled" OnClick="() => ShamsiVisible = !ShamsiVisible"/>
             </MudTooltip>
         </div>
