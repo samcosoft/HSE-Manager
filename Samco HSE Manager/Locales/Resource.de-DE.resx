@@ -190,7 +190,7 @@
     <value>Das System wurde deaktiviert.</value>
   </data>
   <data name="SamcoSoftShared_LicenseStatusMessage_DebuggerDetected" xml:space="preserve">
-    <value>Identifizieren Sie das Systembehebungssystem.</value>
+    <value>Das Systembehebungssystem Identifizieren.</value>
   </data>
   <data name="SamcoSoftShared_LicenseStatusMessage_DomainInvalid" xml:space="preserve">
     <value>Der Domain -Name ist nicht autorisiert.</value>
@@ -292,7 +292,7 @@
     <value>Persönliche Schutzausrüstung</value>
   </data>
   <data name="NavMenu_PropertyEquipment" xml:space="preserve">
-    <value>Zivile Ausrüstung</value>
+    <value>Immobilienausrüstung</value>
   </data>
   <data name="NavMenu_Vehicles" xml:space="preserve">
     <value>Maschinen</value>
@@ -307,7 +307,7 @@
     <value>Sichere Arbeitserlaubnis</value>
   </data>
   <data name="NavMenu_STOPCards" xml:space="preserve">
-    <value>Karten stoppen</value>
+    <value>STOP Karten</value>
   </data>
   <data name="NavMenu_SendReport" xml:space="preserve">
     <value>Bericht einreichen</value>
@@ -320,5 +320,384 @@
   </data>
   <data name="NavMenu_ManageMedications" xml:space="preserve">
     <value>Medikamentenmanagement</value>
+  </data>
+  <data name="DashDesign_RemoveButton" xml:space="preserve">
+    <value>Armaturenbrett Entfernen </value>
+  </data>
+  <data name="FormDesign_FileButton" xml:space="preserve">
+    <value>Dateiverwaltung</value>
+  </data>
+  <data name="AccessDenied" xml:space="preserve">
+    <value>Entschuldigung, Sie dürfen nicht auf diese Seite zugreifen.</value>
+  </data>
+  <data name="GridHeaderOid" xml:space="preserve">
+    <value>Ausweis</value>
+  </data>
+  <data name="GridHeaderTitle" xml:space="preserve">
+    <value>Titel</value>
+  </data>
+  <data name="GridHeaderCode" xml:space="preserve">
+    <value>Formcode</value>
+  </data>
+  <data name="GridHeaderRevision" xml:space="preserve">
+    <value>Revision</value>
+  </data>
+  <data name="GridHeaderRevDate" xml:space="preserve">
+    <value>Revisionsdatum</value>
+  </data>
+  <data name="GridHeaderAccessGroup" xml:space="preserve">
+    <value>Zugang</value>
+  </data>
+  <data name="GridHeaderDisabled" xml:space="preserve">
+    <value>Deaktiviert</value>
+  </data>
+  <data name="GridHeaderRoles" xml:space="preserve">
+    <value>Benutzer</value>
+  </data>
+  <data name="GridHeaderKeywords" xml:space="preserve">
+    <value>Schlüsselwörter</value>
+  </data>
+  <data name="RequiredText" xml:space="preserve">
+    <value>Erforderlich</value>
+  </data>
+  <data name="SearchPlaceholderText" xml:space="preserve">
+    <value>Geben Sie ein, um zu suchen ...</value>
+  </data>
+  <data name="SelectAllText" xml:space="preserve">
+    <value>Wählen Sie alle aus</value>
+  </data>
+  <data name="UnSelectAllText" xml:space="preserve">
+    <value>Alle abschließen</value>
+  </data>
+  <data name="DisableLabel" xml:space="preserve">
+    <value>Deaktivieren</value>
+  </data>
+  <data name="ValidationRequiredMessage" xml:space="preserve">
+    <value>Bitte vervollständigen Sie die erforderlichen Artikel.</value>
+  </data>
+  <data name="ValidationDuplicateFormMessage" xml:space="preserve">
+    <value>Ein Formular mit demselben Code und derselben Versionsnummer ist im System registriert. Bitte überprüfen Sie die Informationen und versuchen Sie es erneut.</value>
+  </data>
+  <data name="DeleteFormConfirmMessage" xml:space="preserve">
+    <value>Sind Sie sicher, dass Sie {0} Formular löschen?</value>
+  </data>
+  <data name="DeleteFormConfirmTitle" xml:space="preserve">
+    <value>Das Formular entfernen</value>
+  </data>
+  <data name="FormDeletionSuccessMessage" xml:space="preserve">
+    <value>Die Form wurde entfernt.</value>
+  </data>
+  <data name="ExcelExportInProgressMessage" xml:space="preserve">
+    <value>Das System erstellt eine Datei. Bitte sei geduldig ...</value>
+  </data>
+  <data name="FormSelectWarningMessage" xml:space="preserve">
+    <value>Bitte wählen Sie ein Formular aus der folgenden Liste aus.</value>
+  </data>
+  <data name="FormAddFileTitle" xml:space="preserve">
+    <value>Neue Datei hinzufügen</value>
+  </data>
+  <data name="Users_Title" xml:space="preserve">
+    <value>Benutzer verwalten</value>
+  </data>
+  <data name="Users_NewPassButton" xml:space="preserve">
+    <value>Ein neues Passwort setzen</value>
+  </data>
+  <data name="Users_PermitButton" xml:space="preserve">
+    <value>Zugriff auf den Informationen setzen</value>
+  </data>
+  <data name="Users_UpgradeButton" xml:space="preserve">
+    <value>Personalzugriff</value>
+  </data>
+  <data name="GridHeaderLocation" xml:space="preserve">
+    <value>Standort</value>
+  </data>
+  <data name="GridHeaderUsername" xml:space="preserve">
+    <value>Benutzername</value>
+  </data>
+  <data name="GridHeaderRole" xml:space="preserve">
+    <value>Rolle</value>
+  </data>
+  <data name="GridHeaderNationalId" xml:space="preserve">
+    <value>Nationale ID</value>
+  </data>
+  <data name="GridHeaderBirthDate" xml:space="preserve">
+    <value>Geburtsdatum</value>
+  </data>
+  <data name="GridHeaderIsMarried" xml:space="preserve">
+    <value>Verheiratet</value>
+  </data>
+  <data name="GridHeaderPersonnelNumber" xml:space="preserve">
+    <value>Personalnummer</value>
+  </data>
+  <data name="GridHeaderCurrentRole" xml:space="preserve">
+    <value>Die aktuelle Seite</value>
+  </data>
+  <data name="GridHeaderEmploymentDate" xml:space="preserve">
+    <value>Beschäftigungsdatum</value>
+  </data>
+  <data name="GridHeaderMobilePhone" xml:space="preserve">
+    <value>Handynummer</value>
+  </data>
+  <data name="GridHeaderEmail" xml:space="preserve">
+    <value>E-Mail-Adresse</value>
+  </data>
+  <data name="GridHeaderStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="LastLoginDate" xml:space="preserve">
+    <value>Letzter Anmeldedatum</value>
+  </data>
+  <data name="User_Login_Info" xml:space="preserve">
+    <value>Anmeldeinformationen</value>
+  </data>
+  <data name="LabelPersonalInfo" xml:space="preserve">
+    <value>Persönliche Informationen</value>
+  </data>
+  <data name="GridHeaderPersonnelEnglishName" xml:space="preserve">
+    <value>Vollname (auf Englisch)</value>
+  </data>
+  <data name="GridHeaderHomePhone_Label" xml:space="preserve">
+    <value>Telefon zu Hause</value>
+  </data>
+  <data name="GridHeaderInsuranceNumber" xml:space="preserve">
+    <value>Versicherungsnummer</value>
+  </data>
+  <data name="GridHeaderDriverExpDate" xml:space="preserve">
+    <value>Ablauf des Führerscheins</value>
+  </data>
+  <data name="LabelJobInfo" xml:space="preserve">
+    <value>Jobinformationen</value>
+  </data>
+  <data name="GridHeaderMarriageStatus" xml:space="preserve">
+    <value>Ehestatus</value>
+  </data>
+  <data name="GridHeaderBusinessEmail" xml:space="preserve">
+    <value>Geschäfts -E -Mail</value>
+  </data>
+  <data name="GridHeaderPreviousRoleLabel" xml:space="preserve">
+    <value>Die vorherige Seite</value>
+  </data>
+  <data name="GridHeaderLastPromotion" xml:space="preserve">
+    <value>Letzter Werbedatum</value>
+  </data>
+  <data name="GridHeaderClothSize" xml:space="preserve">
+    <value>Stoffgröße</value>
+  </data>
+  <data name="GridHeaderShoeSize" xml:space="preserve">
+    <value>Schuhgröße</value>
+  </data>
+  <data name="Users_SetNewPassTitle" xml:space="preserve">
+    <value>Benutzerkennwort setzen</value>
+  </data>
+  <data name="Users_NewPasswordLabel" xml:space="preserve">
+    <value>Neues Passwort</value>
+  </data>
+  <data name="Users_ConfirmNewPasswordLabel" xml:space="preserve">
+    <value>Neues Passwort bestätigen</value>
+  </data>
+  <data name="ConfirmButtonText" xml:space="preserve">
+    <value>Bestätigen</value>
+  </data>
+  <data name="Users_AccessLevelTitle" xml:space="preserve">
+    <value>Zugriffsebene</value>
+  </data>
+  <data name="Users_AccessLevelInfoText" xml:space="preserve">
+    <value>Verwenden Sie diesen Abschnitt nur, wenn Sie einem Benutzer erlauben möchten, auf mehrere Masten zugreifen zu können. Beachten Sie, dass der Benutzer immer Zugriff auf seine aktiven Ortsinformationen hat.</value>
+  </data>
+  <data name="Users_UpgradePersonnelTitle" xml:space="preserve">
+    <value>Personalinformationen aktualisieren</value>
+  </data>
+  <data name="Users_UpgradePersonnelInfoText" xml:space="preserve">
+    <value>Verwenden Sie diesen Abschnitt, wenn Sie auf das Unternehmen zugreifen möchten, das Sie bereits im System registriert haben.</value>
+  </data>
+  <data name="GridHeaderPersonnelName" xml:space="preserve">
+    <value>Personalname</value>
+  </data>
+  <data name="GridHeaderMarried" xml:space="preserve">
+    <value>Verheiratet</value>
+  </data>
+  <data name="CheckingAccessLevel" xml:space="preserve">
+    <value>Der Zugriffsebene überprüfen ...</value>
+  </data>
+  <data name="PageNotFoundTitle" xml:space="preserve">
+    <value>Seite nicht gefunden</value>
+  </data>
+  <data name="PageNotFoundMessage" xml:space="preserve">
+    <value>Entschuldigung, diese Seite existiert nicht.</value>
+  </data>
+  <data name="WelcomeMessage" xml:space="preserve">
+    <value>Hallo lieber {0}! Willkommen im HSE Management Panel!</value>
+  </data>
+  <data name="TrialMessage" xml:space="preserve">
+    <value>Aufgrund der Prüfung dieser Version gibt es möglicherweise einige Fehler, die im Laufe der Zeit gelöst werden. Vielen Dank für Ihre Geduld.
+ Wenn Sie Fragen zu Systemfunktionen oder -fehler haben, wenden Sie sich an E -Mail &lt;a href = "mailto: info@samcosoft.ir"&gt; samcosoft support &lt;/a&gt;.</value>
+  </data>
+  <data name="Login_Title" xml:space="preserve">
+    <value>Melden Sie sich beim System an</value>
+  </data>
+  <data name="Login_EmployeeLogin" xml:space="preserve">
+    <value>Mitarbeiteranmeldung</value>
+  </data>
+  <data name="GridHeaderPassword" xml:space="preserve">
+    <value>Passwort</value>
+  </data>
+  <data name="Login_TrialMessage" xml:space="preserve">
+    <value>Im Testmodus ist der Benutzername und das Passwort des Administratorsystems "admin".</value>
+  </data>
+  <data name="Login_PersonnelLogin" xml:space="preserve">
+    <value>Personalanmeldung</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Login_WrongDataMessage" xml:space="preserve">
+    <value>Der Benutzername oder Passwort ist falsch.</value>
+  </data>
+  <data name="Login_RequiredUsername" xml:space="preserve">
+    <value>Der Benutzername ist erforderlich.</value>
+  </data>
+  <data name="Login_RequiredPassword" xml:space="preserve">
+    <value>Das Passwort ist erforderlich.</value>
+  </data>
+  <data name="FormFile_Title" xml:space="preserve">
+    <value>Datei hinzufügen / bearbeiten</value>
+  </data>
+  <data name="FormFile_Alert" xml:space="preserve">
+    <value>Die vorherige Datei wird ersetzt.</value>
+  </data>
+  <data name="CancelButtonText" xml:space="preserve">
+    <value>Stornieren</value>
+  </data>
+  <data name="Projects_Title" xml:space="preserve">
+    <value>Bohrbetriebsverwaltung</value>
+  </data>
+  <data name="Projects_ProjectCard" xml:space="preserve">
+    <value>Projekte</value>
+  </data>
+  <data name="Projects_Wells" xml:space="preserve">
+    <value>Erdölquellen</value>
+  </data>
+  <data name="Projects_Locations" xml:space="preserve">
+    <value>Standorte (Büros, Rigs)</value>
+  </data>
+  <data name="GridHeaderWell" xml:space="preserve">
+    <value>Erdölquelle</value>
+  </data>
+  <data name="GridHeaderActiveOperation" xml:space="preserve">
+    <value>Aktiver Betrieb</value>
+  </data>
+  <data name="GridHeaderStartDate" xml:space="preserve">
+    <value>Startdatum</value>
+  </data>
+  <data name="GridHeaderEndDate" xml:space="preserve">
+    <value>Enddatum</value>
+  </data>
+  <data name="GridHeaderIssuedWarningsCount" xml:space="preserve">
+    <value>Warnungen zählen</value>
+  </data>
+  <data name="GridHeaderAccidentsCount" xml:space="preserve">
+    <value>Unfälle zählen</value>
+  </data>
+  <data name="GridHeaderDrillsCount" xml:space="preserve">
+    <value>Bohrer zählen</value>
+  </data>
+  <data name="GridHeaderTrainingCounts" xml:space="preserve">
+    <value>Trainingszählungen</value>
+  </data>
+  <data name="Projects_OperationTitle" xml:space="preserve">
+    <value>Operationen</value>
+  </data>
+  <data name="GridHeaderProjectName" xml:space="preserve">
+    <value>Projektname</value>
+  </data>
+  <data name="GridHeaderWellName" xml:space="preserve">
+    <value>Erdölquelle Name</value>
+  </data>
+  <data name="Projects_ActiveLabel" xml:space="preserve">
+    <value>Aktiver Betrieb</value>
+  </data>
+  <data name="Projects_SelectProjectMessage" xml:space="preserve">
+    <value>Bitte wählen Sie ein Projekt.</value>
+  </data>
+  <data name="Projects_SelectLocationMessage" xml:space="preserve">
+    <value>Bitte wählen Sie einen Ort.</value>
+  </data>
+  <data name="Projects_SelectWellMessage" xml:space="preserve">
+    <value>Bitte wählen Sie einen Brunnen.</value>
+  </data>
+  <data name="Projects_ProjectInfoTitle" xml:space="preserve">
+    <value>Projektinformationen</value>
+  </data>
+  <data name="Projects_LocationTitle" xml:space="preserve">
+    <value>Standortinformationen</value>
+  </data>
+  <data name="Projects_WellInfoTitle" xml:space="preserve">
+    <value>Brunneninformationen</value>
+  </data>
+  <data name="Projects_OperationGridMessage" xml:space="preserve">
+    <value>Die Auswahl eines Erdölquelle-, Rig- und Startdatums des Betriebs ist erforderlich.</value>
+  </data>
+  <data name="Projects_EndDateErrorMessage" xml:space="preserve">
+    <value>Das Enddatum der Operation sollte nach seinem Start danach sein.</value>
+  </data>
+  <data name="Projects_ActiveErrorMessage" xml:space="preserve">
+    <value>Wenn das Enddatum registriert ist, könnte das Projekt nicht aktiv sein.</value>
+  </data>
+  <data name="Projects_OtherRigErrorMessage" xml:space="preserve">
+    <value>Das Rig {0} arbeitet derzeit in diesem Brunnen und Projekt.</value>
+  </data>
+  <data name="Projects_StartDateErrorMessage" xml:space="preserve">
+    <value>Der Start des Betriebs sollte nach Beginn des Projekts erfolgen.</value>
+  </data>
+  <data name="Projects_EndProjectDateErrorMessage" xml:space="preserve">
+    <value>Das Ende des Betriebs muss vor Abschluss des Projekts erfolgen.</value>
+  </data>
+  <data name="Projects_DeleteProjectWarning" xml:space="preserve">
+    <value>Beachten! Durch das Löschen des Arbeitsprojekts werden auch alle Subset -Informationen, einschließlich verwandter Berichte, gelöscht. Bist du sicher?</value>
+  </data>
+  <data name="Projects_DeleteWarningMessage" xml:space="preserve">
+    <value>Operation Löschung Warnung</value>
+  </data>
+  <data name="EditController_AddButton" xml:space="preserve">
+    <value>Hinzufügen</value>
+  </data>
+  <data name="EditController_EditButton" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
+  <data name="EditController_DeleteButton" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="StartDate_Required" xml:space="preserve">
+    <value>Startdatum (erforderlich)</value>
+  </data>
+  <data name="ProjectModal_ProjectValidation" xml:space="preserve">
+    <value>Projektname ist erforderlich.</value>
+  </data>
+  <data name="ProjectModal_ProjectExists" xml:space="preserve">
+    <value>Dieses Projekt gibt es bereits.</value>
+  </data>
+  <data name="ProjectModal_StartDateRequired" xml:space="preserve">
+    <value>Es ist obligatorisch, das Projektstartdatum einzugeben.</value>
+  </data>
+  <data name="ProjectModal_EndDateValidation" xml:space="preserve">
+    <value>Das Enddatum des Projekts sollte größer sein als sein Startdatum.</value>
+  </data>
+  <data name="Rig_ModalLocationName" xml:space="preserve">
+    <value>Standortname</value>
+  </data>
+  <data name="RigModal_LocationNameRequiredError" xml:space="preserve">
+    <value>Standortname ist erforderlich.</value>
+  </data>
+  <data name="RigModal_LocationExistedError" xml:space="preserve">
+    <value>Ein weiterer Ort mit demselben Namen gab es bereits.</value>
+  </data>
+  <data name="GridHeaderWellLocation" xml:space="preserve">
+    <value>Erdölquelle</value>
+  </data>
+  <data name="WellModal_RequiredWell" xml:space="preserve">
+    <value>Der Name der Erdölquelle ist erforderlich.</value>
+  </data>
+  <data name="WellModal_DuplicateWellName" xml:space="preserve">
+    <value>Es gibt einen andere Erdölquelle mit demselben Namen.</value>
   </data>
 </root>

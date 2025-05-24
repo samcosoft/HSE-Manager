@@ -1,7 +1,8 @@
 ﻿@inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
+@inject IStringLocalizer<Resource> L
 
-<MudAlert Variant="Variant.Filled" Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Right">با عرض پوزش، شما اجازه دسترسی به این صفحه را ندارید.</MudAlert>
+<MudAlert Variant="Variant.Filled" Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Right">@L["AccessDenied"]</MudAlert>
 
 @code {
     [CascadingParameter]

@@ -1,10 +1,12 @@
-﻿<MudDialog>
+﻿@inject IStringLocalizer<Resource> L
+
+<MudDialog>
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.Recycling" Class="me-3 mb-1" />
-            افزودن / ویرایش فایل
+            @L["FormFile_Title"]
         </MudText>
-        <MudAlert Severity="Severity.Warning">فایل قبلی در صورت وجود جایگزین خواهد شد.</MudAlert>
+        <MudAlert Severity="Severity.Warning">@L["FormFile_Alert"]</MudAlert>
     </TitleContent>
     <DialogContent>
         <MudGrid>
@@ -16,7 +18,7 @@
         </MudGrid>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">انصراف</MudButton>
-        <MudButton Color="Color.Success" Variant="Variant.Filled" StartIcon="fas fa-check" OnClick="Submit">تأیید</MudButton>
+        <MudButton OnClick="Cancel">@L["CancelButtonText"]</MudButton>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" StartIcon="fas fa-check" OnClick="Submit">@L["ConfirmButtonText"]</MudButton>
     </DialogActions>
 </MudDialog>

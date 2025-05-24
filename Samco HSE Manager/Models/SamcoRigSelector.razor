@@ -1,5 +1,6 @@
 ﻿@using Samco_HSE.HSEData
 @using FilterType = Syncfusion.Blazor.DropDowns.FilterType
+@inject IStringLocalizer<Resource> L
 @{
     if (IsMultiselect)
     {
@@ -13,7 +14,7 @@
     else
     {
         <SfComboBox TItem="Rig" TValue="int?"
-                    DataSource="@DataSource" Placeholder="الزامی" FilterType="FilterType.Contains"
+                    DataSource="@DataSource" Placeholder="@L["RequiredText"]" FilterType="FilterType.Contains"
                     Value="_selectedRig" ValueChanged="ComboRigChanged" AllowCustom="false" AllowFiltering="true" Enabled="!IsReadonly">
             <ComboBoxFieldSettings Text="Name" Value="Oid" />
         </SfComboBox>

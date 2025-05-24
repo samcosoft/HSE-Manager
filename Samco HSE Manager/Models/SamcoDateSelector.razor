@@ -93,6 +93,7 @@
 
     protected override void OnInitialized()
     {
+        DefaultCalendar = CultureInfo.CurrentCulture.Name == "fa-IR" ? CalendarType.Persian : CalendarType.Gregorian;
         _shamsiVisible = DefaultCalendar == CalendarType.Persian;
     }
 

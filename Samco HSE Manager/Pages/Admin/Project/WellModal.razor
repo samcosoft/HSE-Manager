@@ -1,21 +1,23 @@
 ﻿@using Samco_HSE.HSEData
 @inject ISnackbar Snackbar
+@inject IStringLocalizer<Resource> L
+
 <MudDialog>
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="fas fa-oil-well" Class="me-3 mb-1" />
-            اطلاعات چاه
+            @L["Projects_WellInfoTitle"]
         </MudText>
     </TitleContent>
     <DialogContent>
         <div class="d-flex flex-column gap-4">
-            <MudTextField Label="نام چاه" Variant="Variant.Outlined" AutoFocus="true" @bind-Value="@(SelWell.Name)" />
-            <MudTextField Label="محل چاه" Variant="Variant.Outlined" @bind-Value="@(SelWell.Location)" />
+            <MudTextField Label="@L["GridHeaderWellName"]" Variant="Variant.Outlined" AutoFocus="true" @bind-Value="@(SelWell.Name)" />
+            <MudTextField Label="@L["GridHeaderWellLocation"]" Variant="Variant.Outlined" @bind-Value="@(SelWell.Location)" />
         </div>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">انصراف</MudButton>
-        <MudButton Color="Color.Success" IconClass="fas fa-check" OnClick="Submit">تأیید</MudButton>
+        <MudButton OnClick="Cancel">@L["CancelButtonText"]</MudButton>
+        <MudButton Color="Color.Success" IconClass="fas fa-check" OnClick="Submit">@L["ConfirmButtonText"]</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -32,13 +34,13 @@
     {
         if (SelWell.Name == null)
         {
-            Snackbar.Add("نام چاه الزامی است.", Severity.Error);
+            Snackbar.Add(L["WellModal_RequiredWell"], Severity.Error);
             return;
         }
         var prevWell = SelWell.ProjectName.Wells.FirstOrDefault(x => x.Name == SelWell.Name);
         if (prevWell != null && prevWell.Name == SelWell.Name && prevWell.Oid != SelWell.Oid)
         {
-            Snackbar.Add("چاه با همین نام وجود دارد.", Severity.Error);
+            Snackbar.Add(L["WellModal_DuplicateWellName"], Severity.Error);
             return;
         }
         SelWell.Save();

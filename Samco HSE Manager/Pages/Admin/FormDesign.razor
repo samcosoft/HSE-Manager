@@ -2,6 +2,7 @@
 @using Samco_HSE.HSEData
 @using FilterType = Syncfusion.Blazor.Grids.FilterType
 @attribute [Authorize(Roles = "Owner,Admin")]
+@inject IStringLocalizer<Resource> L
 
 <PageTitle>مدیریت فرم‌ها</PageTitle>
 
@@ -10,10 +11,10 @@
         <MudPaper Elevation="3" Width="100%" Class="pa-3">
             <MudGrid>
                 <MudItem>
-                    <MudText Typo="Typo.h5">مدیریت فرم‌ها</MudText>
+                    <MudText Typo="Typo.h5">@L["NavMenu_FormSettings"]</MudText>
                 </MudItem>
                 <MudItem>
-                    <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="fas fa-files" OnClick="AttachFile">مدیریت فایل</MudButton>
+                    <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="fas fa-files" OnClick="AttachFile">@L["FormDesign_FileButton"]</MudButton>
                 </MudItem>
             </MudGrid>
         </MudPaper>
@@ -27,13 +28,13 @@
                         OnToolbarClick="FormToolbarClickHandler" />
             <GridFilterSettings Type="FilterType.Excel" />
             <GridColumns>
-                <GridColumn HeaderText="ردیف" Field="Oid" IsPrimaryKey="true" Visible="false" />
-                <GridColumn HeaderText="عنوان" Field="Title" AutoFit="true" />
-                <GridColumn HeaderText="کد فرم" Field="Code" AutoFit="true" />
-                <GridColumn HeaderText="نسخه" Field="Revision" AutoFit="true" />
-                <GridColumn HeaderText="تاریخ بازبینی" Field="Code" AutoFit="true" />
-                <GridColumn HeaderText="دسترسی‌ها" Field="AccessGroup" AutoFit="true" />
-                <GridColumn HeaderText="غیر فعال" Field="Disabled" AutoFit="true" />
+                <GridColumn HeaderText="@L["GridHeaderOid"]" Field="Oid" IsPrimaryKey="true" Visible="false" />
+                <GridColumn HeaderText="@L["GridHeaderTitle"]" Field="Title" AutoFit="true" />
+                <GridColumn HeaderText="@L["GridHeaderCode"]" Field="Code" AutoFit="true" />
+                <GridColumn HeaderText="@L["GridHeaderRevision"]" Field="Revision" AutoFit="true" />
+                <GridColumn HeaderText="@L["GridHeaderRevDate"]" Field="RevDate" AutoFit="true" />
+                <GridColumn HeaderText="@L["GridHeaderAccessGroup"]" Field="AccessGroup" AutoFit="true" />
+                <GridColumn HeaderText="@L["GridHeaderDisabled"]" Field="Disabled" AutoFit="true" />
             </GridColumns>
             <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" AllowEditOnDblClick="true" Mode="EditMode.Dialog"
                               ShowDeleteConfirmDialog="true" Dialog="@SamcoSoftShared.GeneralGridEditOption">
@@ -46,39 +47,39 @@
                     }
                     <MudGrid>
                         <MudItem md="4" sm="12">
-                            <MudTextField Label="عنوان فرم:" @bind-Value="@form!.Title" Variant="Variant.Text" Placeholder="الزامی" />
+                            <MudTextField Label="@($"{L["GridHeaderTitle"]}:")" @bind-Value="@form!.Title" Variant="Variant.Text" Placeholder="@L["RequiredText"]" />
                         </MudItem>
                         <MudItem md="4" sm="12">
-                            <MudTextField Label=":کد فرم" @bind-Value="@form!.Code" Variant="Variant.Text" Placeholder="الزامی" Class="ltr" />
+                            <MudTextField Label="@($"{L["GridHeaderCode"]}:")" @bind-Value="@form!.Code" Variant="Variant.Text" Placeholder="@L["RequiredText"]" Class="ltr" />
                         </MudItem>
                         <MudItem md="4" sm="12">
-                            <MudNumericField Label="نسخه فرم:" T="short" @bind-Value="@form!.Revision" Min="1" Max="255" />
+                            <MudNumericField Label="@($"{L["GridHeaderRevision"]}:")" T="short" @bind-Value="@form!.Revision" Min="1" Max="255" />
                         </MudItem>
                         <MudItem md="4" sm="12">
-                            <MudField Label="تاریخ بازبینی:" Underline="false">
+                            <MudField Label="@($"{L["GridHeaderRevDate"]}:")" Underline="false">
                                 <SamcoDateSelector @bind-DateNotNull="@form!.RevDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
                             </MudField>
                         </MudItem>
                         <MudItem md="4" sm="12">
-                            <MudField Label="استفاده کنندگان:" Underline="false">
+                            <MudField Label="@($"{L["GridHeaderRoles"]}:")" Underline="false">
                                 <SfMultiSelect TItem="string" TValue="string[]" DataSource="@RigRoles"
-                                               @bind-Value="@_accessGroup" Placeholder="الزامی" Mode="VisualMode.CheckBox"
-                                               AllowFiltering="true" FilterBarPlaceholder="برای جستجو تایپ کنید..." FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                               ShowClearButton="true" SelectAllText="انتخاب همه" ShowSelectAll="true"
+                                               @bind-Value="@_accessGroup" Placeholder="@L["RequiredText"]" Mode="VisualMode.CheckBox"
+                                               AllowFiltering="true" FilterBarPlaceholder="@L["SearchPlaceholderText"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                               ShowClearButton="true" SelectAllText="@L["SelectAllText"]" ShowSelectAll="true"
                                                UnSelectAllText="حذف همه" />
                             </MudField>
                         </MudItem>
                         <MudItem md="4" sm="12">
-                            <MudField Label="کلمات کلیدی:" Underline="false">
+                            <MudField Label="@($"{L["GridHeaderKeywords"]}:")" Underline="false">
                                 <SfMultiSelect TItem="string" TValue="string[]" DataSource="@Keywords"
                                                @bind-Value="@_formKeywords" Mode="VisualMode.CheckBox" AllowCustomValue="true"
-                                               AllowFiltering="true" FilterBarPlaceholder="برای جستجو تایپ کنید..." FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                               ShowClearButton="true" SelectAllText="انتخاب همه" ShowSelectAll="true"
-                                               UnSelectAllText="حذف همه" />
+                                               AllowFiltering="true" FilterBarPlaceholder="@L["SearchPlaceholderText"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                               ShowClearButton="true" SelectAllText="@L["SelectAllText"]" ShowSelectAll="true"
+                                               UnSelectAllText="@L["UnSelectAllText"]" />
                             </MudField>
                         </MudItem>
                         <MudItem md="4" sm="12">
-                            <MudCheckBox @bind-Value="@form!.Disabled" Label="غیر فعالسازی"/>
+                            <MudCheckBox @bind-Value="@form!.Disabled" Label="@L["DisableLabel"]"/>
                         </MudItem>
                     </MudGrid>
                 </Template>

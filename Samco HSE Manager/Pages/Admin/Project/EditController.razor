@@ -1,19 +1,15 @@
-﻿<div class="mt-3">
-    <MudGrid Justify="Justify.Center">
-        <MudItem Class="text-center" md="4" sm="4">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="fas fa-plus" OnClick="OpenNewClick">
-                افزودن
-            </MudButton>
-        </MudItem>
-        <MudItem Class="text-center" md="4" sm="4">
-            <MudButton Variant="Variant.Filled" Color="Color.Tertiary" StartIcon="fas fa-pen" OnClick="EditClick">
-                ویرایش
-            </MudButton>
-        </MudItem>
-        <MudItem Class="text-center" md="4" sm="4">
-            <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="fas fa-trash-alt" OnClick="DeleteClick">
-                حذف
-            </MudButton>
-        </MudItem>
-    </MudGrid>
+﻿@inject IStringLocalizer<Resource> L
+
+<div class="mt-3">
+    <MudStack Row="true" Justify="Justify.Center" Wrap="Wrap.Wrap">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="fas fa-plus" OnClick="OpenNewClick">
+            @L["EditController_AddButton"]
+        </MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Tertiary" StartIcon="fas fa-pen" OnClick="EditClick">
+            @L["EditController_EditButton"]
+        </MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="fas fa-trash-alt" OnClick="DeleteClick">
+            @L["EditController_DeleteButton"]
+        </MudButton>
+    </MudStack>
 </div>

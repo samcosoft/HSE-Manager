@@ -23,7 +23,8 @@ public partial class MainLayout : IDisposable
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
     [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
 
-    private bool IsRightToLeft { get; set; }
+    [Parameter]
+    public bool IsRightToLeft { get; set; }
     private bool IsSidebarExpanded { get; set; } = true;
     private string DisplayProfile => "align-self: center; min-height: 170px; display:" + (IsSidebarExpanded ? "block" : "none");
 

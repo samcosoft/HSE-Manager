@@ -16,6 +16,7 @@ public partial class Users : IDisposable
     [Inject] private IDataLayer DataLayer { get; set; } = null!;
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
+    [CascadingParameter] private bool IsRightToLeft { get; set; }
 
     private Session Session1 { get; set; } = null!;
     private IEnumerable<User>? SystemUsers { get; set; }

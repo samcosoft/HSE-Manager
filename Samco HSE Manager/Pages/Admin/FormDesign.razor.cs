@@ -47,12 +47,15 @@ public partial class FormDesign
         {
             case Action.Add:
                 _accessGroup = null;
+                _formKeywords = null;
                 e.Data = new HSEForm(Session1) { RevDate = DateTime.Today };
                 break;
             case Action.BeginEdit:
                 _accessGroup = null;
+                _formKeywords = null;
                 e.Data = await Session1.GetObjectByKeyAsync<HSEForm>(e.RowData.Oid);
                 if (e.Data.AccessGroup != null) _accessGroup = e.Data.AccessGroup.Split("|");
+                if (e.Data.Keywords != null) _formKeywords = e.Data.Keywords.Split("|");
                 break;
             case Action.Save:
                 {
@@ -61,7 +64,7 @@ public partial class FormDesign
                     if (string.IsNullOrEmpty(editModel.Title) || string.IsNullOrEmpty(editModel.Code) ||
                         editModel.Revision == 0 || _accessGroup == null)
                     {
-                        Snackbar.Add("لطفاً موارد الزامی را تکمیل کنید.", Severity.Error);
+                        Snackbar.Add(L["ValidationRequiredMessage"], Severity.Error);
                         e.Cancel = true;
                         return;
                     }
@@ -70,12 +73,12 @@ public partial class FormDesign
                     var prevForm = Session1.FindObject<HSEForm>(new BinaryOperator(nameof(HSEForm.Code), editModel.Code));
                     if (prevForm != null && prevForm.Revision == editModel.Revision && (editModel.Oid < 0 || prevForm.Oid != editModel.Oid))
                     {
-                        Snackbar.Add(
-                            "یک فرم با همین کد و شماره نسخه در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.",
-                            Severity.Error);
+                        Snackbar.Add(L["ValidationDuplicateFormMessage"], Severity.Error);
                         e.Cancel = true;
                         return;
                     }
+
+                    if (_formKeywords!= null) editModel.Keywords= string.Join('|', _formKeywords);
 
                     if (_accessGroup != null) editModel.AccessGroup = string.Join('|', _accessGroup);
                     editModel.Save();
@@ -84,13 +87,14 @@ public partial class FormDesign
             case Action.Delete:
                 {
                     var dataItem = await Session1.GetObjectByKeyAsync<HSEForm>(e.RowData.Oid);
-                    var isConfirm = await DialogService.ConfirmAsync($"آیا از حذف فرم {dataItem.Code} مطمئنید؟", "حذف فرم");
+                    var isConfirm = await DialogService.ConfirmAsync(string.Format(L["DeleteFormConfirmMessage"],dataItem.Code), L["DeleteFormConfirmTitle"]);
                     if (!isConfirm)
                     {
                         e.Cancel = true;
                         return;
                     }
                     dataItem.Delete();
+                    Snackbar.Add(L["FormDeletionSuccessMessage"], Severity.Success);
                     break;
                 }
         }
@@ -100,7 +104,7 @@ public partial class FormDesign
     {
         if (args.Item.Id == "formGrid_Excel Export")
         {
-            Snackbar.Add("سیستم در حال ایجاد فایل است. لطفاً تا دانلود گزارش شکیبا باشید...", Severity.Info);
+            Snackbar.Add(L["ExcelExportInProgressMessage"], Severity.Info);
             var exportProperties = new ExcelExportProperties
             {
                 FileName = "FormList.xlsx"
@@ -113,10 +117,10 @@ public partial class FormDesign
     {
         if (FormGrid!.SelectedRecords.Count == 0)
         {
-            Snackbar.Add("لطفاً یک فرم را از لیست زیر انتخاب کنید.", Severity.Warning);
+            Snackbar.Add(L["FormSelectWarningMessage"], Severity.Warning);
             return;
         }
-        await MudDialogService.ShowAsync<FormFileModal>("افزودن فایل فرم",
+        await MudDialogService.ShowAsync<FormFileModal>(L["FormAddFileTitle"],
             new DialogParameters { { "SelFormId", FormGrid.SelectedRecords.First().Oid } });
     }
 }

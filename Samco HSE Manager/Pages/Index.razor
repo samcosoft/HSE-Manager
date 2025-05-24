@@ -3,18 +3,17 @@
 @page "/home"
 @inject IConfiguration Configuration
 @inject NavigationManager NavigationManager
+@inject IStringLocalizer<Resource> L
+
 <PageTitle>Samco HSE Management System - @Configuration["CompanyInfo:Name"]</PageTitle>
 
 <div class="container-fluid">
     <Animation Class="mb-3" Effect="@Effect.FadeIn" Speed="@Speed.Slow">
         <MudCard>
             <MudCardContent>
-                <MudText Typo="Typo.h6">@_loggedUser?.PersonnelName عزیز سلام! به پنل مدیریت HSE خوش آمدید!</MudText>
+                <MudText Typo="Typo.h6">@string.Format(L["WelcomeMessage"], _loggedUser?.Username)</MudText>
                 <hr class="my-3">
-                <MudAlert Severity="Severity.Info" Icon="fa fa-info" Elevation="3" Variant="Variant.Filled">
-                    با توجه به آزمایشی بودن این نسخه، ممکن است برخی ایرادات در آن وجود داشته باشد که به مرور برطرف می‌گردند. از شکیبایی شما سپاسگزاریم.
-                    در صورت داشتن سوال در مورد قابلیت‌های سیستم و یا بروز خطا با ایمیل <a href="mailto:info@samcosoft.ir">SamcoSoft Support</a> ارتباط برقرار کنید.
-                </MudAlert>
+                <MudAlert Severity="Severity.Info" Icon="fa fa-info" Elevation="3" Variant="Variant.Filled">@(new MarkupString(L["TrialMessage"]))</MudAlert>
             </MudCardContent>
         </MudCard>
     </Animation>

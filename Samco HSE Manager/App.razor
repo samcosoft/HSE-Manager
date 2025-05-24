@@ -2,6 +2,7 @@
 @using DevExpress.Data.Filtering
 @using Samco_HSE_Manager.Pages
 @inject IDataLayer DataLayer
+@inject IStringLocalizer<Resource> L
 
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
@@ -11,7 +12,7 @@
                 <Authorizing>
                     <MudCard>
                         <MudCardContent>
-                            <MudText Typo="Typo.body1">در حال بررسی سطح دسترسی...</MudText>
+                            <MudText Typo="Typo.body1">@L["CheckingAccessLevel"]</MudText>
                             <hr class="my-3">
                             <MudProgressLinear Color="Color.Primary" Striped="true" Indeterminate="true"/>
                         </MudCardContent>
@@ -24,9 +25,9 @@
             </AuthorizeRouteView>
         </Found>
         <NotFound>
-            <PageTitle>صفحه پیدا نشد</PageTitle>
+            <PageTitle>@L["PageNotFoundTitle"]</PageTitle>
             <LayoutView Layout="@typeof(MainLayout)">
-                <MudAlert Variant="Variant.Filled" Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Right">با عرض پوزش، این صفحه وجود ندارد.</MudAlert>
+                <MudAlert Variant="Variant.Filled" Severity="Severity.Error" ContentAlignment="HorizontalAlignment.Center">@L["PageNotFoundMessage"]</MudAlert>
             </LayoutView>
         </NotFound>
     </Router>

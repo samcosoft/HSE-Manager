@@ -321,4 +321,383 @@
   <data name="NavMenu_VisitPatient" xml:space="preserve">
     <value>ویزیت بیمار</value>
   </data>
+  <data name="DashDesign_RemoveButton" xml:space="preserve">
+    <value>حذف داشبورد</value>
+  </data>
+  <data name="FormDesign_FileButton" xml:space="preserve">
+    <value>مدیریت فایل</value>
+  </data>
+  <data name="AccessDenied" xml:space="preserve">
+    <value>با عرض پوزش، شما اجازه دسترسی به این صفحه را ندارید.</value>
+  </data>
+  <data name="GridHeaderOid" xml:space="preserve">
+    <value>ردیف</value>
+  </data>
+  <data name="GridHeaderCode" xml:space="preserve">
+    <value>کد فرم</value>
+  </data>
+  <data name="GridHeaderRevision" xml:space="preserve">
+    <value>نسخه</value>
+  </data>
+  <data name="GridHeaderRevDate" xml:space="preserve">
+    <value>تاریخ بازبینی</value>
+  </data>
+  <data name="GridHeaderAccessGroup" xml:space="preserve">
+    <value>دسترسی‌ها</value>
+  </data>
+  <data name="GridHeaderDisabled" xml:space="preserve">
+    <value>غیر فعال</value>
+  </data>
+  <data name="GridHeaderTitle" xml:space="preserve">
+    <value>عنوان</value>
+  </data>
+  <data name="GridHeaderRoles" xml:space="preserve">
+    <value>استفاده کنندگان</value>
+  </data>
+  <data name="GridHeaderKeywords" xml:space="preserve">
+    <value>کلمات کلیدی</value>
+  </data>
+  <data name="RequiredText" xml:space="preserve">
+    <value>الزامی</value>
+  </data>
+  <data name="SearchPlaceholderText" xml:space="preserve">
+    <value>برای جستجو تایپ کنید...</value>
+  </data>
+  <data name="SelectAllText" xml:space="preserve">
+    <value>انتخاب همه</value>
+  </data>
+  <data name="UnSelectAllText" xml:space="preserve">
+    <value>حذف همه</value>
+  </data>
+  <data name="DisableLabel" xml:space="preserve">
+    <value>غیر فعالسازی</value>
+  </data>
+  <data name="ValidationRequiredMessage" xml:space="preserve">
+    <value>لطفاً موارد الزامی را تکمیل کنید.</value>
+  </data>
+  <data name="ValidationDuplicateFormMessage" xml:space="preserve">
+    <value>یک فرم با همین کد و شماره نسخه در سیستم ثبت شده است. لطفاً اطلاعات را بررسی کرده و دوباره تلاش کنید.</value>
+  </data>
+  <data name="DeleteFormConfirmMessage" xml:space="preserve">
+    <value>آیا از حذف فرم {0} مطمئنید؟</value>
+  </data>
+  <data name="DeleteFormConfirmTitle" xml:space="preserve">
+    <value>حذف فرم</value>
+  </data>
+  <data name="FormDeletionSuccessMessage" xml:space="preserve">
+    <value>فرم حذف شد.</value>
+  </data>
+  <data name="ExcelExportInProgressMessage" xml:space="preserve">
+    <value>سیستم در حال ایجاد فایل است. لطفاً تا دانلود گزارش شکیبا باشید...</value>
+  </data>
+  <data name="FormSelectWarningMessage" xml:space="preserve">
+    <value>لطفاً یک فرم را از لیست زیر انتخاب کنید.</value>
+  </data>
+  <data name="FormAddFileTitle" xml:space="preserve">
+    <value>افزودن فایل فرم</value>
+  </data>
+  <data name="Users_Title" xml:space="preserve">
+    <value>مدیریت کاربران</value>
+  </data>
+  <data name="Users_NewPassButton" xml:space="preserve">
+    <value>تنظیم کلمه عبور</value>
+  </data>
+  <data name="Users_PermitButton" xml:space="preserve">
+    <value>تنظیم دسترسی اطلاعات</value>
+  </data>
+  <data name="Users_UpgradeButton" xml:space="preserve">
+    <value>دسترسی پرسنل</value>
+  </data>
+  <data name="GridHeaderLocation" xml:space="preserve">
+    <value>دکل / دفتر</value>
+  </data>
+  <data name="GridHeaderUsername" xml:space="preserve">
+    <value>نام کاربری</value>
+  </data>
+  <data name="GridHeaderRole" xml:space="preserve">
+    <value>نقش</value>
+  </data>
+  <data name="GridHeaderNationalId" xml:space="preserve">
+    <value>کد ملی</value>
+  </data>
+  <data name="GridHeaderBirthDate" xml:space="preserve">
+    <value>تاریخ تولد</value>
+  </data>
+  <data name="GridHeaderIsMarried" xml:space="preserve">
+    <value>متأهل</value>
+  </data>
+  <data name="GridHeaderPersonnelNumber" xml:space="preserve">
+    <value>شماره پرسنلی</value>
+  </data>
+  <data name="GridHeaderCurrentRole" xml:space="preserve">
+    <value>سمت فعلی</value>
+  </data>
+  <data name="GridHeaderEmploymentDate" xml:space="preserve">
+    <value>تاریخ استخدام</value>
+  </data>
+  <data name="GridHeaderMobilePhone" xml:space="preserve">
+    <value>تلفن همراه</value>
+  </data>
+  <data name="GridHeaderEmail" xml:space="preserve">
+    <value>ایمیل</value>
+  </data>
+  <data name="GridHeaderStatus" xml:space="preserve">
+    <value>وضعیت</value>
+  </data>
+  <data name="LastLoginDate" xml:space="preserve">
+    <value>تاریخ آخرین ورود به سیستم</value>
+  </data>
+  <data name="User_Login_Info" xml:space="preserve">
+    <value>اطلاعات ورود به سیستم</value>
+  </data>
+  <data name="LabelPersonalInfo" xml:space="preserve">
+    <value>اطلاعات شخصی</value>
+  </data>
+  <data name="GridHeaderPersonnelEnglishName" xml:space="preserve">
+    <value>نام و نام خانوادگی (انگلیسی)</value>
+  </data>
+  <data name="GridHeaderHomePhone_Label" xml:space="preserve">
+    <value>تلفن منزل</value>
+  </data>
+  <data name="GridHeaderInsuranceNumber" xml:space="preserve">
+    <value>شماره بیمه</value>
+  </data>
+  <data name="GridHeaderDriverExpDate" xml:space="preserve">
+    <value>تاریخ انقضا گواهینامه</value>
+  </data>
+  <data name="LabelJobInfo" xml:space="preserve">
+    <value>اطلاعات شغلی</value>
+  </data>
+  <data name="GridHeaderMarriageStatus" xml:space="preserve">
+    <value>وضعیت تأهل</value>
+  </data>
+  <data name="GridHeaderBusinessEmail" xml:space="preserve">
+    <value>ایمیل سازمانی</value>
+  </data>
+  <data name="GridHeaderPreviousRoleLabel" xml:space="preserve">
+    <value>سمت قبلی</value>
+  </data>
+  <data name="GridHeaderLastPromotion" xml:space="preserve">
+    <value>تاریخ آخرین ارتقا</value>
+  </data>
+  <data name="GridHeaderClothSize" xml:space="preserve">
+    <value>سایز لباس</value>
+  </data>
+  <data name="GridHeaderShoeSize" xml:space="preserve">
+    <value>سایز کفش</value>
+  </data>
+  <data name="Users_SetNewPassTitle" xml:space="preserve">
+    <value>تنظیم کلمه عبور کاربر</value>
+  </data>
+  <data name="Users_NewPasswordLabel" xml:space="preserve">
+    <value>کلمه عبور جدید</value>
+  </data>
+  <data name="Users_ConfirmNewPasswordLabel" xml:space="preserve">
+    <value>تکرار کلمه عبور</value>
+  </data>
+  <data name="ConfirmButtonText" xml:space="preserve">
+    <value>تأیید</value>
+  </data>
+  <data name="Users_AccessLevelTitle" xml:space="preserve">
+    <value>سطح دسترسی</value>
+  </data>
+  <data name="Users_AccessLevelInfoText" xml:space="preserve">
+    <value>فقط در صورتی که می‌خواهید به یک کاربر اجازه دسترسی به اطلاعات چند دکل را بدهید از این قسمت استفاده کنید. دقت کنید که کاربر همواره به اطلاعات دکل فعال خود دسترسی دارد.</value>
+  </data>
+  <data name="Users_UpgradePersonnelTitle" xml:space="preserve">
+    <value>به روز رسانی اطلاعات پرسنل</value>
+  </data>
+  <data name="Users_UpgradePersonnelInfoText" xml:space="preserve">
+    <value>در صورتی که می‌خواهید به پرسنل شرکت که قبلاً در سیستم ثبت کرده‌اید، دسترسی به سیستم دهید از این قسمت استفاده کنید.</value>
+  </data>
+  <data name="GridHeaderPersonnelName" xml:space="preserve">
+    <value>نام پرسنل</value>
+  </data>
+  <data name="GridHeaderMarried" xml:space="preserve">
+    <value>متأهل</value>
+  </data>
+  <data name="CheckingAccessLevel" xml:space="preserve">
+    <value>در حال بررسی سطح دسترسی...</value>
+  </data>
+  <data name="PageNotFoundTitle" xml:space="preserve">
+    <value>صفحه پیدا نشد</value>
+  </data>
+  <data name="PageNotFoundMessage" xml:space="preserve">
+    <value>با عرض پوزش، این صفحه وجود ندارد.</value>
+  </data>
+  <data name="WelcomeMessage" xml:space="preserve">
+    <value>{0} عزیز سلام! به پنل مدیریت HSE خوش آمدید!</value>
+  </data>
+  <data name="TrialMessage" xml:space="preserve">
+    <value> با توجه به آزمایشی بودن این نسخه، ممکن است برخی ایرادات در آن وجود داشته باشد که به مرور برطرف می‌گردند. از شکیبایی شما سپاسگزاریم.
+ در صورت داشتن سوال در مورد قابلیت‌های سیستم و یا بروز خطا با ایمیل &lt;a href="mailto:info@samcosoft.ir"&gt;SamcoSoft Support&lt;/a&gt; ارتباط برقرار کنید.</value>
+  </data>
+  <data name="Login_Title" xml:space="preserve">
+    <value>ورود به ناحیه کاربری</value>
+  </data>
+  <data name="Login_EmployeeLogin" xml:space="preserve">
+    <value>ورود کارمندان</value>
+  </data>
+  <data name="GridHeaderPassword" xml:space="preserve">
+    <value>کلمه عبور</value>
+  </data>
+  <data name="Login_TrialMessage" xml:space="preserve">
+    <value>در حالت آزمایشی نام کاربری و کلمه عبور مدیر سیستم admin است.</value>
+  </data>
+  <data name="Login_PersonnelLogin" xml:space="preserve">
+    <value>ورود کارکنان</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>ورود به سیستم</value>
+  </data>
+  <data name="Login_WrongDataMessage" xml:space="preserve">
+    <value>نام کاربری و یا کلمه عبور اشتباه است.</value>
+  </data>
+  <data name="Login_RequiredUsername" xml:space="preserve">
+    <value>نام کاربری الزامی است.</value>
+  </data>
+  <data name="Login_RequiredPassword" xml:space="preserve">
+    <value>کلمه عبور الزامی است.</value>
+  </data>
+  <data name="FormFile_Title" xml:space="preserve">
+    <value>افزودن / ویرایش فایل</value>
+  </data>
+  <data name="FormFile_Alert" xml:space="preserve">
+    <value>فایل قبلی در صورت وجود جایگزین خواهد شد.</value>
+  </data>
+  <data name="CancelButtonText" xml:space="preserve">
+    <value>انصراف</value>
+  </data>
+  <data name="Projects_Title" xml:space="preserve">
+    <value>مدیریت عملیات حفاری</value>
+  </data>
+  <data name="Projects_ProjectCard" xml:space="preserve">
+    <value>پروژه‌ها</value>
+  </data>
+  <data name="Projects_Wells" xml:space="preserve">
+    <value>چاه‌ها</value>
+  </data>
+  <data name="Projects_Locations" xml:space="preserve">
+    <value>دکل / پالایشگاه / دفتر</value>
+  </data>
+  <data name="GridHeaderWell" xml:space="preserve">
+    <value>چاه</value>
+  </data>
+  <data name="GridHeaderActiveOperation" xml:space="preserve">
+    <value>عملیات فعال</value>
+  </data>
+  <data name="GridHeaderStartDate" xml:space="preserve">
+    <value>تاریخ شروع</value>
+  </data>
+  <data name="GridHeaderEndDate" xml:space="preserve">
+    <value>تاریخ پایان</value>
+  </data>
+  <data name="GridHeaderIssuedWarningsCount" xml:space="preserve">
+    <value>تعداد اخطارهای صادر شده</value>
+  </data>
+  <data name="GridHeaderAccidentsCount" xml:space="preserve">
+    <value>تعداد حوادث اتفاق افتاده</value>
+  </data>
+  <data name="GridHeaderDrillsCount" xml:space="preserve">
+    <value>تعداد مانورهای برگزار شده</value>
+  </data>
+  <data name="GridHeaderTrainingCounts" xml:space="preserve">
+    <value>تعداد آموزش‌های برگزار شده</value>
+  </data>
+  <data name="Projects_OperationTitle" xml:space="preserve">
+    <value>عملیات حفاری</value>
+  </data>
+  <data name="GridHeaderProjectName" xml:space="preserve">
+    <value>نام پروژه</value>
+  </data>
+  <data name="GridHeaderWellName" xml:space="preserve">
+    <value>نام چاه</value>
+  </data>
+  <data name="Projects_ActiveLabel" xml:space="preserve">
+    <value>عملیات فعال است</value>
+  </data>
+  <data name="Projects_SelectProjectMessage" xml:space="preserve">
+    <value>لطفاً ابتدا یک پروژه را انتخاب کنید.</value>
+  </data>
+  <data name="Projects_SelectLocationMessage" xml:space="preserve">
+    <value>لطفاً یک محل را انتخاب کنید.</value>
+  </data>
+  <data name="Projects_SelectWellMessage" xml:space="preserve">
+    <value>لطفاً ابتدا یک چاه را انتخاب کنید.</value>
+  </data>
+  <data name="Projects_ProjectInfoTitle" xml:space="preserve">
+    <value>اطلاعات پروژه</value>
+  </data>
+  <data name="Projects_LocationTitle" xml:space="preserve">
+    <value>اطلاعات دکل / دفتر</value>
+  </data>
+  <data name="Projects_WellInfoTitle" xml:space="preserve">
+    <value>اطلاعات چاه</value>
+  </data>
+  <data name="Projects_OperationGridMessage" xml:space="preserve">
+    <value>انتخاب چاه، دکل و تاریخ شروع عملیات لازم است.</value>
+  </data>
+  <data name="Projects_EndDateErrorMessage" xml:space="preserve">
+    <value>تاریخ پایان عملیات باید از شروع آن بزرگتر باشد.</value>
+  </data>
+  <data name="Projects_ActiveErrorMessage" xml:space="preserve">
+    <value>در صورت ثبت تاریخ پایان، امکان فعال بودن پروژه وجود ندارد.</value>
+  </data>
+  <data name="Projects_OtherRigErrorMessage" xml:space="preserve">
+    <value>در حال حاضر دکل {0} بر روی این چاه و پروژه در حال فعالیت است.</value>
+  </data>
+  <data name="Projects_StartDateErrorMessage" xml:space="preserve">
+    <value>تاریخ شروع عملیات باید بعد از شروع پروژه باشد.</value>
+  </data>
+  <data name="Projects_EndProjectDateErrorMessage" xml:space="preserve">
+    <value>تاریخ پایان عملیات باید قبل از پایان پروژه باشد.</value>
+  </data>
+  <data name="Projects_DeleteProjectWarning" xml:space="preserve">
+    <value>اخطار! با حذف پروژه کاری تمامی اطلاعات زیر مجموعه آن شامل گزارشات مرتبط نیز حذف خواهند شد. آیا مطمئنید؟</value>
+  </data>
+  <data name="Projects_DeleteWarningMessage" xml:space="preserve">
+    <value>اخطار حذف عملیات</value>
+  </data>
+  <data name="EditController_AddButton" xml:space="preserve">
+    <value>افزودن</value>
+  </data>
+  <data name="EditController_EditButton" xml:space="preserve">
+    <value>ویرایش</value>
+  </data>
+  <data name="EditController_DeleteButton" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="StartDate_Required" xml:space="preserve">
+    <value>تاریخ شروع (الزامی)</value>
+  </data>
+  <data name="ProjectModal_ProjectValidation" xml:space="preserve">
+    <value>نام پروژه الزامی است.</value>
+  </data>
+  <data name="ProjectModal_ProjectExists" xml:space="preserve">
+    <value>پروژه با همین نام وجود دارد.</value>
+  </data>
+  <data name="ProjectModal_StartDateRequired" xml:space="preserve">
+    <value>وارد نمودن تاریخ شروع پروژه الزامی است.</value>
+  </data>
+  <data name="ProjectModal_EndDateValidation" xml:space="preserve">
+    <value>تاریخ پایان پروژه باید از شروع آن بزرگتر باشد.</value>
+  </data>
+  <data name="Rig_ModalLocationName" xml:space="preserve">
+    <value>نام دکل / دفتر</value>
+  </data>
+  <data name="RigModal_LocationNameRequiredError" xml:space="preserve">
+    <value>نام مکان الزامی است.</value>
+  </data>
+  <data name="RigModal_LocationExistedError" xml:space="preserve">
+    <value>مکانی با همین نام وجود دارد.</value>
+  </data>
+  <data name="GridHeaderWellLocation" xml:space="preserve">
+    <value>محل چاه</value>
+  </data>
+  <data name="WellModal_RequiredWell" xml:space="preserve">
+    <value>نام چاه الزامی است.</value>
+  </data>
+  <data name="WellModal_DuplicateWellName" xml:space="preserve">
+    <value>چاه دیگری با همین نام وجود دارد.</value>
+  </data>
 </root>

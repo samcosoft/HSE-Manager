@@ -16,6 +16,9 @@ public partial class Projects : IDisposable
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
     [Inject] private IDialogService DialogService { get; set; } = null!;
     [Inject] private Syncfusion.Blazor.Popups.SfDialogService ConfirmDialog { get; set; } = null!;
+
+    [CascadingParameter]
+    private bool IsRightToLeft { get; set; }
     private Session Session1 { get; set; } = null!;
     private XPCollection<Samco_HSE.HSEData.Project>? DrillProjects { get; set; }
     private Samco_HSE.HSEData.Project? _selProject;
@@ -72,7 +75,7 @@ public partial class Projects : IDisposable
             case EditController.EditType.Well:
                 if (_selProjectOid == null)
                 {
-                    Snackbar.Add("لطفاً ابتدا یک پروژه را انتخاب کنید.", Severity.Warning);
+                    Snackbar.Add(L["Projects_SelectProjectMessage"], Severity.Warning);
                     return;
                 }
 
@@ -96,7 +99,7 @@ public partial class Projects : IDisposable
             case EditController.EditType.Project:
                 if (_selProjectOid == null || !_selProjectOid.Any())
                 {
-                    Snackbar.Add("لطفاً ابتدا یک پروژه را انتخاب کنید.", Severity.Warning);
+                    Snackbar.Add(L["Projects_SelectProjectMessage"], Severity.Warning);
                     return;
                 }
 
@@ -106,7 +109,7 @@ public partial class Projects : IDisposable
             case EditController.EditType.Rig:
                 if (_selRigOid == null || !_selRigOid.Any())
                 {
-                    Snackbar.Add("لطفاً ابتدا یک دکل را انتخاب کنید.", Severity.Warning);
+                    Snackbar.Add(L["Projects_SelectLocationMessage"], Severity.Warning);
                     return;
                 }
 
@@ -115,7 +118,7 @@ public partial class Projects : IDisposable
             case EditController.EditType.Well:
                 if (_selWellOid == null || !_selWellOid.Any())
                 {
-                    Snackbar.Add("لطفاً ابتدا یک چاه را انتخاب کنید.", Severity.Warning);
+                    Snackbar.Add(L["Projects_SelectWellMessage"], Severity.Warning);
                     return;
                 }
 
@@ -136,15 +139,15 @@ public partial class Projects : IDisposable
         switch (editType)
         {
             case EditController.EditType.Project:
-                dialog = await DialogService.ShowAsync<ProjectModal>("اطلاعات پروژه",
+                dialog = await DialogService.ShowAsync<ProjectModal>(L["Projects_ProjectInfoTitle"],
                     new DialogParameters { { "SelProject", _selProject } });
                 break;
             case EditController.EditType.Rig:
-                dialog = await DialogService.ShowAsync<RigModal>("اطلاعات دکل / دفتر",
+                dialog = await DialogService.ShowAsync<RigModal>(L["Projects_LocationTitle"],
                     new DialogParameters { { "SelRig", _selRig } });
                 break;
             case EditController.EditType.Well:
-                dialog = await DialogService.ShowAsync<WellModal>("اطلاعات چاه",
+                dialog = await DialogService.ShowAsync<WellModal>(L["Projects_WellInfoTitle"],
                     new DialogParameters { { "SelWell", _selWell } });
                 break;
             case EditController.EditType.WellWork:
@@ -169,7 +172,7 @@ public partial class Projects : IDisposable
                 case EditController.EditType.Project:
                     if (_selProjectOid == null || _selProjectOid.Any() == false)
                     {
-                        Snackbar.Add("لطفاً ابتدا یک پروژه را انتخاب کنید.", Severity.Warning);
+                        Snackbar.Add(L["Projects_SelectProjectMessage"], Severity.Warning);
                         return;
                     }
 
@@ -180,7 +183,7 @@ public partial class Projects : IDisposable
                 case EditController.EditType.Rig:
                     if (_selRigOid == null || !_selRigOid.Any())
                     {
-                        Snackbar.Add("لطفاً ابتدا یک دکل را انتخاب کنید.", Severity.Warning);
+                        Snackbar.Add(L["Projects_SelectLocationMessage"], Severity.Warning);
                         return;
                     }
 
@@ -190,7 +193,7 @@ public partial class Projects : IDisposable
                 case EditController.EditType.Well:
                     if (_selWellOid == null || !_selWellOid.Any())
                     {
-                        Snackbar.Add("لطفاً ابتدا یک چاه را انتخاب کنید.", Severity.Warning);
+                        Snackbar.Add(L["Projects_SelectWellMessage"], Severity.Warning);
                         return;
                     }
 
@@ -238,21 +241,21 @@ public partial class Projects : IDisposable
                     //Validation
                     if (editModel.RigNo == null || _selProjectWell == null)
                     {
-                        Snackbar.Add("انتخاب چاه، دکل و تاریخ شروع عملیات لازم است.", Severity.Error);
+                        Snackbar.Add(L["Projects_OperationGridMessage"], Severity.Error);
                         e.Cancel = true;
                         return;
                     }
 
                     if (editModel.EndDate != null && editModel.EndDate < editModel.StartDate)
                     {
-                        Snackbar.Add("تاریخ پایان عملیات باید از شروع آن بزرگتر باشد.", Severity.Error);
+                        Snackbar.Add(L["Projects_EndDateErrorMessage"], Severity.Error);
                         e.Cancel = true;
                         return;
                     }
 
                     if (editModel is { EndDate: not null, IsActive: true })
                     {
-                        Snackbar.Add("در صورت ثبت تاریخ پایان، امکان فعال بودن پروژه وجود ندارد.", Severity.Error);
+                        Snackbar.Add(L["Projects_ActiveErrorMessage"], Severity.Error);
                         e.Cancel = true;
                         return;
                     }
@@ -262,7 +265,7 @@ public partial class Projects : IDisposable
                                                                                  x.IsActive).ToList();
                     if (otherRigIsActive.Any())
                     {
-                        Snackbar.Add($"در حال حاضر دکل {otherRigIsActive.First().RigNo.Name} بر روی این چاه و پروژه در حال فعالیت است.", Severity.Error);
+                        Snackbar.Add(string.Format(L["Projects_OtherRigErrorMessage"],otherRigIsActive.First().RigNo.Name), Severity.Error);
                         e.Cancel = true;
                         return;
                     }
@@ -272,7 +275,7 @@ public partial class Projects : IDisposable
                     //Check project date
                     if (editModel.StartDate < editModel.WellNo.ProjectName.StartDate)
                     {
-                        Snackbar.Add("تاریخ شروع عملیات باید بعد از شروع پروژه باشد.", Severity.Error);
+                        Snackbar.Add(L["Projects_StartDateErrorMessage"], Severity.Error);
                         e.Cancel = true;
                         return;
                     }
@@ -280,7 +283,7 @@ public partial class Projects : IDisposable
                     if (editModel.EndDate != null && editModel.WellNo.ProjectName.EndDate != null &&
                         editModel.EndDate > editModel.WellNo.ProjectName.EndDate)
                     {
-                        Snackbar.Add("تاریخ پایان عملیات باید قبل از پایان پروژه باشد.", Severity.Error);
+                        Snackbar.Add(L["Projects_EndProjectDateErrorMessage"], Severity.Error);
                         e.Cancel = true;
                         return;
                     }
@@ -302,8 +305,8 @@ public partial class Projects : IDisposable
             case Action.Delete:
                 {
                     if (!await ConfirmDialog.ConfirmAsync(
-                            "اخطار! با حذف پروژه کاری تمامی اطلاعات زیر مجموعه آن شامل گزارشات مرتبط نیز حذف خواهند شد. آیا مطمئنید؟",
-                            "اخطار حذف عملیات")) return;
+                            L["Projects_DeleteProjectWarning"],
+                            L["Projects_DeleteWarningMessage"])) return;
                     var dataItem = e.RowData;
                     dataItem.Delete();
                     break;
@@ -315,7 +318,7 @@ public partial class Projects : IDisposable
     {
         if (args.Item.Id == "workGrid_Excel Export")
         {
-            Snackbar.Add("سیستم در حال ایجاد فایل است. لطفاً تا دانلود گزارش شکیبا باشید...", Severity.Info);
+            Snackbar.Add(L["ExcelExportInProgressMessage"], Severity.Info);
             var exportProperties = new ExcelExportProperties
             {
                 FileName = "WorkList.xlsx"

@@ -1,29 +1,31 @@
 ﻿@using Samco_HSE.HSEData
 @inject ISnackbar Snackbar
+@inject IStringLocalizer<Resource> L
+
 <MudDialog>
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.Work" Class="me-3 mb-1"/>
-            اطلاعات پروژه
+            @L["Projects_ProjectInfoTitle"]
         </MudText>
     </TitleContent>
     <DialogContent>
         <MudGrid>
             <MudItem lg="12">
-                <MudTextField Label="نام پروژه" Variant="Variant.Outlined" AutoFocus="true"
+                <MudTextField Label="@L["GridHeaderProjectName"]" Variant="Variant.Outlined" AutoFocus="true"
                               @bind-Value="@(SelProject.Name)"/>
             </MudItem>
             <MudItem lg="12">
-                <SamcoDateSelector @bind-Date="SelProject.StartDate" DisplayText="تاریخ شروع (الزامی)" CalenderVariant="Variant.Outlined"/>
+                <SamcoDateSelector @bind-Date="SelProject.StartDate" DisplayText="@L["StartDate_Required"]" CalenderVariant="Variant.Outlined"/>
             </MudItem>
             <MudItem lg="12">
-                <SamcoDateSelector @bind-Date="SelProject.EndDate" DisplayText="تاریخ پایان"/>
+                <SamcoDateSelector @bind-Date="SelProject.EndDate" DisplayText="@L["GridHeaderEndDate"]" />
             </MudItem>
         </MudGrid>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">انصراف</MudButton>
-        <MudButton Color="Color.Success" IconClass="fas fa-check" OnClick="Submit">تأیید</MudButton>
+        <MudButton OnClick="Cancel">@L["CancelButtonText"]</MudButton>
+        <MudButton Color="Color.Success" IconClass="fas fa-check" OnClick="Submit">@L["ConfirmButtonText"]</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -39,23 +41,23 @@
     {
         if (SelProject.Name == null)
         {
-            Snackbar.Add("نام پروژه الزامی است.", Severity.Error);
+            Snackbar.Add(L["ProjectModal_ProjectValidation"], Severity.Error);
             return;
         }
         var prevProj = SelProject.Session.Query<Project>().FirstOrDefault(x => x.Name == SelProject.Name);
         if (prevProj != null && prevProj.Name == SelProject.Name && prevProj.Oid != SelProject.Oid)
         {
-            Snackbar.Add("پروژه با همین نام وجود دارد.", Severity.Error);
+            Snackbar.Add(L["ProjectModal_ProjectExists"], Severity.Error);
             return;
         }
         if (SelProject.StartDate == null)
         {
-            Snackbar.Add("وارد نمودن تاریخ شروع پروژه الزامی است.", Severity.Error);
+            Snackbar.Add(L["ProjectModal_StartDateRequired"], Severity.Error);
             return;
         }
         if (SelProject.EndDate != null && SelProject.EndDate < SelProject.StartDate)
         {
-            Snackbar.Add("تاریخ پایان پروژه باید از شروع آن بزرگتر باشد.", Severity.Error);
+            Snackbar.Add(L["ProjectModal_EndDateValidation"], Severity.Error);
             return;
         }
         SelProject.Save();

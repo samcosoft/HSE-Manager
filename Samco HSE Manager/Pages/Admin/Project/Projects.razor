@@ -3,8 +3,9 @@
 @using SelectionMode = Syncfusion.Blazor.DropDowns.SelectionMode
 @page "/projects"
 @attribute [Authorize(Roles = "Owner,Admin")]
+@inject IStringLocalizer<Resource> L
 
-<PageTitle>مدیریت عملیات حفاری</PageTitle>
+<PageTitle>@L["Projects_Title"]</PageTitle>
 
 <MudGrid>
     <MudItem md="4" sm="12">
@@ -14,11 +15,12 @@
                     <MudIcon Icon="@Icons.Material.Filled.Work"/>
                 </CardHeaderAvatar>
                 <CardHeaderContent>
-                    <MudText Typo="Typo.h6">پروژه‌ها</MudText>
+                    <MudText Typo="Typo.h6">@L["Projects_ProjectCard"]</MudText>
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <SfListBox TItem="Project" TValue="int[]" DataSource="@DrillProjects" @bind-Value="@_selProjectOid" Height="200px">
+                <SfListBox TItem="Project" TValue="int[]" DataSource="@DrillProjects" @bind-Value="@_selProjectOid"
+                           Height="200px" EnableRtl="IsRightToLeft">
                     <ListBoxSelectionSettings Mode="SelectionMode.Single"/>
                     <ListBoxEvents TItem="Project" TValue="int[]" ValueChange="OnProjectChange"/>
                     <ListBoxFieldSettings Text="Name" Value="Oid"/>
@@ -36,11 +38,12 @@
                     <FontAwesomeIcon Icon="@FontAwesome.OilWell" IconType="IconType.Solid" Size="1.5em"/>
                 </CardHeaderAvatar>
                 <CardHeaderContent>
-                    <MudText Typo="Typo.h6">چاه‌ها</MudText>
+                    <MudText Typo="Typo.h6">@L["Projects_Wells"]</MudText>
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <SfListBox TItem="Well" TValue="int[]" DataSource="_wells" @bind-Value="@_selWellOid" Height="200px">
+                <SfListBox TItem="Well" TValue="int[]" DataSource="_wells" @bind-Value="@_selWellOid"
+                           Height="200px" EnableRtl="IsRightToLeft">
                     <ListBoxSelectionSettings Mode="SelectionMode.Single"/>
                     <ListBoxFieldSettings Text="Name" Value="Oid"/>
                 </SfListBox>
@@ -57,11 +60,12 @@
                     <MudIcon Icon="@Icons.Material.Filled.AddHomeWork"/>
                 </CardHeaderAvatar>
                 <CardHeaderContent>
-                    <MudText Typo="Typo.h6">دکل / پالایشگاه / دفتر</MudText>
+                    <MudText Typo="Typo.h6">@L["Projects_Locations"]</MudText>
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <SfListBox TItem="Rig" TValue="int[]" DataSource="@_rigs" @bind-Value="@_selRigOid" Height="200px">
+                <SfListBox TItem="Rig" TValue="int[]" DataSource="@_rigs" @bind-Value="@_selRigOid"
+                           Height="200px" EnableRtl="IsRightToLeft">
                     <ListBoxSelectionSettings Mode="SelectionMode.Single"/>
                     <ListBoxFieldSettings Text="Name" Value="Oid"/>
                 </SfListBox>
@@ -82,24 +86,24 @@
                         <MudIcon Icon="fas fa-person-digging"/>
                     </CardHeaderAvatar>
                     <CardHeaderContent>
-                        <MudText Typo="Typo.h5">عملیات حفاری</MudText>
+                        <MudText Typo="Typo.h5">@L["Projects_OperationTitle"]</MudText>
                     </CardHeaderContent>
                 </MudCardHeader>
                 <MudCardContent>
                     <SfGrid @ref="WorkGrid" ID="workGrid" DataSource="@WellWorks" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
                             AllowGrouping="true" Toolbar="@(new[] { "Add", "Edit", "Delete", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
                             AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
-                            Width="100%">
+                            Width="100%" EnableRtl="IsRightToLeft">
                         <GridEvents TValue="WellWork" OnActionBegin="WorkGrid_Action" OnToolbarClick="WorkToolbarClickHandler"/>
                         <GridFilterSettings Type="FilterType.Excel"/>
                         <GridColumns>
-                            <GridColumn HeaderText="ردیف" Field="Oid" IsIdentity="true" IsPrimaryKey="true" Visible="false"/>
-                            <GridColumn HeaderText="دکل" Field="RigNo.Name" AutoFit="true"/>
-                            <GridColumn HeaderText="چاه" Field="WellNo.Name" AutoFit="true"/>
-                            <GridColumn HeaderText="عملیات فعال" Field="IsActive" DisplayAsCheckBox="true" AutoFit="true"/>
-                            <GridColumn HeaderText="تاریخ شروع" Field="StartDate" AutoFit="true"/>
-                            <GridColumn HeaderText="تاریخ پایان" Field="EndDate" AutoFit="true"/>
-                            <GridColumn HeaderText="تعداد اخطارهای صادر شده">
+                            <GridColumn HeaderText="@L["GridHeaderOid"]" Field="Oid" IsIdentity="true" IsPrimaryKey="true" Visible="false" />
+                            <GridColumn HeaderText="@L["GridHeaderLocation"]" Field="RigNo.Name" AutoFit="true" />
+                            <GridColumn HeaderText="@L["GridHeaderWell"]" Field="WellNo.Name" AutoFit="true" />
+                            <GridColumn HeaderText="@L["GridHeaderActiveOperation"]" Field="IsActive" DisplayAsCheckBox="true" AutoFit="true" />
+                            <GridColumn HeaderText="@L["GridHeaderStartDate"]" Field="StartDate" AutoFit="true" />
+                            <GridColumn HeaderText="@L["GridHeaderEndDate"]" Field="EndDate" AutoFit="true"/>
+                            <GridColumn HeaderText="@L["GridHeaderIssuedWarningsCount"]">
                                 <Template>
                                     @{
                                         var work = context as WellWork;
@@ -107,7 +111,7 @@
                                     }
                                 </Template>
                             </GridColumn>
-                            <GridColumn HeaderText="تعداد حوادث اتفاق افتاده">
+                            <GridColumn HeaderText="@L["GridHeaderAccidentsCount"]">
                                 <Template>
                                     @{
                                         var work = (context as WellWork);
@@ -115,7 +119,7 @@
                                     }
                                 </Template>
                             </GridColumn>
-                            <GridColumn HeaderText="تعداد مانورهای برگزار شده">
+                            <GridColumn HeaderText="@L["GridHeaderDrillsCount"]">
                                 <Template>
                                     @{
                                         var work = (context as WellWork);
@@ -123,7 +127,7 @@
                                     }
                                 </Template>
                             </GridColumn>
-                            <GridColumn HeaderText="تعداد آموزش‌های برگزار شده">
+                            <GridColumn HeaderText="@L["GridHeaderTrainingCounts"]">
                                 <Template>
                                     @{
                                         var work = (context as WellWork);
@@ -142,25 +146,25 @@
                                 @{
                                     var wellWork = editFormContext as WellWork;
                                 }
-                                <MudRTLProvider RightToLeft="true">
+                                <MudRTLProvider RightToLeft="IsRightToLeft">
                                     <MudGrid>
                                         <MudItem md="4" sm="12">
-                                            <MudField Label="نام دکل / پالایشگاه:" Underline="false">
+                                            <MudField Label="@($"{L["GridHeaderLocation"]}:")" Underline="false">
                                                 <SamcoRigSelector DataSource="_rigs" @bind-SelectedRig="@wellWork!.RigNo"/>
                                             </MudField>
                                         </MudItem>
                                         <MudItem md="4" sm="12">
-                                            <MudField Label="انتخاب پروژه / چاه:" Underline="false">
+                                            <MudField Label="@($"{L["GridHeaderWell"]}:")" Underline="false">
                                                 <SfComboBox TItem="ListWell" TValue="ListWell" DataSource="@_selProjectWllList"
-                                                            Placeholder="الزامی" @bind-Value="@_selProjectWell">
+                                                            Placeholder="@L["RequiredText"]" @bind-Value="@_selProjectWell" EnableRtl="IsRightToLeft">
                                                     <ComboBoxTemplates TItem="ListWell">
                                                         <HeaderTemplate>
                                                             <MudGrid Justify="Justify.SpaceEvenly" Class="w-100">
                                                                 <MudItem Class="w-50">
-                                                                    <MudText Typo="Typo.body1">نام پروژه</MudText>
+                                                                    <MudText Typo="Typo.body1">@L["GridHeaderProjectName"]</MudText>
                                                                 </MudItem>
                                                                 <MudItem Class="w-50">
-                                                                    <MudText Typo="Typo.body1">نام چاه</MudText>
+                                                                    <MudText Typo="Typo.body1">@L["GridHeaderWellName"]</MudText>
                                                                 </MudItem>
                                                             </MudGrid>
                                                         </HeaderTemplate>
@@ -176,18 +180,18 @@
                                             </MudField>
                                         </MudItem>
                                         <MudItem md="4" sm="12">
-                                            <MudField Label="تاریخ شروع:" Underline="false">
+                                            <MudField Label="@($"{L["GridHeaderStartDate"]}:")" Underline="false">
                                                 <SamcoDateSelector @bind-DateNotNull="@wellWork!.StartDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
                                             </MudField>
                                         </MudItem>
                                         <MudItem md="4" sm="12">
-                                            <MudField Label="تاریخ پایان:" Underline="false">
+                                            <MudField Label="" Underline="false">
                                                 <SamcoDateSelector @bind-Date="@wellWork!.EndDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian"/>
                                             </MudField>
                                         </MudItem>
                                         <MudItem md="4" sm="12">
-                                            <MudField Label="وضعیت:" Underline="false">
-                                                <MudCheckBox @bind-Value="@wellWork!.IsActive" Label="عملیات فعال است"/>
+                                            <MudField Label="@($"{L["GridHeaderStatus"]}:")" Underline="false">
+                                                <MudCheckBox @bind-Value="@wellWork!.IsActive" Label="@L["Projects_ActiveLabel"]" />
                                             </MudField>
                                         </MudItem>
                                     </MudGrid>

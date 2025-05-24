@@ -3,22 +3,23 @@
 @using Samco_HSE.HSEData
 @using Syncfusion.Blazor.Popups
 @using FilterType = Syncfusion.Blazor.Grids.FilterType
+@inject IStringLocalizer<Resource> L
 
 
-<PageTitle>مدیریت کاربران</PageTitle>
+<PageTitle>@L["Users_Title"]</PageTitle>
 
 <MudCard Class="h-100">
     <MudCardHeader>
         <MudPaper Elevation="3" Width="100%" Class="pa-3">
             <MudGrid>
                 <MudItem>
-                    <MudText Typo="Typo.h5">مدیریت کاربران</MudText>
+                    <MudText Typo="Typo.h5">@L["Users_Title"]</MudText>
                 </MudItem>
                 <MudItem>
                     <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
-                        <MudButton StartIcon="fas fa-key" IconColor="Color.Error" OnClick="OnNewPassBtnClick">تنظیم کلمه عبور</MudButton>
-                        <MudButton StartIcon="fas fa-unlock" IconColor="Color.Warning" OnClick="OnPermitBtnClick">تنظیم دسترسی اطلاعات</MudButton>
-                        <MudButton StartIcon="fas fa-user" IconColor="Color.Tertiary" OnClick="OnUpgradeBtnClick">دسترسی پرسنل</MudButton>
+                        <MudButton StartIcon="fas fa-key" IconColor="Color.Error" OnClick="OnNewPassBtnClick">@L["Users_NewPassButton"]</MudButton>
+                        <MudButton StartIcon="fas fa-unlock" IconColor="Color.Warning" OnClick="OnPermitBtnClick">@L["Users_PermitButton"]</MudButton>
+                        <MudButton StartIcon="fas fa-user" IconColor="Color.Tertiary" OnClick="OnUpgradeBtnClick">@L["Users_UpgradeButton"]</MudButton>
                     </MudButtonGroup>
                 </MudItem>
             </MudGrid>
@@ -28,26 +29,26 @@
         <SfGrid @ref="UserGrid" ID="userGrid" DataSource="@SystemUsers" AllowPaging="true" AllowSorting="true" AllowFiltering="true" EnableStickyHeader="true"
                 AllowGrouping="true" Toolbar="@(new[] { "Add", "Edit", "Delete", "Excel Export", "Search", "ColumnChooser" })" ClipMode="ClipMode.EllipsisWithTooltip"
                 AllowResizing="true" ShowColumnChooser="true" EnableAdaptiveUI="true" AdaptiveUIMode="AdaptiveMode.Mobile"
-                AllowExcelExport="true" Width="100%">
+                AllowExcelExport="true" Width="100%" EnableRtl="IsRightToLeft">
             <GridEvents TValue="User" OnActionBegin="UserGrid_Action"
                         OnToolbarClick="UserToolbarClickHandler" />
             <GridFilterSettings Type="FilterType.Excel" />
             <GridColumns>
-                <GridColumn HeaderText="ردیف" Field="Oid" IsPrimaryKey="true" Visible="false" />
-                <GridColumn HeaderText="دکل / دفتر" Field="ActiveRig.Name" AutoFit="true" />
-                <GridColumn HeaderText="نام کاربری" Field="Username" AutoFit="true" />
-                <GridColumn HeaderText="نقش" Field="SiteRole" AutoFit="true" />
-                <GridColumn HeaderText="نام و نام خانوادگی" Field="PersonnelName" AutoFit="true" />
-                <GridColumn HeaderText="کد ملی" Field="NationalID" AutoFit="true" />
-                <GridColumn HeaderText="تاریخ تولد" Field="BirthDate" AutoFit="true" />
-                <GridColumn HeaderText="متأهل" Field="Marriage" AutoFit="true" DisplayAsCheckBox="true" />
-                <GridColumn HeaderText="شماره پرسنلی" Field="PersonnelNum" AutoFit="true" />
-                <GridColumn HeaderText="سمت فعلی" Field="CurrentRole" AutoFit="true" />
-                <GridColumn HeaderText="تاریخ استخدام" Field="EmpDate" AutoFit="true" />
-                <GridColumn HeaderText="تلفن همراه" Field="MobileNum" AutoFit="true" />
-                <GridColumn HeaderText="ایمیل" Field="BusinessEmail" AutoFit="true" />
-                <GridColumn HeaderText="وضعیت" Field="Status" AutoFit="true" />
-                <GridColumn HeaderText="تاریخ آخرین ورود به سیستم" Field="LastLogin" AutoFit="true" />
+                <GridColumn HeaderText="@L["GridHeaderOid"]" Field="Oid" IsPrimaryKey="true" Visible="false" />
+                <GridColumn HeaderText="@L["GridHeaderLocation"]" Field="ActiveRig.Name" AutoFit="true" />
+                <GridColumn HeaderText="@L["GridHeaderUsername"]" Field="Username" AutoFit="true" />
+                <GridColumn HeaderText="@L["GridHeaderRoles"]" Field="SiteRole" AutoFit="true" />
+                <GridColumn HeaderText="@L["SamcoPersonnelSelector.Name"]" Field="PersonnelName" AutoFit="true" />
+                <GridColumn HeaderText="@L["GridHeaderNationalId"]" Field="NationalID" AutoFit="true" />
+                <GridColumn HeaderText="@L["GridHeaderBirthDate"]" Field="BirthDate" AutoFit="true" />
+                <GridColumn HeaderText="@L["GridHeaderIsMarried"]" Field="Marriage" AutoFit="true" DisplayAsCheckBox="true" />
+                <GridColumn HeaderText="@L["GridHeaderPersonnelNumber"]" Field="PersonnelNum" AutoFit="true" />
+                <GridColumn HeaderText="@L["GridHeaderCurrentRole"]" Field="CurrentRole" AutoFit="true" />
+                <GridColumn HeaderText="@L["GridHeaderEmploymentDate"]" Field="EmpDate" AutoFit="true" />
+                <GridColumn HeaderText="@L["GridHeaderMobilePhone"]" Field="MobileNum" AutoFit="true" />
+                <GridColumn HeaderText="@L["GridHeaderEmploymentDate"]" Field="BusinessEmail" AutoFit="true" />
+                <GridColumn HeaderText="@L["GridHeaderStatus"]" Field="Status" AutoFit="true" />
+                <GridColumn HeaderText="@L["LastLoginDate"]" Field="LastLogin" AutoFit="true" />
             </GridColumns>
             <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" AllowEditOnDblClick="true" Mode="EditMode.Dialog"
                               ShowDeleteConfirmDialog="true" Dialog="@SamcoSoftShared.GeneralGridEditOption">
@@ -58,37 +59,37 @@
                     @{
                         var user = editFormContext as User;
                     }
-                    <MudRTLProvider RightToLeft="true">
+                    <MudRTLProvider RightToLeft="IsRightToLeft">
                         <MudExpansionPanels MultiExpansion="true">
-                            <MudExpansionPanel Text="اطلاعات ورود به سیستم" Expanded="true">
+                            <MudExpansionPanel Text="@L["User_Login_Info"]" Expanded="true">
                                 <MudGrid>
                                     <MudItem md="4" sm="12">
-                                        <MudTextField Label=":نام کاربری" @bind-Value="@user.Username" Variant="Variant.Text" Placeholder="الزامی" Class="ltr" />
+                                        <MudTextField Label="@($"{L["GridHeaderUsername"]}:")" @bind-Value="@user.Username" Variant="Variant.Text" Placeholder="@L["RequiredText"]"/>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="نقش:" Underline="false">
-                                            <SfComboBox TItem="KeyValuePair<string, string>" TValue="string" DataSource="@_roles" Placeholder="الزامی"
+                                        <MudField Label="@($"{L["GridHeaderRole"]}:")" Underline="false">
+                                            <SfComboBox TItem="KeyValuePair<string, string>" TValue="string" DataSource="@_roles" Placeholder="@L["RequiredText"]"
                                                         @bind-Value="@user.SiteRole">
                                                 <ComboBoxFieldSettings Text="Value" Value="Key" />
                                             </SfComboBox>
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="داشبورد:" Underline="false">
-                                            <SfComboBox TItem="string" TValue="string" DataSource="@Dashboards" Placeholder="الزامی"
+                                        <MudField Label="@($"{L["NavMenu_Dashboard"]}:")" Underline="false">
+                                            <SfComboBox TItem="string" TValue="string" DataSource="@Dashboards" Placeholder="@L["RequiredText"]"
                                                         @bind-Value="@user.DashboardId">
                                             </SfComboBox>
                                         </MudField>
                                     </MudItem>
                                 </MudGrid>
                             </MudExpansionPanel>
-                            <MudExpansionPanel Text="اطلاعات شخصی" Expanded="true">
+                            <MudExpansionPanel Text="@L["LabelPersonalInfo"]" Expanded="true">
                                 <MudGrid>
                                     <MudItem md="4" sm="12">
-                                        <MudTextField @bind-Value="@user.PersonnelName" Label="نام و نام خانوادگی:" Variant="Variant.Text" Placeholder="الزامی" />
+                                        <MudTextField @bind-Value="@user.PersonnelName" Label="@($"{L["GridHeaderPersonnelName"]}:")" Variant="Variant.Text" Placeholder="@L["RequiredText"]" />
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudTextField @bind-Value="@user.EnglishName" Label=":نام و نام خانوادگی (انگلیسی)" Variant="Variant.Text" Adornment="Adornment.Start" Class="ltr" />
+                                        <MudTextField @bind-Value="@user.EnglishName" Label="@($"{L["GridHeaderPersonnelEnglishName"]}:")" Variant="Variant.Text" Adornment="Adornment.Start"/>
                                     </MudItem>
                                     @* <MudItem md="4" sm="12">
                                         <SfImageEditor @ref="ImageEditor" Height="150">
@@ -96,84 +97,84 @@
                                         </SfImageEditor>
                                     </MudItem> *@
                                     <MudItem md="4" sm="12">
-                                        <MudTextField @bind-Value="@user.NationalID" Label=":کد ملی" Variant="Variant.Text" Mask="@(new PatternMask("0000000000"))" Placeholder="الزامی" Class="ltr" />
+                                        <MudTextField @bind-Value="@user.NationalID" Label="@($"{L["GridHeaderNationalId"]}:")" Variant="Variant.Text" Mask="@(new PatternMask("0000000000"))" Placeholder="@L["RequiredText"]"/>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="تاریخ تولد:" Underline="false">
-                                            <SamcoDateSelector @bind-Date="@user.BirthDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
+                                        <MudField Label="@($"{L["GridHeaderBirthDate"]}:")" Underline="false">
+                                            <SamcoDateSelector @bind-Date="@user.BirthDate"/>
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="وضعیت تأهل:" Underline="false">
-                                            <MudCheckBox @bind-Value="@user.Marriage" Label="متأهل" />
+                                        <MudField Label="@($"{L["GridHeaderMarriageStatus"]}:")" Underline="false">
+                                            <MudCheckBox @bind-Value="@user.Marriage" Label="@L["GridHeaderMarried"]" />
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudTextField @bind-Value="@user.MobileNum" Label=":تلفن همراه" Variant="Variant.Text" Mask="@(new PatternMask("00000000000"))" Adornment="Adornment.Start" Class="ltr" />
+                                        <MudTextField @bind-Value="@user.MobileNum" Label="@($"{L["GridHeaderMobilePhone"]}:")" Variant="Variant.Text" Mask="@(new PatternMask("00000000000"))" Adornment="Adornment.Start"/>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudTextField @bind-Value="@user.HomeNum" Label=":تلفن منزل" Variant="Variant.Text" Mask="@(new PatternMask("00000000000"))" Adornment="Adornment.Start" Class="ltr" />
+                                        <MudTextField @bind-Value="@user.HomeNum" Label="@($"{L["GridHeaderHomePhone_Label"]}:")" Variant="Variant.Text" Mask="@(new PatternMask("00000000000"))" Adornment="Adornment.Start"/>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudTextField @bind-Value="@user.InsuranceNum" Label=":شماره بیمه" Variant="Variant.Text" Adornment="Adornment.Start" Class="ltr" />
+                                        <MudTextField @bind-Value="@user.InsuranceNum" Label="@($"{L["GridHeaderInsuranceNumber"]}:")" Variant="Variant.Text" Adornment="Adornment.Start"/>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="تاریخ انقضا گواهینامه:" Underline="false">
-                                            <SamcoDateSelector @bind-Date="@user.LicenseDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
+                                        <MudField Label="@($"{L["GridHeaderDriverExpDate"]}:")" Underline="false">
+                                            <SamcoDateSelector @bind-Date="@user.LicenseDate"/>
                                         </MudField>
                                     </MudItem>
                                 </MudGrid>
                             </MudExpansionPanel>
-                            <MudExpansionPanel Text="اطلاعات شغلی" Expanded="true">
+                            <MudExpansionPanel Text="@L["LabelJobInfo"]" Expanded="true">
                                 <MudGrid>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="نام دکل / محل فعالیت:" Underline="false">
+                                        <MudField Label="@($"{L["GridHeaderLocation"]}:")" Underline="false">
                                             <SamcoRigSelector @bind-SelectedRig="@user.ActiveRig" DataSource="Rigs" IsMultiselect="false"/>
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="تاریخ استخدام:" Underline="false">
-                                            <SamcoDateSelector @bind-Date="@user.EmpDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
+                                        <MudField Label="@($"{L["GridHeaderEmploymentDate"]}:")" Underline="false">
+                                            <SamcoDateSelector @bind-Date="@user.EmpDate"/>
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="سمت فعلی:" Underline="false">
-                                            <SfComboBox TItem="string" TValue="string" DataSource="@RigRoles" Placeholder="الزامی"
+                                        <MudField Label="@($"{L["GridHeaderCurrentRole"]}:")" Underline="false">
+                                            <SfComboBox TItem="string" TValue="string" DataSource="@RigRoles" Placeholder="@L["RequiredText"]"
                                                         @bind-Value="@user.CurrentRole">
                                             </SfComboBox>
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudTextField Label=":شماره پرسنلی" @bind-Value="@user.PersonnelNum" Variant="Variant.Text" Placeholder="الزامی" Class="ltr" />
+                                        <MudTextField Label="@($"{L["GridHeaderPersonnelNumber"]}:")" @bind-Value="@user.PersonnelNum" Variant="Variant.Text" Placeholder="@L["RequiredText"]"/>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="وضعیت:" Underline="false">
-                                            <SfComboBox TItem="string" TValue="string" DataSource="@_status" Placeholder="الزامی"
+                                        <MudField Label="@($"{L["GridHeaderStatus"]}:")" Underline="false">
+                                            <SfComboBox TItem="string" TValue="string" DataSource="@_status" Placeholder="@L["RequiredText"]"
                                                         @bind-Value="@user.Status">
                                             </SfComboBox>
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudTextField @bind-Value="@user.BusinessEmail" Variant="Variant.Text" Label=":ایمیل سازمانی"
-                                                      Mask="@(RegexMask.Email())" Class="ltr" InputMode="InputMode.email" Adornment="Adornment.Start" />
+                                        <MudTextField @bind-Value="@user.BusinessEmail" Variant="Variant.Text" Label="@($"{L["GridHeaderBusinessEmail"]}:")"
+                                                      Mask="@(RegexMask.Email())" InputMode="InputMode.email" Adornment="Adornment.Start" />
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="سمت قبلی:" Underline="false">
+                                        <MudField Label="@($"{L["GridHeaderPreviousRoleLabel"]}:")" Underline="false">
                                             <SfComboBox TItem="string" TValue="string" DataSource="@RigRoles"
                                                         @bind-Value="@user.PreviousRole">
                                             </SfComboBox>
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudField Label="تاریخ آخرین ارتقا:" Underline="false">
-                                            <SamcoDateSelector @bind-Date="@user.LastUpgradeDate" DefaultCalendar="SamcoDateSelector.CalendarType.Persian" />
+                                        <MudField Label="@($"{L["GridHeaderLastPromotion"]}:")" Underline="false">
+                                            <SamcoDateSelector @bind-Date="@user.LastUpgradeDate"/>
                                         </MudField>
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudNumericField Label="سایز لباس:" Min="35" Max="50" @bind-Text="@user.ClothSize" Adornment="Adornment.Start" />
+                                        <MudNumericField Label="@($"{L["GridHeaderClothSize"]}:")" Min="35" Max="50" @bind-Text="@user.ClothSize" Adornment="Adornment.Start" />
                                     </MudItem>
                                     <MudItem md="4" sm="12">
-                                        <MudNumericField Label="سایز کفش:" Min="35" Max="50" @bind-Text="@user.ShoeSize" Adornment="Adornment.Start" />
+                                        <MudNumericField Label="@($"{L["GridHeaderShoeSize"]}:")" Min="35" Max="50" @bind-Text="@user.ShoeSize" Adornment="Adornment.Start" />
                                     </MudItem>
                                 </MudGrid>
                             </MudExpansionPanel>
@@ -186,20 +187,20 @@
 </MudCard>
 
 <SfDialog @ref="PassModal" AllowDragging="true" Visible="false" IsModal="true" Width="600px" ShowCloseIcon="true"
-          Header="تنظیم کلمه عبور کاربر" CloseOnEscape="true">
+          Header="@L["Users_SetNewPassTitle"]" CloseOnEscape="true" EnableRtl="IsRightToLeft">
     <DialogTemplates>
         <Content>
             <MudGrid>
                 <MudItem>
-                    <MudTextField Label="کلمه عبور:" @bind-Value="@_newPass" InputType="InputType.Password" />
+                    <MudTextField Label="@($"{L["Users_NewPasswordLabel"]}:")" @bind-Value="@_newPass" InputType="InputType.Password" />
                 </MudItem>
                 <MudItem>
-                    <MudTextField Label="تکرار کلمه عبور:" @bind-Value="@_confPass" InputType="InputType.Password" />
+                    <MudTextField Label="@($"{L["Users_ConfirmNewPasswordLabel"]}:")" @bind-Value="@_confPass" InputType="InputType.Password" />
                 </MudItem>
             </MudGrid>
         </Content>
         <FooterTemplate>
-            <MudButton Color="Color.Success" StartIcon="fas fa-check" Variant="Variant.Filled" OnClick="PassOkBtnClick">تأیید</MudButton>
+            <MudButton Color="Color.Success" StartIcon="fas fa-check" Variant="Variant.Filled" OnClick="PassOkBtnClick">@L["ConfirmButtonText"]</MudButton>
         </FooterTemplate>
     </DialogTemplates>
     <DialogPositionData Y="top" />
@@ -207,14 +208,14 @@
 </SfDialog>
 
 <SfDialog @ref="PermitModal" AllowDragging="true" Visible="false" IsModal="true" Width="600px" ShowCloseIcon="true"
-          Header="سطح دسترسی" CloseOnEscape="true">
+          Header="@L["Users_AccessLevelTitle"]" CloseOnEscape="true" EnableRtl="IsRightToLeft">
     <DialogTemplates>
         <Content>
-            <MudAlert Variant="Variant.Filled" Severity="Severity.Info">فقط در صورتی که می‌خواهید به یک کاربر اجازه دسترسی به اطلاعات چند دکل را بدهید از این قسمت استفاده کنید. دقت کنید که کاربر همواره به اطلاعات دکل فعال خود دسترسی دارد.</MudAlert>
+            <MudAlert Variant="Variant.Filled" Severity="Severity.Info">@L["Users_AccessLevelInfoText"]</MudAlert>
             <SamcoRigSelector @bind-SelectedRigs="PermitRigList" IsMultiselect="true" DataSource="Rigs"/>
         </Content>
         <FooterTemplate>
-            <MudButton Color="Color.Success" StartIcon="fas fa-check" Variant="Variant.Filled" OnClick="PermitOkBtnClick">تأیید</MudButton>
+            <MudButton Color="Color.Success" StartIcon="fas fa-check" Variant="Variant.Filled" OnClick="PermitOkBtnClick">@L["ConfirmButtonText"]</MudButton>
         </FooterTemplate>
     </DialogTemplates>
     <DialogPositionData Y="top" />
@@ -222,24 +223,24 @@
 </SfDialog>
 
 <SfDialog @ref="UpgradeModal" AllowDragging="true" Visible="false" IsModal="true" Width="600px" ShowCloseIcon="true"
-          Header="به روز رسانی پرسنل" CloseOnEscape="true">
+          Header="@L["Users_UpgradePersonnelTitle"]" CloseOnEscape="true" EnableRtl="IsRightToLeft">
     <DialogTemplates>
         <Content>
-            <MudAlert Variant="Variant.Filled" Severity="Severity.Info">در صورتی که می‌خواهید به پرسنل شرکت که قبلاً در سیستم ثبت کرده‌اید، دسترسی به سیستم دهید از این قسمت استفاده کنید.</MudAlert>
-            <MudRTLProvider RightToLeft="true">
+            <MudAlert Variant="Variant.Filled" Severity="Severity.Info">@L["Users_UpgradePersonnelInfoText"]</MudAlert>
+            <MudRTLProvider RightToLeft="IsRightToLeft">
                 <MudGrid>
                     <MudItem md="12">
-                        <MudField Label="نام پرسنل:" Underline="false">
+                        <MudField Label="@($"{L["GridHeaderPersonnelName"]}:")" Underline="false">
                             <SamcoPersonnelSelector @bind-SelectedPersonnel="_selPersonnel" DataSource="PersonnelList" Session="Session1" />
                         </MudField>
                     </MudItem>
                     <MudItem md="6" sm="12">
-                        <MudTextField Label=":نام کاربری" @bind-Value="@_personnelUsername" Variant="Variant.Text"
-                                      Placeholder="الزامی" Class="ltr" />
+                        <MudTextField Label="@($"{L["GridHeaderUsername"]}:")" @bind-Value="@_personnelUsername" Variant="Variant.Text"
+                                      Placeholder="@L["RequiredText"]"/>
                     </MudItem>
                     <MudItem md="6" sm="12">
-                        <MudField Label="نقش:" Underline="false">
-                            <SfComboBox TItem="KeyValuePair<string, string>" TValue="string" DataSource="@_roles" Placeholder="الزامی"
+                        <MudField Label="@($"{L["GridHeaderRole"]}:")" Underline="false">
+                            <SfComboBox TItem="KeyValuePair<string, string>" TValue="string" DataSource="@_roles" Placeholder="@L["RequiredText"]"
                                         @bind-Value="@_personnelRole">
                                 <ComboBoxFieldSettings Text="Value" Value="Key" />
                             </SfComboBox>
@@ -249,7 +250,7 @@
             </MudRTLProvider>
         </Content>
         <FooterTemplate>
-            <MudButton Color="Color.Success" StartIcon="fas fa-check" Variant="Variant.Filled" OnClick="UpgradeOkBtnClick">تأیید</MudButton>
+            <MudButton Color="Color.Success" StartIcon="fas fa-check" Variant="Variant.Filled" OnClick="UpgradeOkBtnClick">@L["ConfirmButtonText"]</MudButton>
         </FooterTemplate>
     </DialogTemplates>
     <DialogPositionData Y="top" />

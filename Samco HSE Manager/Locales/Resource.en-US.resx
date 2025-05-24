@@ -277,13 +277,13 @@
     <value>Users</value>
   </data>
   <data name="NavMenu_DashboardSettings" xml:space="preserve">
-    <value>Dashboard settings</value>
+    <value>Dashboard Settings</value>
   </data>
   <data name="NavMenu_ReportSettings" xml:space="preserve">
-    <value>Report settings</value>
+    <value>Report Settings</value>
   </data>
   <data name="NavMenu_FormSettings" xml:space="preserve">
-    <value>Form settings</value>
+    <value>Form Settings</value>
   </data>
   <data name="NavMenu_Personnel" xml:space="preserve">
     <value>Employees</value>
@@ -292,7 +292,7 @@
     <value>Personal Protection Equipment</value>
   </data>
   <data name="NavMenu_PropertyEquipment" xml:space="preserve">
-    <value>Civilian equipment</value>
+    <value>Property Equipments</value>
   </data>
   <data name="NavMenu_Vehicles" xml:space="preserve">
     <value>Machinery</value>
@@ -316,9 +316,388 @@
     <value>Clinic</value>
   </data>
   <data name="NavMenu_VisitPatient" xml:space="preserve">
-    <value>Patient visit</value>
+    <value>Patient Visit</value>
   </data>
   <data name="NavMenu_ManageMedications" xml:space="preserve">
     <value>Medication Management</value>
+  </data>
+  <data name="DashDesign_RemoveButton" xml:space="preserve">
+    <value>Delete Dashboard</value>
+  </data>
+  <data name="FormDesign_FileButton" xml:space="preserve">
+    <value>File Management</value>
+  </data>
+  <data name="AccessDenied" xml:space="preserve">
+    <value>Sorry, you are not allowed to access this page.</value>
+  </data>
+  <data name="UnSelectAllText" xml:space="preserve">
+    <value>Unselect All</value>
+  </data>
+  <data name="GridHeaderUsername" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="GridHeaderTitle" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="GridHeaderRoles" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="GridHeaderRevision" xml:space="preserve">
+    <value>Revision</value>
+  </data>
+  <data name="GridHeaderRevDate" xml:space="preserve">
+    <value>Revision Date</value>
+  </data>
+  <data name="GridHeaderOid" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="GridHeaderLocation" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="GridHeaderKeywords" xml:space="preserve">
+    <value>Keywords</value>
+  </data>
+  <data name="GridHeaderDisabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="GridHeaderCode" xml:space="preserve">
+    <value>Form Code</value>
+  </data>
+  <data name="GridHeaderAccessGroup" xml:space="preserve">
+    <value>Access</value>
+  </data>
+  <data name="GridHeaderRole" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="GridHeaderNationalId" xml:space="preserve">
+    <value>National ID</value>
+  </data>
+  <data name="GridHeaderIsMarried" xml:space="preserve">
+    <value>Married</value>
+  </data>
+  <data name="GridHeaderBirthDate" xml:space="preserve">
+    <value>Birth Date</value>
+  </data>
+  <data name="GridHeaderPersonnelNumber" xml:space="preserve">
+    <value>Personnel Number</value>
+  </data>
+  <data name="GridHeaderEmploymentDate" xml:space="preserve">
+    <value>Employment Date</value>
+  </data>
+  <data name="GridHeaderEmail" xml:space="preserve">
+    <value>Email Address</value>
+  </data>
+  <data name="GridHeaderStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="LastLoginDate" xml:space="preserve">
+    <value>Last Login Date</value>
+  </data>
+  <data name="GridHeaderLastPromotion" xml:space="preserve">
+    <value>Last Promotion Date</value>
+  </data>
+  <data name="GridHeaderMarriageStatus" xml:space="preserve">
+    <value>Marriage Status</value>
+  </data>
+  <data name="GridHeaderMobilePhone" xml:space="preserve">
+    <value>Mobile Number</value>
+  </data>
+  <data name="GridHeaderHomePhone_Label" xml:space="preserve">
+    <value>Home Phone</value>
+  </data>
+  <data name="GridHeaderInsuranceNumber" xml:space="preserve">
+    <value>Insurance Number</value>
+  </data>
+  <data name="GridHeaderDriverExpDate" xml:space="preserve">
+    <value>Driver License Expiration</value>
+  </data>
+  <data name="GridHeaderClothSize" xml:space="preserve">
+    <value>Cloth Size</value>
+  </data>
+  <data name="GridHeaderBusinessEmail" xml:space="preserve">
+    <value>Business Email</value>
+  </data>
+  <data name="GridHeaderShoeSize" xml:space="preserve">
+    <value>Shoe Size</value>
+  </data>
+  <data name="LabelJobInfo" xml:space="preserve">
+    <value>Job Information</value>
+  </data>
+  <data name="LabelPersonalInfo" xml:space="preserve">
+    <value>Personal Information</value>
+  </data>
+  <data name="GridHeaderPersonnelEnglishName" xml:space="preserve">
+    <value>Fullname (In English)</value>
+  </data>
+  <data name="RequiredText" xml:space="preserve">
+    <value>Required</value>
+  </data>
+  <data name="Users_NewPasswordLabel" xml:space="preserve">
+    <value>New Password</value>
+  </data>
+  <data name="Users_ConfirmNewPasswordLabel" xml:space="preserve">
+    <value>Confirm New Password</value>
+  </data>
+  <data name="Users_NewPassButton" xml:space="preserve">
+    <value>Set New Password</value>
+  </data>
+  <data name="ConfirmButtonText" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="Users_AccessLevelTitle" xml:space="preserve">
+    <value>Access Level</value>
+  </data>
+  <data name="GridHeaderPersonnelName" xml:space="preserve">
+    <value>Personnel Name</value>
+  </data>
+  <data name="SearchPlaceholderText" xml:space="preserve">
+    <value>Type in to search ...</value>
+  </data>
+  <data name="SelectAllText" xml:space="preserve">
+    <value>Select All</value>
+  </data>
+  <data name="DisableLabel" xml:space="preserve">
+    <value>Disable</value>
+  </data>
+  <data name="ValidationRequiredMessage" xml:space="preserve">
+    <value>Please complete the required items.</value>
+  </data>
+  <data name="ValidationDuplicateFormMessage" xml:space="preserve">
+    <value>A form with the same code and version number is registered in the system. Please check the information and try again.</value>
+  </data>
+  <data name="DeleteFormConfirmMessage" xml:space="preserve">
+    <value>Are you sure of deleting {0} form?</value>
+  </data>
+  <data name="DeleteFormConfirmTitle" xml:space="preserve">
+    <value>Remove the form</value>
+  </data>
+  <data name="FormDeletionSuccessMessage" xml:space="preserve">
+    <value>The form was removed.</value>
+  </data>
+  <data name="ExcelExportInProgressMessage" xml:space="preserve">
+    <value>The system is creating a file. Please be patient ...</value>
+  </data>
+  <data name="FormSelectWarningMessage" xml:space="preserve">
+    <value>Please select a form from the list below.</value>
+  </data>
+  <data name="FormAddFileTitle" xml:space="preserve">
+    <value>Add new file</value>
+  </data>
+  <data name="Users_Title" xml:space="preserve">
+    <value>Manage users</value>
+  </data>
+  <data name="Users_PermitButton" xml:space="preserve">
+    <value>Set information access</value>
+  </data>
+  <data name="Users_UpgradeButton" xml:space="preserve">
+    <value>Personnel Access</value>
+  </data>
+  <data name="GridHeaderCurrentRole" xml:space="preserve">
+    <value>The current side</value>
+  </data>
+  <data name="User_Login_Info" xml:space="preserve">
+    <value>Login Information</value>
+  </data>
+  <data name="GridHeaderPreviousRoleLabel" xml:space="preserve">
+    <value>The previous side</value>
+  </data>
+  <data name="Users_SetNewPassTitle" xml:space="preserve">
+    <value>Set user password</value>
+  </data>
+  <data name="Users_AccessLevelInfoText" xml:space="preserve">
+    <value>Use this section only if you want to allow a user to access multiple masts. Note that the user always has access to his active place information.</value>
+  </data>
+  <data name="Users_UpgradePersonnelTitle" xml:space="preserve">
+    <value>Update Personnel Information</value>
+  </data>
+  <data name="Users_UpgradePersonnelInfoText" xml:space="preserve">
+    <value>Use this section if you want to access the company personnel you have already registered in the system.</value>
+  </data>
+  <data name="GridHeaderMarried" xml:space="preserve">
+    <value>Married</value>
+  </data>
+  <data name="CheckingAccessLevel" xml:space="preserve">
+    <value>Checking access level...</value>
+  </data>
+  <data name="PageNotFoundTitle" xml:space="preserve">
+    <value>Page not found</value>
+  </data>
+  <data name="PageNotFoundMessage" xml:space="preserve">
+    <value>Sorry, this page is not existed.</value>
+  </data>
+  <data name="Login_Title" xml:space="preserve">
+    <value>Login to the system</value>
+  </data>
+  <data name="Login_EmployeeLogin" xml:space="preserve">
+    <value>Employee Login</value>
+  </data>
+  <data name="GridHeaderPassword" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Login_PersonnelLogin" xml:space="preserve">
+    <value>Personnel Login</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="WelcomeMessage" xml:space="preserve">
+    <value>Hi dear {0}! Welcome to the HSE Management Panel!</value>
+  </data>
+  <data name="TrialMessage" xml:space="preserve">
+    <value>Due to the testing of this version, there may be some flaws that will be resolved over time. Thank you for your patience.
+ If you have questions about system capabilities or error, contact email &lt;a href = "Mailto: info@samcosoft.ir"&gt; Samcosoft Support &lt;/a&gt;.</value>
+  </data>
+  <data name="Login_TrialMessage" xml:space="preserve">
+    <value>In the trial mode the username and password of the administrator system is "admin".</value>
+  </data>
+  <data name="Login_WrongDataMessage" xml:space="preserve">
+    <value>The username or password is wrong.</value>
+  </data>
+  <data name="Login_RequiredUsername" xml:space="preserve">
+    <value>The username is required.</value>
+  </data>
+  <data name="Login_RequiredPassword" xml:space="preserve">
+    <value>The password is required.</value>
+  </data>
+  <data name="FormFile_Title" xml:space="preserve">
+    <value>Add / Edit File</value>
+  </data>
+  <data name="CancelButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Projects_ProjectCard" xml:space="preserve">
+    <value>Projects</value>
+  </data>
+  <data name="Projects_Wells" xml:space="preserve">
+    <value>Wells</value>
+  </data>
+  <data name="Projects_Locations" xml:space="preserve">
+    <value>Locations (Offices, Rigs)</value>
+  </data>
+  <data name="GridHeaderWell" xml:space="preserve">
+    <value>Well</value>
+  </data>
+  <data name="GridHeaderActiveOperation" xml:space="preserve">
+    <value>Active Operation</value>
+  </data>
+  <data name="GridHeaderStartDate" xml:space="preserve">
+    <value>Start Date</value>
+  </data>
+  <data name="GridHeaderEndDate" xml:space="preserve">
+    <value>End Date</value>
+  </data>
+  <data name="GridHeaderIssuedWarningsCount" xml:space="preserve">
+    <value>Warnings Count</value>
+  </data>
+  <data name="GridHeaderAccidentsCount" xml:space="preserve">
+    <value>Accidents Count</value>
+  </data>
+  <data name="GridHeaderDrillsCount" xml:space="preserve">
+    <value>Drills Count</value>
+  </data>
+  <data name="GridHeaderTrainingCounts" xml:space="preserve">
+    <value>Training Counts</value>
+  </data>
+  <data name="Projects_OperationTitle" xml:space="preserve">
+    <value>Operations</value>
+  </data>
+  <data name="GridHeaderProjectName" xml:space="preserve">
+    <value>Project Name</value>
+  </data>
+  <data name="GridHeaderWellName" xml:space="preserve">
+    <value>Well Name</value>
+  </data>
+  <data name="Projects_ActiveLabel" xml:space="preserve">
+    <value>Active Operation</value>
+  </data>
+  <data name="Projects_SelectLocationMessage" xml:space="preserve">
+    <value>Please choose a location.</value>
+  </data>
+  <data name="Projects_SelectProjectMessage" xml:space="preserve">
+    <value>Please select a project.</value>
+  </data>
+  <data name="Projects_SelectWellMessage" xml:space="preserve">
+    <value>Please choose a well.</value>
+  </data>
+  <data name="Projects_ProjectInfoTitle" xml:space="preserve">
+    <value>Project Information</value>
+  </data>
+  <data name="Projects_LocationTitle" xml:space="preserve">
+    <value>Location Information</value>
+  </data>
+  <data name="Projects_WellInfoTitle" xml:space="preserve">
+    <value>Well Information</value>
+  </data>
+  <data name="EditController_AddButton" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="EditController_EditButton" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="EditController_DeleteButton" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="ProjectModal_ProjectValidation" xml:space="preserve">
+    <value>Project name is required.</value>
+  </data>
+  <data name="ProjectModal_ProjectExists" xml:space="preserve">
+    <value>This project is already existed.</value>
+  </data>
+  <data name="FormFile_Alert" xml:space="preserve">
+    <value>The previous file will be replaced.</value>
+  </data>
+  <data name="Projects_Title" xml:space="preserve">
+    <value>Drilling operation management</value>
+  </data>
+  <data name="Projects_OperationGridMessage" xml:space="preserve">
+    <value>Choosing a well, rig and start date of operation are required.</value>
+  </data>
+  <data name="Projects_EndDateErrorMessage" xml:space="preserve">
+    <value>The end date of the operation should be after than its start.</value>
+  </data>
+  <data name="Projects_ActiveErrorMessage" xml:space="preserve">
+    <value>If the end date is registered, the project couldn't be active.</value>
+  </data>
+  <data name="Projects_OtherRigErrorMessage" xml:space="preserve">
+    <value>The rig {0} is currently operating on this well and project.</value>
+  </data>
+  <data name="Projects_StartDateErrorMessage" xml:space="preserve">
+    <value>The start of the operation should be after the project begins.</value>
+  </data>
+  <data name="Projects_EndProjectDateErrorMessage" xml:space="preserve">
+    <value>The end of the operation must be before the project is completed.</value>
+  </data>
+  <data name="Projects_DeleteProjectWarning" xml:space="preserve">
+    <value>Notice! By deleting the work project, all its subset information, including related reports, will also be deleted. Are you sure?</value>
+  </data>
+  <data name="Projects_DeleteWarningMessage" xml:space="preserve">
+    <value>Operation Deletion Warning</value>
+  </data>
+  <data name="StartDate_Required" xml:space="preserve">
+    <value>Start date (required)</value>
+  </data>
+  <data name="ProjectModal_StartDateRequired" xml:space="preserve">
+    <value>It is mandatory to enter the project start date.</value>
+  </data>
+  <data name="ProjectModal_EndDateValidation" xml:space="preserve">
+    <value>The project's end date should be greater than its start.</value>
+  </data>
+  <data name="Rig_ModalLocationName" xml:space="preserve">
+    <value>Location Name</value>
+  </data>
+  <data name="RigModal_LocationNameRequiredError" xml:space="preserve">
+    <value>Location name is required.</value>
+  </data>
+  <data name="RigModal_LocationExistedError" xml:space="preserve">
+    <value>Another location with the same name already existed.</value>
+  </data>
+  <data name="GridHeaderWellLocation" xml:space="preserve">
+    <value>Well</value>
+  </data>
+  <data name="WellModal_RequiredWell" xml:space="preserve">
+    <value>The name of the well is required.</value>
+  </data>
+  <data name="WellModal_DuplicateWellName" xml:space="preserve">
+    <value>There is another well with the same name.</value>
   </data>
 </root>

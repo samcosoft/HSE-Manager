@@ -1,18 +1,20 @@
 ﻿@using Samco_HSE.HSEData
 @inject ISnackbar Snackbar
+@inject IStringLocalizer<Resource> L
+
 <MudDialog>
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.AddHomeWork" Class="me-3 mb-1" />
-            اطلاعات دکل / دفتر
+            @L["Projects_LocationTitle"]
         </MudText>
     </TitleContent>
     <DialogContent>
-        <MudTextField Label="نام دکل / دفتر" Variant="Variant.Outlined" AutoFocus="true" @bind-Value="@(SelRig.Name)"/>
+        <MudTextField Label="@L["Rig_ModalLocationName"]" Variant="Variant.Outlined" AutoFocus="true" @bind-Value="@(SelRig.Name)" />
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">انصراف</MudButton>
-        <MudButton Color="Color.Success" IconClass="fas fa-check" OnClick="Submit">تأیید</MudButton>
+        <MudButton OnClick="Cancel">@L["CancelButtonText"]</MudButton>
+        <MudButton Color="Color.Success" IconClass="fas fa-check" OnClick="Submit">@L["ConfirmButtonText"]</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -28,13 +30,13 @@
     {
         if (SelRig.Name == null)
         {
-            Snackbar.Add("نام مکان الزامی است.", Severity.Error);
+            Snackbar.Add(L["RigModal_LocationNameRequiredError"], Severity.Error);
             return;
         }
         var prevRig = SelRig.Session.Query<Rig>().FirstOrDefault(x => x.Name == SelRig.Name);
         if (prevRig != null && prevRig.Name == SelRig.Name && prevRig.Oid != SelRig.Oid)
         {
-            Snackbar.Add("مکانی با همین نام وجود دارد.", Severity.Error);
+            Snackbar.Add(L["RigModal_LocationExistedError"], Severity.Error);
             return;
         }
         SelRig.Save();

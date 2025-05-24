@@ -1,19 +1,20 @@
 ﻿@page "/dashboard"
 @attribute [Authorize(Roles = "Owner,Admin")]
+@inject IStringLocalizer<Resource> L
 
 <MudCard>
     <MudCardHeader>
         <MudPaper Elevation="3" Width="100%" Class="pa-3">
             <MudGrid>
                 <MudItem>
-                    <MudText Typo="Typo.h5">مدیریت داشبوردها</MudText>
+                    <MudText Typo="Typo.h5">@L["NavMenu_DashboardSettings"]</MudText>
                 </MudItem>
                 <MudItem>
                     <SfComboBox TItem="string" TValue="string" DataSource="Dashboards" @bind-Value="_selDash"
                                 AllowCustom="false" AllowFiltering="true" ShowClearButton="false"/>
                 </MudItem>
                 <MudItem>
-                    <MudButton Color="Color.Error" Variant="Variant.Filled" StartIcon="fas fa-trash" OnClick="RemoveDashboard">حذف داشبورد</MudButton>
+                    <MudButton Color="Color.Error" Variant="Variant.Filled" StartIcon="fas fa-trash" OnClick="RemoveDashboard">@L["DashDesign_RemoveButton"]</MudButton>
                 </MudItem>
             </MudGrid>
         </MudPaper>

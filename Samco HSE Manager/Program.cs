@@ -9,7 +9,6 @@ using Samco_HSE_Manager;
 using Samco_HSE_Manager.Authentication;
 using Syncfusion.Blazor;
 using Syncfusion.Blazor.Popups;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,7 +58,6 @@ builder.Services.AddScoped(_ =>
 builder.Services.AddScoped<SfDialogService>();
 builder.Services.AddSyncfusionBlazor(options =>
 {
-    options.EnableRtl = true;
     options.Animation = GlobalAnimationMode.Enable;
     options.EnableRippleEffect = true;
 });
