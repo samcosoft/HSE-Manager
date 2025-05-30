@@ -131,7 +131,8 @@ public partial class MainLayout : IDisposable
             H3 = new H3Typography { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = "600" },
             H4 = new H4Typography { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = "600" },
             H5 = new H5Typography { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = "600" },
-            H6 = new H6Typography { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = "600" }
+            H6 = new H6Typography { FontFamily = new[] { "Dana", "Tahoma", "Arial" }, FontWeight = "600" },
+            Button = new ButtonTypography{TextTransform = "capitalize" }
         }
     };
 
@@ -190,7 +191,7 @@ public partial class MainLayout : IDisposable
     private string? GetApplicationVersion()
     {
         return Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-            ?.InformationalVersion;
+            ?.InformationalVersion.Split("+")[0];
     }
 
     void OnLocationChanged(object? sender, LocationChangedEventArgs args)

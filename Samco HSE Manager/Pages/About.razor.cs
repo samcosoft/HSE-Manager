@@ -11,7 +11,7 @@ public partial class About
     private string? GetApplicationVersion()
     {
         return Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-            ?.InformationalVersion;
+            ?.InformationalVersion.Split("+")[0];
     }
 
     private string GetReleaseNote()

@@ -700,4 +700,52 @@
   <data name="WellModal_DuplicateWellName" xml:space="preserve">
     <value>There is another well with the same name.</value>
   </data>
+  <data name="About_WelcomeMessage" xml:space="preserve">
+    <value>Welcome to the HSE Management System</value>
+  </data>
+  <data name="About_TrialMessage" xml:space="preserve">
+    <value>This is a test version of the program. Contact the company sales unit or technical support for activation code. It is required to have internet access.</value>
+  </data>
+  <data name="About_AboutText" xml:space="preserve">
+    <value>About the application</value>
+  </data>
+  <data name="About_Description1" xml:space="preserve">
+    <value>The HSE Comprehensive Management System is a program that, while simply managing all data of the safety, health and environmental unit. This system can be used in all oil companies, refineries and drilling rigs.</value>
+  </data>
+  <data name="About_Description2" xml:space="preserve">
+    <value>The software has been used in the production of this software, the experiences of large companies and managers of large companies such as Dana Energy and Petro Iran. The smooth and beautiful user interface, support for Farsi and the use of up -to -date programming technology are features of this product.</value>
+  </data>
+  <data name="About_ReleaseNotes" xml:space="preserve">
+    <value>Version changes</value>
+  </data>
+  <data name="About_CompanyInfo" xml:space="preserve">
+    <value>Company information</value>
+  </data>
+  <data name="About_CompanyName" xml:space="preserve">
+    <value>Company name:</value>
+  </data>
+  <data name="About_Address" xml:space="preserve">
+    <value>Address:</value>
+  </data>
+  <data name="About_Phone" xml:space="preserve">
+    <value>Phone:</value>
+  </data>
+  <data name="About_ContactUs" xml:space="preserve">
+    <value>Contact us</value>
+  </data>
+  <data name="About_Website" xml:space="preserve">
+    <value>Website:</value>
+  </data>
+  <data name="About_Support" xml:space="preserve">
+    <value>Support:</value>
+  </data>
+  <data name="About_LicenseInfo" xml:space="preserve">
+    <value>License information</value>
+  </data>
+  <data name="About_Activation" xml:space="preserve">
+    <value>Activate</value>
+  </data>
+  <data name="About_Deactivate" xml:space="preserve">
+    <value>Deactivate</value>
+  </data>
 </root>

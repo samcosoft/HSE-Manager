@@ -700,4 +700,52 @@
   <data name="WellModal_DuplicateWellName" xml:space="preserve">
     <value>چاه دیگری با همین نام وجود دارد.</value>
   </data>
+  <data name="About_WelcomeMessage" xml:space="preserve">
+    <value>به سامانه مدیریت جامع HSE خوش آمدید!</value>
+  </data>
+  <data name="About_TrialMessage" xml:space="preserve">
+    <value>این نسخه آزمایشی برنامه است. برای دریافت کد فعال سازی با واحد فروش شرکت و یا پشتیبانی فنی تماس بگیرید. برای فعال سازی دسترسی به اینترنت الزامی است.</value>
+  </data>
+  <data name="About_AboutText" xml:space="preserve">
+    <value>درباره برنامه</value>
+  </data>
+  <data name="About_Description1" xml:space="preserve">
+    <value> سامانه مدیریت جامع HSE برنامه ایست که در عین سادگی مدیریت تمامی داده های واحد ایمنی، بهداشت و محیط زیست را پوشش میدهد. از این سیستم میتوان در تمامی شرکتهای نفتی، پالایشگاه ها و دکل های حفاری استفاده نمود.</value>
+  </data>
+  <data name="About_Description2" xml:space="preserve">
+    <value>در تولید این نرم‌افزار از تجربیات دست اندرکاران و مدیران واحد ایمنی شرکتهای بزرگی چون دانا انرژی و پترو ایران استفاده شده است. محیط کاربری روان و زیبا، پشتیبانی از زبان فارسی و استفاده از به روزترین تکنولوژی برنامه نویسی از ویژگی های این محصول است.</value>
+  </data>
+  <data name="About_ReleaseNotes" xml:space="preserve">
+    <value>تغییرات نسخه</value>
+  </data>
+  <data name="About_CompanyInfo" xml:space="preserve">
+    <value>اطلاعات شرکت</value>
+  </data>
+  <data name="About_CompanyName" xml:space="preserve">
+    <value>نام شرکت:</value>
+  </data>
+  <data name="About_Address" xml:space="preserve">
+    <value>آدرس:</value>
+  </data>
+  <data name="About_Phone" xml:space="preserve">
+    <value>تلفن:</value>
+  </data>
+  <data name="About_ContactUs" xml:space="preserve">
+    <value>تماس با ما</value>
+  </data>
+  <data name="About_Website" xml:space="preserve">
+    <value>وب سایت:</value>
+  </data>
+  <data name="About_Support" xml:space="preserve">
+    <value>پشتیبانی:</value>
+  </data>
+  <data name="About_LicenseInfo" xml:space="preserve">
+    <value>اطلاعات مجوز</value>
+  </data>
+  <data name="About_Activation" xml:space="preserve">
+    <value>فعالسازی</value>
+  </data>
+  <data name="About_Deactivate" xml:space="preserve">
+    <value>غیر فعالسازی</value>
+  </data>
 </root>
